@@ -1,0 +1,52 @@
+{% extends "userapp/base_menu.html" %}
+{% block titulo %}Login{% endblock %}
+
+{% block customcss %}
+  <style>
+    .callout {
+      margin-top: 30%;
+    }
+  </style>
+{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+      <div class="large-4 columns large-centered">
+        <div class="callout">
+          <form method="post" action="/userlogin/">
+            {% csrf_token %}
+            <div class="row">
+              <div class="large-12 columns">
+                <h3 class="text-center">{{ Titulo }}</h3>
+              </div>
+            </div>
+            <div class="row">
+              <div class="large-12 columns">
+                <label>Usuário
+                  <input type="text" name="username" placeholder="Usuario" />
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="large-12 columns">
+                <label>Senha
+                  <input type="password" name="password" placeholder="Senha" />
+                </label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="large-12 columns">
+                <p class="text-right">
+                  <!-- <input type="button" class="button" value="Registrar" onclick="javascript:location.href='/novo_usuario/';"> -->
+                  <a href="/novo_usuario/" class="button">Registrar</a>
+                  <input type="submit" class="button" value="Entrar">
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% if erro %}{{ erro }}{% endif %}
+
+{% endblock %}
