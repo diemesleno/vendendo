@@ -1,0 +1,72 @@
+{% load staticfiles %}
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block titulo %}{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
+
+    {% block customcss %}{% endblock %}
+
+  </head>
+
+  {% block body %}
+  <body>
+
+    <!-- Inicio top-bar -->
+    <div class="top-bar">
+      <div class="top-bar-title">
+        <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
+          <span class="menu-icon dark" data-toggle></span>
+        </span>
+        <strong>CoopManiacs</strong>
+      </div>
+      <div id="responsive-menu">
+        <div class="top-bar-left">
+          <ul class="dropdown menu" data-dropdown-menu>
+            <li>
+              <a href="#">One</a>
+              <ul class="menu vertical">
+                <li><a href="#">One</a></li>
+                <li><a href="#">Two</a></li>
+                <li><a href="#">Three</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Two</a></li>
+            <li><a href="#">Three</a></li>
+          </ul>
+        </div>
+        <div class="top-bar-right">
+          <ul class="menu">
+            {% if request.user.is_authenticated %}
+              <li>Olá, {{ user.get_username }}</li>
+              <li><a href="/logout/">Sair</a></li>
+            {% else %}
+              <li><a href="">Login</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Fim top-bar -->
+
+  {% endblock %}
+
+    {% block conteudo %}
+    {% endblock %}
+
+    <script src="{% static 'js/vendor/jquery.min.js' %}"></script>
+    <script src="{% static 'js/vendor/what-input.min.js' %}"></script>
+    <script src="{% static 'js/foundation.min.js' %}"></script>
+
+    {% block customjs %}{% endblock %}
+
+    <script>
+      $(document).foundation();
+    </script>
+
+  </body>
+</html>

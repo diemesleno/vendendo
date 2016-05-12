@@ -1,0 +1,83 @@
+{% extends "userapp/base_menu.html" %}
+{% block titulo %}Novo Usuário{% endblock %}
+
+{% block conteudo %}
+  <div class="row">
+    <div class="large-6 columns">
+      <h3>{{ Titulo }}</h3>
+      <form method="POST" action="/novo_usuario/">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ usuario.id }}">
+        <div class="row">
+          <div class="large-6 columns">
+            <label>Usuário
+              <input type="text" name="username" value="{% if form %}{{ form.username.value }}{% else %}{% if usuario %}{{ usuario.username }}{% endif %}{% endif %}">
+              {% if form.username.errors %}
+                {{ form.username.errors }}
+              {% endif %}
+            </label>
+          </div>
+          <div class="large-6 columns">
+            <label>E-mail
+              <input type="email" name="email" value="{% if form %}{{ form.email.value }}{% else %}{% if usuario %}{{ usuario.email }}{% endif %}{% endif %}">
+                {% if form.email.errors %}
+                  {{ form.email.errors }}
+                {% endif %}
+            </label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-6 columns">
+            <label>Nome
+              <input type="text" name="first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if usuario %}{{ usuario.first_name }}{% endif %}{% endif %}">
+                {% if form.first_name.errors %}
+                  {{ form.first_name.errors }}
+                {% endif %}
+            </label>
+          </div>
+          <div class="large-6 columns">
+            <label>Sobrenome
+              <input type="text" name="last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if usuario %}{{ usuario.last_name }}{% endif %}{% endif %}">
+                {% if form.last_name.errors %}
+                  {{ form.last_name.errors }}
+                {% endif %}
+            </label>
+          </div>
+        </div>
+        {% if not usuario.id %}
+        <div class="row">
+          <div class="large-6 columns">
+            <label>Senha
+              <input type="password" name="password" id="password" value="{% if form %}{{ form.password.value }}{% else %}{% if usuario %}{{ usuario.password }}{% endif %}{% endif %}">
+                {% if form.password.errors %}
+                  {{ form.password.errors }}
+                {% endif %}
+            </label>
+          </div>
+          <div class="large-6 columns">
+            <label>Repita a senha
+              <input type="password" name="rep-password" data-equalto="password">
+                <span class="form-error">
+                  Hey, passwords are supposed to match!
+                </span>
+            </label>
+          </div>
+        </div>
+        {% else %}
+          <input type="hidden" name="password" value="{% if form %}{{ form.password.value }}{% else %}{% if usuario %}{{ usuario.password }}{% endif %}{% endif %}">
+        {% endif %}
+        <div class="row">
+              <div class="large-12 columns">
+                <p class="text-right">
+                  {% if usuario.id %}
+                    <input type="button" class="alert button" value="Excluir" onclick="javascript:location.href='/excluir_usuario/?eid={{ usuario.id }}';">
+                  {% endif %}
+                  <input type="button" class="button" value="Voltar" onclick="javascript:location.href='/userlogin/';">
+                  <button type="submit" class="success button" >Salvar</button>
+                </p>
+              </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
