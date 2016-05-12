@@ -1,4 +1,4 @@
-{% extends "userapp/base_menu.html" %}
+{% extends "userapp/base.html" %}
 {% block titulo %}Login{% endblock %}
 
 {% block customcss %}
@@ -13,7 +13,7 @@
     <div class="row">
       <div class="large-4 columns large-centered">
         <div class="callout">
-          <form method="post" action="/userlogin/">
+          <form method="post" action="/">
             {% csrf_token %}
             <div class="row">
               <div class="large-12 columns">
