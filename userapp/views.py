@@ -6,6 +6,8 @@ from django.contrib.auth.models import User
 from .forms import NovoUsuarioForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+import uuid
+import hashlib
 
 
 class ListaUsuario(base.View):
@@ -97,6 +99,46 @@ class UserLogin(base.View):
                                     self.template_name,
                                     {'Titulo': self.titulo,
                                      'erro': "Usuário ou senha incorretos."})
+
+
+class RedefinePassword(base.View):
+    template_name = "userapp/redefinepwd.html"
+
+    def get(self, request):
+        return TemplateResponse(request,
+                                self.template_name,
+                                {})
+
+    def post(self, request):
+        email = request.POST['email']
+        user = authenticate(email=email)
+        if user is not None:
+            if user.is_active:
+                try:
+                    salt = uuid.uuid4().hex
+                    new_pass = str(hashlib.sha256(salt.encode() + password.encode()).hexdigest())[:-6]
+                    subject = "Sua nova senha - Vendendo CRM"
+                    msg = "Olá "+user.first_name+", <br /><br />Esta é a nova senha da sua conta "+email+" no Vendendo CRM: <br /> \
+                    <b>"+new_pass+"</b>"
+                    user.email_user(subject=subject, message=msg, from_email=None)
+                    return TemplateResponse(request,
+                                            self.template_name,
+                                            {'success': "Um e-mail foi enviado para você com \
+                                            a sua nova senha"})
+                except Exception, e:
+                   return TemplateResponse(request,
+                                           self.template_name,
+                                           {'erro': "Erro interno: " + str(e.message)}) 
+            else:
+                return TemplateResponse(request,
+                                        self.template_name,
+                                        {'erro': "Este usuário encontra-se, \
+                                         inativo. Entre em contato com o \
+                                         administrador da conta."})
+        else:
+            return TemplateResponse(request,
+                                    self.template_name,
+                                    {'erro': "Não existe um usuário com este e-mail."})
 
 
 class Logout(base.View):
