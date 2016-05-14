@@ -7,6 +7,7 @@ from django.core.mail import send_mail
 from .forms import NovoUsuarioForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
+from crm.models import Organization
 import uuid
 import hashlib
 
@@ -39,7 +40,7 @@ class CadastroUsuario(base.View):
         elif eid:
             usuario = User.objects.get(id=eid)
             usuario.delete()
-            return HttpResponseRedirect("/userlogin/")
+            return HttpResponseRedirect("/")
         else:
             return TemplateResponse(request,
                                     self.template_name,
@@ -52,7 +53,7 @@ class CadastroUsuario(base.View):
             form = self.form_class(request.POST, instance=usuario)
             if form.is_valid():
                 form.save()
-                return HttpResponseRedirect("/userlogin/")
+                return HttpResponseRedirect("/")
             else:
                 return TemplateResponse(request,
                                         self.template_name,
@@ -63,8 +64,14 @@ class CadastroUsuario(base.View):
             usuario = User()
             form = self.form_class(request.POST, instance=usuario)
             if form.is_valid():
-                form.save()
-                return HttpResponseRedirect("/userlogin/")
+                u = form.save(commit=False)
+                u.username = hashlib.md5(u.email).hexdigest()[-30:]
+                u.save()
+                organization = Organization()
+                organization.user = u
+                organization.name = request.POST['organization']
+                organization.save()
+                return HttpResponseRedirect("/")
             else:
                 return TemplateResponse(request,
                                         self.template_name,
@@ -131,7 +138,7 @@ class RedefinePassword(base.View):
                 except Exception, e:
                    return TemplateResponse(request,
                                            self.template_name,
-                                           {'erro': "Erro interno: " + str(e.message)}) 
+                                           {'erro': "Erro interno: " + str(e.message)})
             else:
                 return TemplateResponse(request,
                                         self.template_name,
@@ -148,4 +155,4 @@ class Logout(base.View):
 
     def get(self, request):
         logout(request)
-        return HttpResponseRedirect("/userlogin")
+        return HttpResponseRedirect("/")
