@@ -1,0 +1,43 @@
+{% extends "userapp/base.html" %}
+{% block titulo %}Login{% endblock %}
+
+{% block customcss %}
+
+  <link href="../static/css/signin.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block conteudo %}
+    <div class="container">
+
+      <form class="form-signin" method="post" action="/">
+        {% csrf_token %}
+        <h3 class="form-signin-heading">{{ Titulo }}</h3>
+        <label for="inputEmail" class="sr-only">Email</label>
+        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+        <label for="inputPassword" class="sr-only">Senha</label>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me"> Lembrar e-mail
+          </label>
+        </div>
+        <p class="btn-align">
+          <a href="/novo_usuario/" class="btn btn-primary">Registrar</a>
+          <input type="submit" class="btn btn-primary" value="Entrar">
+        </p>
+        <p class="forgot-pwd">
+        <a href="/redefinepwd/">Esqueci minha senha</a>
+        </p>
+        <p class="msg-error">
+        {% if erro %}
+          <div class="alert alert-danger" role="alert">
+            <a href="#" class="alert-link">{{ erro }}</a>
+          </div>
+        {% endif %}
+        </p>
+      </form>
+
+    </div>
+
+{% endblock %}
