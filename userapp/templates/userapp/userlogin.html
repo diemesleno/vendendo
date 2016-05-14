@@ -15,13 +15,13 @@
 {% block conteudo %}
     <div class="container">
 
-      <form class="form-signin">
+      <form class="form-signin" method="post" action="/">
         {% csrf_token %}
         <h3 class="form-signin-heading">{{ Titulo }}</h3>
         <label for="inputEmail" class="sr-only">Email</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Senha</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Senha" required>
+        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Senha" required>
         <div class="checkbox">
           <label>
             <input type="checkbox" value="remember-me"> Lembrar e-mail
