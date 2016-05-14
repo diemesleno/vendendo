@@ -4,11 +4,6 @@
 {% block customcss %}
 
   <link href="../static/css/signin.css" rel="stylesheet">
-  <style>
-    .callout {
-      margin-top: 30%;
-    }
-  </style>
 
 {% endblock %}
 
@@ -34,9 +29,15 @@
         <p class="forgot-pwd">
         <a href="/redefinepwd/">Esqueci minha senha</a>
         </p>
+        <p class="msg-error">
+        {% if erro %}
+          <div class="alert alert-danger" role="alert">
+            <a href="#" class="alert-link">{{ erro }}</a>
+          </div>
+        {% endif %}
+        </p>
       </form>
 
     </div>
-    {% if erro %}{{ erro }}{% endif %}
 
 {% endblock %}
