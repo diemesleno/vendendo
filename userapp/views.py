@@ -66,6 +66,7 @@ class CadastroUsuario(base.View):
             if form.is_valid():
                 u = form.save(commit=False)
                 u.username = hashlib.md5(u.email).hexdigest()[-30:]
+                u.set_password(request.POST['password'])
                 u.save()
                 organization = Organization()
                 organization.user = u
@@ -89,9 +90,13 @@ class UserLogin(base.View):
                                 {'Titulo': self.titulo})
 
     def post(self, request):
-        usuario = request.POST['username']
-        senha = request.POST['password']
-        user = authenticate(username=usuario, password=senha)
+        email = request.POST['email']
+        print email
+        password = request.POST['password']
+        print password
+        username = hashlib.md5(email).hexdigest()[-30:]
+        print username
+        user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
                 login(request, user)
