@@ -125,8 +125,8 @@ class RedefinePassword(base.View):
             if user.is_active:
                 try:
                     salt = uuid.uuid4().hex
-                    new_pass = str(hashlib.md5(salt.encode() + email.encode()).hexdigest())[-6:]
-                    user.password = new_pass
+                    new_pass = str(hashlib.md5(salt.encode() + email.encode()).hexdigest())[-8:]
+                    user.set_password(new_pass)
                     user.save()
                     subject = "Sua nova senha - Vendendo CRM"
                     body = "Olá "+str(user.first_name)+", <br /><br />Esta é a nova senha da sua conta "+str(email)+" no Vendendo CRM: <br /><b>"+str(new_pass)+"</b>"
