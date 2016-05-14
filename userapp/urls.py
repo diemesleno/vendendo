@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^novo_usuario/$', views.CadastroUsuario.as_view()),
     url(r'^editar_usuario/$', views.CadastroUsuario.as_view()),
     url(r'^excluir_usuario/$', views.CadastroUsuario.as_view()),
+    url(r'^redefinepwd/$', views.RedefinePassword.as_view()),
 ]
