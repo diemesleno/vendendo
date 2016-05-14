@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.generic import base, TemplateView
 from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
 from .forms import NovoUsuarioForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -111,16 +112,18 @@ class RedefinePassword(base.View):
 
     def post(self, request):
         email = request.POST['email']
-        user = authenticate(email=email)
-        if user is not None:
+        user = User.objects.filter(email=email)
+        if user:
+            user = user[0]
             if user.is_active:
                 try:
                     salt = uuid.uuid4().hex
-                    new_pass = str(hashlib.sha256(salt.encode() + password.encode()).hexdigest())[:-6]
+                    new_pass = str(hashlib.md5(salt.encode() + email.encode()).hexdigest())[-6:]
+                    user.password = new_pass
+                    user.save()
                     subject = "Sua nova senha - Vendendo CRM"
-                    msg = "Olá "+user.first_name+", <br /><br />Esta é a nova senha da sua conta "+email+" no Vendendo CRM: <br /> \
-                    <b>"+new_pass+"</b>"
-                    user.email_user(subject=subject, message=msg, from_email=None)
+                    body = "Olá "+str(user.first_name)+", <br /><br />Esta é a nova senha da sua conta "+str(email)+" no Vendendo CRM: <br /><b>"+str(new_pass)+"</b>"
+                    send_mail(subject, body, "hostmaster@vendendo.com.br", [email], html_message=body)
                     return TemplateResponse(request,
                                             self.template_name,
                                             {'success': "Um e-mail foi enviado para você com \
