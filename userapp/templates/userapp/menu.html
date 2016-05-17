@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block titulo %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
 
     <link rel="stylesheet" href="{% static 'css/foundation.css' %}" />
 
@@ -22,7 +22,7 @@
         <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
           <span class="menu-icon dark" data-toggle></span>
         </span>
-        <strong>CoopManiacs</strong>
+        <strong>Vendendo</strong>
       </div>
       <div id="responsive-menu">
         <div class="top-bar-left">
@@ -41,8 +41,8 @@
         </div>
         <div class="top-bar-right">
           <ul class="menu">
-            {% if request.user.is_authenticated %}
-              <li>Olá, {{ user.get_username }}</li>
+            {% if request.user_account.is_authenticated %}
+              <li>Olá, {{ user_account.get_username }}</li>
               <li><a href="/logout/">Sair</a></li>
             {% else %}
               <li><a href="">Login</a></li>
@@ -55,7 +55,7 @@
 
   {% endblock %}
 
-    {% block conteudo %}
+    {% block content %}
     {% endblock %}
 
     <script src="{% static 'js/vendor/jquery.min.js' %}"></script>

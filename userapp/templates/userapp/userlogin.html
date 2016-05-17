@@ -1,5 +1,5 @@
 {% extends "userapp/base.html" %}
-{% block titulo %}Login{% endblock %}
+{% block title %}Entrar{% endblock %}
 
 {% block customcss %}
 
@@ -7,13 +7,13 @@
 
 {% endblock %}
 
-{% block conteudo %}
+{% block content %}
     <div class="container">
 
       <form class="form-signin" method="post" action="/">
         {% csrf_token %}
-        <h3 class="form-signin-heading">{{ Titulo }}</h3>
-        <label for="inputEmail" class="sr-only">Email</label>
+        <h3 class="form-signin-heading">{{ title }}</h3>
+        <label for="inputEmail" class="sr-only">E-mail</label>
         <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Senha</label>
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Senha" required>
@@ -23,16 +23,16 @@
           </label>
         </div>
         <p class="btn-align">
-          <a href="/novo_usuario/" class="btn btn-primary">Registrar</a>
           <input type="submit" class="btn btn-primary" value="Entrar">
         </p>
         <p class="forgot-pwd">
-        <a href="/redefinepwd/">Esqueci minha senha</a>
+           Ainda não tem uma conta? <a href="/newuser/">Registre-se aqui.</a><br>
+          <a href="/resetpwd/">Esqueci minha senha</a>
         </p>
         <p class="msg-error">
-        {% if erro %}
+        {% if error %}
           <div class="alert alert-danger" role="alert">
-            <a href="#" class="alert-link">{{ erro }}</a>
+            <a href="#" class="alert-link">{{ error }}</a>
           </div>
         {% endif %}
         </p>

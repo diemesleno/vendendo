@@ -3,16 +3,16 @@ from django import forms
 from django.contrib.auth.models import User
 
 
-class NovoUsuarioForm(forms.ModelForm):
+class NewUserForm(forms.ModelForm):
     error_messages = {
-        'required': 'Campo Obrigatorio.',
-        'invalid': 'Campo Invalido'
+        'required': 'Campo Obrigatório.',
+        'invalid': 'Campo Inválido'
     }
     first_name = forms.CharField(required=True, error_messages=error_messages)
     email = forms.CharField(required=True, error_messages={
-        'required': 'Campo Obrigatorio.',
-        'invalid': 'Entre com um username válido. Este campo pode conter somente \
-            letras, numeros e os caracteres @ . + - _.'
+        'required': 'Campo Obrigatório.',
+        'invalid': 'Entre com um usuário válido. Este campo pode conter somente \
+            letras, números e os caracteres @ . + - _.'
     })
     username = forms.CharField(required=False)
     password = forms.CharField(required=True, error_messages=error_messages)
@@ -29,13 +29,13 @@ class NovoUsuarioForm(forms.ModelForm):
 
 class LoginForm(forms.ModelForm):
     error_messages = {
-        'required': 'Campo Obrigatorio.',
-        'invalid': 'Campo Invalido'
+        'required': 'Campo Obrigatório.',
+        'invalid': 'Campo Inválido'
     }
     username = forms.CharField(required=True, error_messages={
-        'required': 'Campo Obrigatorio.',
-        'invalid': 'Entre com um username válido. Este campo pode conter somente \
-            letras, numeros e os caracteres @ . + - _.'
+        'required': 'Campo Obrigatório.',
+        'invalid': 'Entre com um usuário válido. Este campo pode conter somente \
+            letras, números e os caracteres @ . + - _.'
     })
     password = forms.CharField(required=True, error_messages=error_messages)
 

@@ -1,0 +1,35 @@
+{% extends "userapp/menu.html" %}
+{% block title %}Lista de users{% endblock %}
+
+{% block content %}
+
+      <h1>{{ title }}</h1>
+      <input type="button" class="button" value="Novo" onclick="javascript:location.href='/newuser/';">
+      <p>
+      <table border="1">
+        <tr>
+          <td></td>
+          <td>Usuário</td>
+          <td>E-mail</td>
+          <td>Nome</td>
+          <td>Sobrenome</td>
+          <td>Usuário Desde</td>
+          <td>Último Login</td>
+          <td>Ativo</td>
+        </tr>
+        {% for user_account in users %}
+        <tr>
+          <td><input type="button" class="button" value="Editar" onclick="javascript:location.href='/edituser/?id={{ user_account.id }}';"></td>
+          <td>{{ user_account.username }}</td>
+          <td>{{ user_account.email }}</td>
+          <td>{{ user_account.first_name }}</td>
+          <td>{{ user_account.last_name }}</td>
+          <td>{{ user_account.date_joined }}</td>
+          <td>{{ user_account.last_login }}</td>
+          <td>{{ user_account.is_active }}</td>
+          <td><input type="button" class="alert button" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';"></td>
+        </tr>
+        {% endfor %}
+      </table>
+
+{% endblock %}

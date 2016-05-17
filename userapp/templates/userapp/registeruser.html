@@ -1,0 +1,73 @@
+{% extends "userapp/base.html" %}
+{% block title %}Novo Usuário{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>{{ title }}</h2>
+  <form method="POST" action="/newuser/">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{ user_account.id }}">
+    <div class="form-group">
+      <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+      {% if form.username.errors %}
+        {{ form.username.errors }}
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="id_email">E-mail</label>
+      <input type="email" class="form-control" name="email" id="id_email" value="{% if form %}{{ form.email.value }}{% else %}{% if user_account %}{{ user_account.email }}{% endif %}{% endif %}">
+      {% if form.email.errors %}
+        {{ form.email.errors }}
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="id_first_name">Nome</label>
+      <input type="text" class="form-control" name="first_name" id="id_first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if user_account %}{{ user_account.first_name }}{% endif %}{% endif %}">
+      {% if form.first_name.errors %}
+        {{ form.first_name.errors }}
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="id_last_name">Sobrenome</label>
+      <input type="text" class="form-control" name="last_name" id="id_last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if user_account %}{{ user_account.last_name }}{% endif %}{% endif %}">
+      {% if form.last_name.errors %}
+        {{ form.last_name.errors }}
+      {% endif %}
+    </div>
+    {% if not user_account.id %}
+    <div class="form-group">
+      <label for="id_password">Senha</label>
+      <input type="password" class="form-control" name="password" id="id_password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
+      {% if form.password.errors %}
+        {{ form.password.errors }}
+      {% endif %}
+    </div>
+    <!-- Confirmação de senhas iguais
+    <div class="form-group">
+      <label for="id_rep-password">Repita a senha</label>
+      <input type="password" name="rep-password" id="id_rep-password" data-equalto="password">
+      <span class="form-error">
+        As senhas não combinam!
+      </span>
+    </div>
+    -->
+    {% else %}
+    <input type="hidden" class="form-control" name="password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
+    {% endif %}
+    <div class="form-group">
+      <label for="id_organization">Organização</label>
+      <input type="text" class="form-control" name="organization" id="id_organization" value="{% if form %}{{ form.organization.value }}{% else %}{% if user_account %}{{ user_account.organization }}{% endif %}{% endif %}">
+      {% if form.organization.errors %}
+      {{ form.organization.errors }}
+      {% endif %}
+    </div>
+    <p class="text-right">
+      {% if user_account.id %}
+      <input type="button" class="btn btn-danger" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';">
+      {% endif %}
+      <button type="submit" class="btn btn-success">Salvar</button>
+      <input type="button" class="btn btn-default" value="Voltar" onclick="javascript:location.href='/';">
+    </p>
+  </form>
+</div>
+{% endblock %}

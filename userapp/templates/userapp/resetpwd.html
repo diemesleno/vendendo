@@ -1,9 +1,9 @@
 {% extends "userapp/base.html" %}
-{% block titulo %}Redefinir Senha{% endblock %}
+{% block title %}Redefinir Senha{% endblock %}
 
 {% block customcss %}
 
-  <link href="../static/css/redefinepwd.css" rel="stylesheet">
+  <link href="../static/css/resetpwd.css" rel="stylesheet">
   <style>
     .callout {
       margin-top: 30%;
@@ -12,7 +12,7 @@
 
 {% endblock %}
 
-{% block conteudo %}
+{% block content %}
     <div class="container">
 
     {% if success %}
@@ -26,9 +26,9 @@
       </p>
     {% else %}
 
-      <form class="form-redefinepwd" method="post" action="/redefinepwd/">
+      <form class="form-resetpwd" method="post" action="/resetpwd/">
         {% csrf_token %}
-        <h3 class="form-redefinepwd-heading">Esqueci minha senha</h3>
+        <h3 class="form-resetpwd-heading">Esqueci minha senha</h3>
         <h4><small>O sistema vai gerar uma nova senha e enviá-la por e-mail a você</small></h4>
         <label for="id_email" class="sr-only">Email</label>
         <input type="email" id="id_email" name="email" class="form-control" placeholder="Email" required autofocus>
@@ -38,9 +38,9 @@
         </p>
 
         <p class="msg-error">
-        {% if erro %}
+        {% if error %}
           <div class="alert alert-danger" role="alert">
-            <a href="#" class="alert-link">{{ erro }}</a>
+            <a href="#" class="alert-link">{{ error }}</a>
           </div>
         {% endif %}
         </p>
