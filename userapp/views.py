@@ -100,7 +100,7 @@ class UserLogin(base.View):
         if user_account is not None:
             if user_account.is_active:
                 login(request, user_account)
-                return HttpResponseRedirect("/listusers/")
+                return HttpResponseRedirect("/dashboard/")
             else:
                 return TemplateResponse(request,
                                         self.template_name,
