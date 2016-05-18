@@ -1,0 +1,183 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Visão Geral{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/dashboard.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Nome da Organização</h3>
+    <!-- Panel Indicators -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Panel title</h3>
+      </div>
+      <!-- Panels -->
+      <div class="list-group">
+      <div class="panel-body">
+        <div class="row placeholders">
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+                <a href="#" class="list-group-item">
+                  <h4 class="list-group-item-heading">List group item heading</h4>
+                  <p class="list-group-item-text">...</p>
+                </a>
+            </div>
+          </div>
+        </div>
+        <div class="row placeholders">
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row placeholders">
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4 col-sm-4 placeholder">
+            <div class="panel panel-default">
+              <div class="panel-body panel-body2">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Painel Activities -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Atividades</h3>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Header</th>
+              <th>Header</th>
+              <th>Header</th>
+              <th>Header</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1,001</td>
+              <td>Lorem</td>
+              <td>ipsum</td>
+              <td>dolor</td>
+              <td>sit</td>
+            </tr>
+            <tr>
+              <td>1,002</td>
+              <td>amet</td>
+              <td>consectetur</td>
+              <td>adipiscing</td>
+              <td>elit</td>
+            </tr>
+            <tr>
+              <td>1,003</td>
+              <td>Integer</td>
+              <td>nec</td>
+              <td>odio</td>
+              <td>Praesent</td>
+            </tr>
+            <tr>
+              <td>1,003</td>
+              <td>libero</td>
+              <td>Sed</td>
+              <td>cursus</td>
+              <td>ante</td>
+            </tr>
+          </tbody>
+        </table>
+        <nav>
+          <ul class="pagination pagination-sm">
+            <li class="disabled">
+              <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="active">
+              <a href="#">1
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li>
+              <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="row">
+  </div>
+</footer>
+{% endblock %}
