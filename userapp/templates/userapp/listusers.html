@@ -1,12 +1,13 @@
-{% extends "userapp/menu.html" %}
+{% extends "crm/basemenu.html" %}
 {% block title %}Lista de users{% endblock %}
 
 {% block content %}
-
-      <h1>{{ title }}</h1>
+<div class="container">
+  <h1>{{ title }}</h1>
       <input type="button" class="button" value="Novo" onclick="javascript:location.href='/newuser/';">
       <p>
-      <table border="1">
+      <div class="table-responsive">
+      <table class="table">
         <tr>
           <td></td>
           <td>Usuário</td>
@@ -16,6 +17,7 @@
           <td>Usuário Desde</td>
           <td>Último Login</td>
           <td>Ativo</td>
+          <td></td>
         </tr>
         {% for user_account in users %}
         <tr>
@@ -27,9 +29,10 @@
           <td>{{ user_account.date_joined }}</td>
           <td>{{ user_account.last_login }}</td>
           <td>{{ user_account.is_active }}</td>
-          <td><input type="button" class="alert button" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';"></td>
+          <td><input type="button" class="button" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';"></td>
         </tr>
         {% endfor %}
       </table>
-
+    </div>
+</div>
 {% endblock %}
