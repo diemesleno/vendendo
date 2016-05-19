@@ -136,3 +136,7 @@ EMAIL_HOST = 'smtp.domain.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'your_email@domain.com'
 EMAIL_HOST_PASSWORD = 'your_password'
+
+# url to redirect after successfull login
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGIN_URL ='/'
