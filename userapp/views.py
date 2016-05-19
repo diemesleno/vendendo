@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from .forms import NewUserForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
-from crm.models import Organization
+from crm.models import Organization, UserOrganization
 import uuid
 import hashlib
 
@@ -64,15 +64,27 @@ class RegisterUser(base.View):
             user_account = User()
             form = self.form_class(request.POST, instance=user_account)
             if form.is_valid():
-                u = form.save(commit=False)
-                u.username = hashlib.md5(u.email).hexdigest()[-30:]
-                u.set_password(request.POST['password'])
-                u.save()
-                organization = Organization()
-                organization.user_account = u
-                organization.name = request.POST['organization']
-                organization.save()
-                return HttpResponseRedirect("/")
+                if not User.objects.filter(email=request.POST['email']).exists():
+                    u = form.save(commit=False)
+                    u.username = hashlib.md5(u.email).hexdigest()[-30:]
+                    u.set_password(request.POST['password'])
+                    u.save()
+                    organization = Organization()
+                    organization.user_account = u
+                    organization.name = request.POST['organization']
+                    organization.save()
+                    user_organization = UserOrganization()
+                    user_organization.user_account = u
+                    user_organization.organization = organization
+                    user_organization.type_user = 'A'
+                    user_organization.save()
+                    return HttpResponseRedirect("/")
+                else:
+                    return TemplateResponse(request,
+                                            self.template_name,
+                                            {'title': self.title,
+                                             'form': form,
+                                             'error':"Já existe uma conta registrada com esse e-mail."})
             else:
                 return TemplateResponse(request,
                                         self.template_name,

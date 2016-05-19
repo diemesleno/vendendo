@@ -4,6 +4,13 @@
 {% block content %}
 <div class="container">
   <h2>{{ title }}</h2>
+  <p class="msg-error">
+  {% if error %}
+    <div class="alert alert-danger" role="alert">
+      <a href="#" class="alert-link">{{ error }}</a>
+    </div>
+  {% endif %}
+  </p>
   <form method="POST" action="/newuser/">
     {% csrf_token %}
     <input type="hidden" name="id" value="{{ user_account.id }}">
