@@ -38,3 +38,7 @@ th {
 .row-dashboard{
   padding: 0px;
 }
+.panel-count{
+  font-size: 48px;
+  font-weight: bold;
+}
