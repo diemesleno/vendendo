@@ -8,6 +8,7 @@ from .forms import NewUserForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from crm.models import Organization, UserOrganization
+from .models import UserComplement
 import uuid
 import hashlib
 
@@ -73,6 +74,10 @@ class RegisterUser(base.View):
                     organization.user_account = u
                     organization.name = request.POST['organization']
                     organization.save()
+                    uc = UserComplement()
+                    uc.user_account = u
+                    uc.organization_active = organization
+                    uc.save()
                     user_organization = UserOrganization()
                     user_organization.user_account = u
                     user_organization.organization = organization
