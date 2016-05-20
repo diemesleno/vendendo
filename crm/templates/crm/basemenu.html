@@ -38,10 +38,11 @@
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Organização<span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ organization_active }}<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">Organização 1</a></li>
-              <li><a href="#">Organização 2</a></li>
+              {% for organization in organizations %}
+              <li><a href="#">{{ organization.organization }}</a></li>
+              {% endfor %}
             </ul>
           </li>
         </ul>
@@ -52,6 +53,7 @@
           <li><a href="">Link 4</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+          {% if type_user_organization == "A" %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administração<span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -59,6 +61,7 @@
               <li><a href="#">Item 2</a></li>
             </ul>
           </li>
+          {% endif %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>  {{ user.first_name }}<span class="caret"></span></a>
             <ul class="dropdown-menu">
