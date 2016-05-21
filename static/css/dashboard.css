@@ -42,3 +42,62 @@ th {
   font-size: 48px;
   font-weight: bold;
 }
+
+/* Panel Activity */
+
+.activities .panel-group {
+  margin-bottom: 8px;
+}
+
+.activities .activity-icon {
+  font-size: 2.2em !important;
+  margin-right: 20px;
+}
+
+.activities .icon-place {
+  float: left;
+}
+
+.activities .activity-text {
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: silver;
+  padding-right: 30px;
+}
+
+.activities .activity-text a{
+  font-family: arial;
+  font-size: medium;
+}
+
+.activities .activity-text p{
+  font-family: arial;
+  font-weight: normal;
+  font-size: x-small;
+
+}
+
+.activities .activity-controls {
+  
+}
+
+.activities .activity-controls .glyphicon {
+  vertical-align: middle;
+  font-family: 'Glyphicons Halflings'; 
+  color: gray;
+  font-size: medium;
+  margin-left:5px;
+  color: #333;
+}
+
+.activities .activity-controls span {
+  font-family: arial; 
+  color: gray; 
+  font-size: x-small; 
+  margin-left:5px;
+}
+
+.activities .activity-controls .label {
+  color: #fff;
+  font-weight: normal;
+}
