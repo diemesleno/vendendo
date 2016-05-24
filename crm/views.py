@@ -15,10 +15,10 @@ class Dashboard(LoginRequiredMixin, base.View):
     def get(self, request):
         user_account = User.objects.get(id=request.user.id).id
         organizations = UserOrganization.objects.filter(user_account=user_account)
-        organization_active = UserComplement.objects.get(user_account=user_account)
+        organization_active = UserComplement.objects.get(user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
                                     user_account=user_account, 
-                                    organization=organization_active.organization_active_id).type_user
+                                    organization=organization_active).type_user
         return TemplateResponse(request,
                                 self.template_name,
                                 {'organizations': organizations,
