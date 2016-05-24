@@ -25,3 +25,26 @@ class Dashboard(LoginRequiredMixin, base.View):
                                  'type_user_organization': type_user_organization,
                                  'organization_active': organization_active,
                                  })
+
+
+class Organizations(LoginRequiredMixin, base.View):
+
+    template_name = 'crm/listorganization.html'
+
+    def get(self, request):
+        user_account = User.objects.get(id=request.user.id).id
+        organizations = UserOrganization.objects.filter(user_account=user_account)
+        organization_active = UserComplement.objects.get(user_account=user_account).organization_active
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account, 
+                                    organization=organization_active).type_user
+        my_organizations = UserOrganization.objects.filter(user_account=user_account,
+                                                           type_user='A',
+                                                           status_active=True)
+        return TemplateResponse(request,
+                                self.template_name,
+                                {'organizations': organizations,
+                                 'type_user_organization': type_user_organization,
+                                 'organization_active': organization_active,
+                                 'my_organizations': my_organizations,
+                                 })

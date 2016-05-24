@@ -1,0 +1,37 @@
+body {
+    background-color: #EEEEEE;
+}
+.main {
+  padding: 20px;
+}
+@media (min-width: 768px) {
+  .main {
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}
+.main .page-header {
+  margin-top: 0;
+}
+.placeholders {
+  margin-bottom: 0px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 0px;
+}
+.placeholder img {
+  display: inline-block;
+}
+.pagination {
+  float:right;
+}
+.table{
+  background-color: #FFFFFF;
+}
+th {
+  background-color: #F6F6F6;
+}
