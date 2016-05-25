@@ -4,7 +4,7 @@ from django.views.generic import base, TemplateView
 from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from .forms import NewUserForm
+from .forms import NewUserForm, EditUserForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from crm.models import Organization, UserOrganization
@@ -30,22 +30,9 @@ class RegisterUser(base.View):
     title = 'Cadastro de Usuário'
 
     def get(self, request):
-        id = request.GET.get('id', False)
-        eid = request.GET.get('eid', False)
-        if id:
-            user_account = User.objects.get(id=id)
-            return TemplateResponse(request,
-                                    self.template_name,
-                                    {'title': self.title,
-                                     'user_account': user_account})
-        elif eid:
-            user_account = User.objects.get(id=eid)
-            user_account.delete()
-            return HttpResponseRedirect("/")
-        else:
-            return TemplateResponse(request,
-                                    self.template_name,
-                                    {'title': self.title})
+        return TemplateResponse(request,
+                                self.template_name,
+                                {'title': self.title})
 
     def post(self, request):
         id = request.POST.get('id', False)
@@ -89,13 +76,80 @@ class RegisterUser(base.View):
                                             self.template_name,
                                             {'title': self.title,
                                              'form': form,
-                                             'error':"Já existe uma conta registrada com esse e-mail."})
+                                             'error': "Já existe uma conta \
+                                             registrada com esse e-mail."})
             else:
                 return TemplateResponse(request,
                                         self.template_name,
                                         {'title': self.title,
                                          'form': form})
 
+
+class EditUser(base.View):
+    template_name = "userapp/edituser.html"
+    form_class = EditUserForm
+    title = 'Cadastro de Usuário'
+
+    def get(self, request):
+        user_account = User.objects.get(id=request.user.id)
+        organizations = UserOrganization.objects.filter(user_account=user_account.id)
+        organization_active = UserComplement.objects.get(user_account=user_account.id)
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account.id,
+                                    organization=organization_active.organization_active_id).type_user
+        return TemplateResponse(request,
+                                self.template_name,
+                                {'organizations': organizations,
+                                 'type_user_organization': type_user_organization,
+                                 'organization_active': organization_active,
+                                 'user_account': user_account,
+                                 'title': self.title})
+
+    def post(self, request):
+        user_account = User.objects.get(id=request.user.id)
+        organizations = UserOrganization.objects.filter(user_account=user_account.id)
+        organization_active = UserComplement.objects.get(user_account=user_account.id)
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account.id,
+                                    organization=organization_active.organization_active_id).type_user
+        form = self.form_class(request.POST, instance=user_account)
+        if form.is_valid():
+            if request.POST['email'] != request.user.email:
+                if not User.objects.filter(email=request.POST['email']).exists():
+                    u = form.save(commit=False)
+                    u.username = hashlib.md5(u.email).hexdigest()[-30:]
+                    u.save()
+                    return TemplateResponse(request,
+                                            self.template_name,
+                                            {'title': self.title,
+                                             'user_account': user_account,
+                                             'organizations': organizations,
+                                             'type_user_organization': type_user_organization,
+                                             'organization_active': organization_active,
+                                             'success': "Seus dados foram alterados com sucesso"})
+                else:
+                    return TemplateResponse(request,
+                                            self.template_name,
+                                            {'title': self.title,
+                                             'form': form,
+                                             'error': "Já existe uma conta \
+                                             registrada com esse e-mail."})
+            else:
+                form.save()
+                return TemplateResponse(request,
+                                        self.template_name,
+                                        {'title': self.title,
+                                         'user_account': user_account,
+                                         'organizations': organizations,
+                                         'type_user_organization': type_user_organization,
+                                         'organization_active': organization_active,
+                                         'success': "Seus dados foram alterados com sucesso"})
+        else:
+            return TemplateResponse(request,
+                                    self.template_name,
+                                    {'title': self.title,
+                                     'form': form,
+                                     'user_account': user_account})
 
 class UserLogin(base.View):
     template_name = "userapp/userlogin.html"
@@ -148,7 +202,8 @@ class ResetPassword(base.View):
             if user_account.is_active:
                 try:
                     salt = uuid.uuid4().hex
-                    new_pass = str(hashlib.md5(salt.encode() + email.encode()).hexdigest())[-8:]
+                    new_pass = str(hashlib.md5(salt.encode() +
+                                   email.encode()).hexdigest())[-8:]
                     user_account.set_password(new_pass)
                     user_account.save()
                     subject = "Sua nova senha - Vendendo CRM"
@@ -156,15 +211,17 @@ class ResetPassword(base.View):
                     nova senha da sua conta "+str(email)+" no Vendendo CRM: \
                     <br /><b>"+str(new_pass)+"</b>"
                     send_mail(subject, body, "hostmaster@vendendo.com.br",
-                    [email], html_message=body)
+                                             [email],
+                                             html_message=body)
                     return TemplateResponse(request,
                                             self.template_name,
                                             {'success': "Um e-mail foi enviado para você com \
                                             a sua nova senha"})
                 except Exception, e:
-                   return TemplateResponse(request,
-                                           self.template_name,
-                                           {'error': "Erro interno: " + str(e.message)})
+                    return TemplateResponse(request,
+                                            self.template_name,
+                                            {'error': "Erro interno: " +
+                                             str(e.message)})
             else:
                 return TemplateResponse(request,
                                         self.template_name,
@@ -176,6 +233,35 @@ class ResetPassword(base.View):
                                     self.template_name,
                                     {'error': "Não existe um usuário com este \
                                     e-mail."})
+
+
+class EditPassword(base.View):
+    template_name = "userapp/editpwd.html"
+    title = 'Alterar Senha'
+
+    def get(self, request):
+        user_account = User.objects.get(id=request.user.id).id
+        organizations = UserOrganization.objects.filter(user_account=user_account)
+        organization_active = UserComplement.objects.get(user_account=user_account)
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account,
+                                    organization=organization_active.organization_active_id).type_user
+        return TemplateResponse(request,
+                                self.template_name,
+                                {'organizations': organizations,
+                                 'type_user_organization': type_user_organization,
+                                 'organization_active': organization_active,
+                                 'title': self.title})
+
+    def post(self, request):
+        user_account = User.objects.get(id=request.user.id)
+        user_account.set_password(request.POST['password'])
+        user_account.save()
+        return TemplateResponse(request,
+                                self.template_name,
+                                {'title': self.title,
+                                 'success': "Sua senha foi alterada com \
+                                 sucesso"})
 
 
 class Logout(base.View):
