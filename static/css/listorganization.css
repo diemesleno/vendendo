@@ -1,0 +1,7 @@
+.table td {
+    text-align: left;
+}
+
+.table .action-column {
+    width: 10px;
+}
