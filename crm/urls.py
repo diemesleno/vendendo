@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^organization/add/$', views.OrganizationCreate.as_view(), name='organization-add'),
     
     url(r'^organizations/$', views.OrganizationIndex.as_view(), name='organization-index'),
-    url(r'^dashboard/$', views.Dashboard.as_view()),
+    url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 ]

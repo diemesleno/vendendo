@@ -50,10 +50,7 @@
           </li>
         </ul>
         <ul class="nav navbar-nav">
-          <li><a href="">Link 1</a></li>
-          <li><a href="">Link 2</a></li>
-          <li><a href="">Link 3</a></li>
-          <li><a href="">Link 4</a></li>
+          <li><a href="{% url 'crm:dashboard-index' %}">Visão Geral</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if type_user_organization == "A" %}
