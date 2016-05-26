@@ -29,7 +29,7 @@ class Dashboard(LoginRequiredMixin, SessionMixin, TemplateView):
 
 
 class OrganizationIndex(LoginRequiredMixin, SessionMixin, ListView):
-    template_name = 'crm/listorganization.html'
+    template_name = 'crm/organization_index.html'
     context_object_name = 'my_organizations'
 
     def get_queryset(self):
