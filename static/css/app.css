@@ -35,3 +35,7 @@ body {
 th {
   background-color: #F6F6F6;
 }
+
+.action-buttons {
+  text-align: right;
+}

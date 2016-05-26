@@ -20,7 +20,7 @@
         <form action="" method="post">
           {% csrf_token %}
           {% include 'crm/form-template.html' %}
-          <div class="form-group">
+          <div class="form-group action-buttons">
             <button type="submit" class="btn btn-success">Salvar</button>
             <a href="{% url 'crm:organization-index' %}" class="btn btn-default">Voltar</a>
           </div>
