@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from crm.models import Organization, UserOrganization
+from crm.forms import OrganizationForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 
@@ -42,7 +43,7 @@ class OrganizationIndex(LoginRequiredMixin, SessionMixin, ListView):
 
 class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Organization
-    fields = ['name']
+    form_class = OrganizationForm
 
     def form_valid(self, form):
         organization = form.save()
@@ -56,8 +57,7 @@ class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
 
 class OrganizationUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
     model = Organization
-    fields = ['name']
-
+    form_class = OrganizationForm
 
 class OrganizationDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = Organization
