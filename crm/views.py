@@ -8,6 +8,7 @@ from crm.models import Organization, UserOrganization
 from crm.forms import OrganizationForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import redirect
 
 
 class SessionMixin(object):
@@ -28,6 +29,19 @@ class SessionMixin(object):
 
 class Dashboard(LoginRequiredMixin, SessionMixin, TemplateView):
     template_name = 'crm/dashboard.html'
+
+
+class OrganizationSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        o = Organization.objects.get(pk=self.kwargs['pk'])
+
+        if not UserOrganization.objects.filter(user_account=u, 
+                                               organization=o,
+                                               type_user='A').exists():
+            return redirect('crm:organization-index')
+        return super(OrganizationSecMixin, self).dispatch(*args, **kwargs)
 
 
 class OrganizationIndex(LoginRequiredMixin, SessionMixin, ListView):
@@ -55,10 +69,11 @@ class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
         return super(OrganizationCreate, self).form_valid(form)
 
 
-class OrganizationUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+class OrganizationUpdate(LoginRequiredMixin, SessionMixin, OrganizationSecMixin, UpdateView):
     model = Organization
     form_class = OrganizationForm
 
-class OrganizationDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+
+class OrganizationDelete(LoginRequiredMixin, SessionMixin, OrganizationSecMixin, DeleteView):
     model = Organization
     success_url = reverse_lazy('crm:organization-index')
