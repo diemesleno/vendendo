@@ -10,4 +10,6 @@ class OrganizationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrganizationForm, self).__init__(*args, **kwargs)
-        self.fields["name"].required = True
+        self.fields['name'].required = True
+        self.fields['name'].label = 'Nome'
+        self.fields['name'].widget.attrs.update({'class': 'form-control'})

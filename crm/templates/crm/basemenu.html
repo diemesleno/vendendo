@@ -44,6 +44,8 @@
               {% for organization in organizations %}
               <li><a href="#">{{ organization.organization }}</a></li>
               {% endfor %}
+              <li role="separator" class="divider"></li>
+              <li><a href="{% url 'crm:organization-add' %}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Organização</a></li>
             </ul>
           </li>
         </ul>
