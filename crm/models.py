@@ -1,6 +1,7 @@
 # coding:utf-8
 from django.db import models
 from django.contrib import auth
+from django.core.urlresolvers import reverse
 
 
 class Organization(models.Model):
@@ -9,6 +10,9 @@ class Organization(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:organization-index')
 
 
 class UserOrganization(models.Model):
