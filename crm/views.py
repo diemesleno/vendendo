@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import base, ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import base, ListView, CreateView, UpdateView, \
+    DeleteView, TemplateView
 from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
@@ -16,11 +17,13 @@ class SessionMixin(object):
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
         user_account = User.objects.get(id=self.request.user.id).id
-        organizations = UserOrganization.objects.filter(user_account=user_account)
-        organization_active = UserComplement.objects.get(user_account=user_account).organization_active
+        organizations = UserOrganization.objects.filter(
+                            user_account=user_account)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
-                                     user_account=user_account, 
-                                     organization=organization_active).type_user
+                                    user_account=user_account,
+                                    organization=organization_active).type_user
         context['type_user_organization'] = type_user_organization
         context['organization_active'] = organization_active
         context['organizations'] = organizations
@@ -37,7 +40,7 @@ class OrganizationSecMixin(object):
         u = self.request.user
         o = Organization.objects.get(pk=self.kwargs['pk'])
 
-        if not UserOrganization.objects.filter(user_account=u, 
+        if not UserOrganization.objects.filter(user_account=u,
                                                organization=o,
                                                type_user='A').exists():
             return redirect('crm:organization-index')
@@ -77,3 +80,11 @@ class OrganizationUpdate(LoginRequiredMixin, SessionMixin, OrganizationSecMixin,
 class OrganizationDelete(LoginRequiredMixin, SessionMixin, OrganizationSecMixin, DeleteView):
     model = Organization
     success_url = reverse_lazy('crm:organization-index')
+
+
+class SellerIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/seller_index.html'
+    context_object_name = 'sellers'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id).id
