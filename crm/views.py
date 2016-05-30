@@ -36,6 +36,7 @@ class SessionMixin(object):
 class Dashboard(LoginRequiredMixin, SessionMixin, TemplateView):
     template_name = 'crm/dashboard.html'
 
+
 # Organization Views
 class OrganizationSecMixin(object):
 
@@ -84,6 +85,7 @@ class OrganizationDelete(LoginRequiredMixin, SessionMixin, OrganizationSecMixin,
     model = Organization
     success_url = reverse_lazy('crm:organization-index')
 
+
 # Seller Views
 class SellerSecMixin(object):
 
@@ -128,8 +130,8 @@ class SellerIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id).id
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return UserOrganization.objects.filter(organization=organization_active,
-                                               type_user='S')
+        return UserOrganization.objects.filter(
+            organization=organization_active, type_user='S')
 
 
 class SellerFind(LoginRequiredMixin, SessionMixin, FormView):
@@ -198,7 +200,8 @@ class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
         context = super(SellerJoin, self).get_context_data(**kwargs)
         user_join = User.objects.get(email=self.request.session['email_find'])
         context['email_find'] = user_join.email
-        context['full_name'] = str(user_join.first_name) + str(user_join.last_name)
+        context['full_name'] = str(user_join.first_name) + str(
+                                user_join.last_name)
         return context
 
     def form_valid(self, form):
@@ -208,7 +211,7 @@ class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
                            email=self.request.session['email_find'])
         admin_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
-                                  user_account=admin_account).organization_active
+                                user_account=admin_account).organization_active
 
         user_organization.user_account = user_account
         user_organization.organization = organization_active
