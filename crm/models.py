@@ -26,3 +26,6 @@ class UserOrganization(models.Model):
 
     def __unicode__(self):
         return str(self.id)
+
+    def get_absolute_url(self):
+        return reverse('crm:seller-index')

@@ -1,0 +1,42 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Adicionando um novo Vendedor{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/seller.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Adicionando um Vendedor</h3>
+
+    <div class="col-xs-12 col-sm-12">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+
+        <form action="" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>E-mail</label>
+            <div class="control-group">
+              {{ email_find }}
+            </div>
+          </div>
+          {% include 'crm/form-template.html' %}
+          <div class="form-group action-buttons">
+            <button type="submit" class="btn btn-success">Salvar</button>
+            <a href="{% url 'crm:seller-find' %}" class="btn btn-default">Voltar</a>
+          </div>
+        </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

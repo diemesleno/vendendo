@@ -9,4 +9,4 @@ class UserComplement(models.Model):
     organization_active = models.ForeignKey('crm.Organization', on_delete=models.CASCADE)
 
     def __unicode__(self):
-        return str(self.organization_active)
+        return str(self.user_account.first_name)

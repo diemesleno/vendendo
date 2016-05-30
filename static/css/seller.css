@@ -1,0 +1,12 @@
+.table td {
+    text-align: left;
+}
+
+.table .action-column {
+    width: 10px;
+}
+
+.user-img {
+    float: left;
+    margin-right: 20px;
+}
