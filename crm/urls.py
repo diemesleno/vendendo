@@ -12,6 +12,7 @@ urlpatterns = [
 
     url(r'^seller/(?P<pk>[0-9]+)/deactivate/$', views.SellerDeactivate.as_view(), name='seller-deactivate'),
     url(r'^seller/(?P<pk>[0-9]+)/activate/$', views.SellerActivate.as_view(), name='seller-activate'),
+    url(r'^seller/(?P<pk>[0-9]+)/delete/$', views.SellerDelete.as_view(), name='seller-delete'),
     url(r'^seller/find/$', views.SellerFind.as_view(), name='seller-find'),
     url(r'^seller/add/$', views.SellerCreate.as_view(), name='seller-add'),
     url(r'^seller/join/$', views.SellerJoin.as_view(), name='seller-join'),

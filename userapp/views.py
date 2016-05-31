@@ -69,6 +69,7 @@ class RegisterUser(base.View):
                     user_organization.user_account = u
                     user_organization.organization = organization
                     user_organization.type_user = 'A'
+                    user_organization.status_active = 'A'
                     user_organization.save()
                     return HttpResponseRedirect("/")
                 else:

@@ -18,10 +18,10 @@ class SessionMixin(object):
 
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
-        user_account = User.objects.get(id=self.request.user.id).id
+        user_account = User.objects.get(id=self.request.user.id)
         organizations = UserOrganization.objects.filter(
                             user_account=user_account,
-                            status_active=True)
+                            status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
@@ -59,7 +59,7 @@ class OrganizationIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id).id
         return UserOrganization.objects.filter(user_account=user_account,
                                                type_user='A',
-                                               status_active=True)
+                                               status_active='A')
 
 
 class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
@@ -72,6 +72,7 @@ class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.user_account = self.request.user
         user_organization.organization = organization
         user_organization.type_user = 'A'
+        user_organization.status_active = 'A'
         user_organization.save()
         return super(OrganizationCreate, self).form_valid(form)
 
@@ -225,7 +226,7 @@ class SellerDeactivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateV
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.status_active = False
+        self.object.status_active = 'I'
         self.object.save()
         return redirect('crm:seller-index')
 
@@ -235,6 +236,21 @@ class SellerActivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateVie
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        self.object.status_active = True
+        self.object.status_active = 'A'
         self.object.save()
         return redirect('crm:seller-index')
+
+
+class SellerDelete(LoginRequiredMixin, SessionMixin, SellerSecMixin, DeleteView):
+    model = UserOrganization
+    success_url = reverse_lazy('crm:seller-index')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        user_account = self.object.user_account
+        self.object.delete()
+
+        if not UserOrganization.objects.filter(user_account=user_account).exists():
+            user_account.delete()
+        return HttpResponseRedirect(success_url)

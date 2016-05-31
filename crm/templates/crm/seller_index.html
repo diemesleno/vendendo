@@ -22,23 +22,36 @@
           {% for seller in sellers %}
           <tr>
             <td class="action-column">
-              {% if seller.status_active %}
+              {% if seller.status_active == 'A' %}
+
               <form action="{% url 'crm:seller-deactivate' seller.id %}" method="post">
               {% csrf_token %}
                 <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Desativar vendedor">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                  <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                 </button>
               </form>
-              {% else %}
+
+              {% elif seller.status_active == 'I' %}
+
               <form action="{% url 'crm:seller-activate' seller.id %}" method="post">
               {% csrf_token %}
                 <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ativar vendedor">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </button>
               </form>
+
+              {% elif seller.status_active == 'N' %}
+
+              <form action="{% url 'crm:seller-delete' seller.id %}" method="post">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Cancelar convite">
+                  <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+              </form>
+
               {% endif %}
             </td>
-            <td width="10px">{% if seller.status_active %}<span class="label label-primary">Ativo</span>{% else %}<span class="label label-default">Inativo</span>{% endif %}</td>
+            <td width="10px">{% if seller.status_active == 'A' %}<span class="label label-success">Ativo</span>{% elif seller.status_active == 'I' %}<span class="label label-default">Inativo</span>{% elif seller.status_active == 'N' %}<span class="label label-info">Aguardando ativação</span>{% endif %}</td>
             <td>{{ seller.user_account.first_name }}</td>
             <td>{{ seller.user_account.email }}</td>
           </tr>
