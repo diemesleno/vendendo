@@ -28,6 +28,7 @@ class UserOrganization(models.Model):
     status_active = models.CharField(max_length=1,
                                      choices=type_status_choices,
                                      default='N')
+    code_activating = models.CharField(max_length=200)
 
     def __unicode__(self):
         return str(self.id)

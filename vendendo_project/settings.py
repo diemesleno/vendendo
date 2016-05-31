@@ -140,3 +140,6 @@ EMAIL_HOST_PASSWORD = 'your_password'
 # url to redirect after successfull login
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGIN_URL ='/'
+
+# Host for redirect activate invite
+INVITE_HOST = 'http://127.0.0.1:8000'

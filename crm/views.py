@@ -1,3 +1,4 @@
+# coding:utf-8
 from django.shortcuts import render
 from django.views.generic import base, ListView, CreateView, UpdateView, \
     DeleteView, TemplateView, FormView
@@ -10,8 +11,29 @@ from crm.forms import OrganizationForm, SellerFindForm, SellerForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
+from django.conf import settings
+from django.core.mail import send_mail
 import uuid
 import hashlib
+
+
+class Sendx(object):
+    
+    def send_invite(self, user_organization):
+        subject = "Você foi convidado! Vendendo CRM"
+        body = "Olá "+str(user_organization.user_account.first_name)+", \
+               <br /><br />Você foi convidado por \
+               "+str(self.request.user.first_name)+" para ser um de seus \
+               vendedores na "+str(user_organization.organization.name)+". \
+               <br /><br /> \
+               Clique no link a seguir para aceitar o convite: <br />\
+               <a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code=\
+               "+str(user_organization.code_activating)+"'>\
+               "+str(settings.INVITE_HOST)+"/invite/activate/?code=\
+               "+str(user_organization.code_activating)+"</a>"
+        send_mail(subject, body, "hostmaster@vendendo.com.br",
+                                 [user_organization.user_account.email],
+                                 html_message=body)
 
 
 class SessionMixin(object):
