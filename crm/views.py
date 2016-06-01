@@ -19,18 +19,13 @@ import hashlib
 
 class Sendx(object):
     
+    @staticmethod
     def send_invite(self, user_organization):
         subject = "Você foi convidado! Vendendo CRM"
-        body = "Olá "+str(user_organization.user_account.first_name)+", \
-               <br /><br />Você foi convidado por \
-               "+str(self.request.user.first_name)+" para ser um de seus \
-               vendedores na "+str(user_organization.organization.name)+". \
-               <br /><br /> \
-               Clique no link a seguir para aceitar o convite: <br />\
-               <a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code=\
-               "+str(user_organization.code_activating)+"'>\
-               "+str(settings.INVITE_HOST)+"/invite/activate/?code=\
-               "+str(user_organization.code_activating)+"</a>"
+        body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus vendedores na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
+        print "subject: " + str(subject)
+        print "body: " + str(body)
+        print "to: " + str(user_organization.user_account.email)
         send_mail(subject, body, "hostmaster@vendendo.com.br",
                                  [user_organization.user_account.email],
                                  html_message=body)
@@ -53,6 +48,14 @@ class SessionMixin(object):
         context['organization_active'] = organization_active
         context['organizations'] = organizations
         return context
+
+
+class SuccessPage(TemplateView):
+    template_name = 'crm/success-template.html'
+
+
+class ErrorPage(TemplateView):
+    template_name = 'crm/error-template.html'
 
 
 class Dashboard(LoginRequiredMixin, SessionMixin, TemplateView):
@@ -209,7 +212,15 @@ class SellerCreate(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.user_account = user
         user_organization.organization = organization_active
         user_organization.type_user = 'S'
+        code_activating = hashlib.md5(user.email +
+                                      str(organization_active.id)
+                                     ).hexdigest()[-30:]
+        user_organization.code_activating = code_activating
         user_organization.save()
+        try:
+            Sendx.send_invite(self, user_organization)
+        except Exception, e:
+            print str(e.message)
         return super(SellerCreate, self).form_valid(form)
 
 
@@ -239,7 +250,12 @@ class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.user_account = user_account
         user_organization.organization = organization_active
         user_organization.type_user = 'S'
+        code_activating = hashlib.md5(self.request.session['email_find'] +
+                                      str(organization_active.id)
+                                     ).hexdigest()[-30:]
+        user_organization.code_activating = code_activating
         user_organization.save()
+        Sendx.send_invite(self, user_organization)
         return super(SellerJoin, self).form_valid(form)
 
 
@@ -276,3 +292,27 @@ class SellerDelete(LoginRequiredMixin, SessionMixin, SellerSecMixin, DeleteView)
         if not UserOrganization.objects.filter(user_account=user_account).exists():
             user_account.delete()
         return HttpResponseRedirect(success_url)
+
+
+class SellerInviteActivate(base.View):
+
+    def get(self, request):
+        code = request.GET.get("code", False)
+        if code:
+            if UserOrganization.objects.filter(code_activating=code,
+                                               status_active='N').exists():
+                user_organization = UserOrganization.objects.get(
+                                        code_activating=code)
+                user_organization.status_active = 'A'
+                user_organization.save()
+                return redirect('crm:success-index')
+        return redirect('crm:error-index')
+
+
+class SellerInvite(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateView):
+    model = UserOrganization
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        Sendx.send_invite(self, self.object)
+        return redirect('crm:seller-index')

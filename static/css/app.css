@@ -39,3 +39,23 @@ th {
 .action-buttons {
   text-align: right;
 }
+
+/* PAGE SUCCESS AND ERROR */
+
+.section-success .success-flag {
+  margin-top: 30px;
+}
+
+.section-success p {
+  font-size: medium;
+  margin-bottom: 40px;
+}
+
+.section-error .error-flag {
+  margin-top: 30px;
+}
+
+.section-error p {
+  font-size: medium;
+  margin-bottom: 40px;
+}

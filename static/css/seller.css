@@ -3,7 +3,12 @@
 }
 
 .table .action-column {
-    width: 10px;
+    max-width: 23px;
+}
+
+.table .action-column div {
+    float:left;
+    margin: 2px;
 }
 
 .user-img {

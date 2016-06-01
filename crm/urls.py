@@ -13,10 +13,15 @@ urlpatterns = [
     url(r'^seller/(?P<pk>[0-9]+)/deactivate/$', views.SellerDeactivate.as_view(), name='seller-deactivate'),
     url(r'^seller/(?P<pk>[0-9]+)/activate/$', views.SellerActivate.as_view(), name='seller-activate'),
     url(r'^seller/(?P<pk>[0-9]+)/delete/$', views.SellerDelete.as_view(), name='seller-delete'),
+    url(r'^seller/(?P<pk>[0-9]+)/toinvite/$', views.SellerInvite.as_view(), name='seller-invite'),
+    url(r'^invite/activate/$', views.SellerInviteActivate.as_view(), name='seller-invite-activate'),
     url(r'^seller/find/$', views.SellerFind.as_view(), name='seller-find'),
     url(r'^seller/add/$', views.SellerCreate.as_view(), name='seller-add'),
     url(r'^seller/join/$', views.SellerJoin.as_view(), name='seller-join'),
     url(r'^sellers/$', views.SellerIndex.as_view(), name='seller-index'),
     
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
+
+    url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),
+    url(r'^error/$', views.ErrorPage.as_view(), name='error-index'),
 ]
