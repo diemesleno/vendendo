@@ -64,3 +64,24 @@ class LoginForm(forms.ModelForm):
         model = User
         fields = ('username',
                   'password')
+
+
+class EditPasswordForm(forms.Form):
+    MIN_LENGTH = 8
+    password = forms.CharField(required=True, error_messages={
+        'required': 'Campo Obrigatório.',
+    })
+
+    def clean(self):
+        cleaned_data = super(EditPasswordForm, self).clean()
+        pwd = cleaned_data.get('password')
+        # At least MIN_LENGTH long
+        if pwd:
+            if len(pwd) < self.MIN_LENGTH:
+                self.add_error('password', "A nova senha precisa ter ao menos %d caracteres." % self.MIN_LENGTH)
+
+            # At least one letter and one non-letter
+            first_isalpha = pwd[0].isalpha()
+            if all(c.isalpha() == first_isalpha for c in pwd):
+                self.add_error('password', "A nova senha precisa conter ao menos uma letra e um número ou caracter especial.")
+        return cleaned_data

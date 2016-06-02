@@ -4,7 +4,7 @@ from django.views.generic import base, TemplateView
 from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-from .forms import NewUserForm, EditUserForm
+from .forms import NewUserForm, EditUserForm, EditPasswordForm
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from crm.models import Organization, UserOrganization
@@ -93,11 +93,14 @@ class EditUser(base.View):
 
     def get(self, request):
         user_account = User.objects.get(id=request.user.id)
-        organizations = UserOrganization.objects.filter(user_account=user_account.id)
-        organization_active = UserComplement.objects.get(user_account=user_account.id)
+        organizations = UserOrganization.objects.filter(
+                            user_account=user_account,
+                            status_active='A')
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account.id,
-                                    organization=organization_active.organization_active_id).type_user
+                                    user_account=user_account,
+                                    organization=organization_active).type_user
         return TemplateResponse(request,
                                 self.template_name,
                                 {'organizations': organizations,
@@ -108,11 +111,14 @@ class EditUser(base.View):
 
     def post(self, request):
         user_account = User.objects.get(id=request.user.id)
-        organizations = UserOrganization.objects.filter(user_account=user_account.id)
-        organization_active = UserComplement.objects.get(user_account=user_account.id)
+        organizations = UserOrganization.objects.filter(
+                            user_account=user_account,
+                            status_active='A')
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account.id,
-                                    organization=organization_active.organization_active_id).type_user
+                                    user_account=user_account,
+                                    organization=organization_active).type_user
         form = self.form_class(request.POST, instance=user_account)
         if form.is_valid():
             if request.POST['email'] != request.user.email:
@@ -239,14 +245,18 @@ class ResetPassword(base.View):
 class EditPassword(base.View):
     template_name = "userapp/editpwd.html"
     title = 'Alterar Senha'
+    form_class = EditPasswordForm
 
     def get(self, request):
         user_account = User.objects.get(id=request.user.id).id
-        organizations = UserOrganization.objects.filter(user_account=user_account)
-        organization_active = UserComplement.objects.get(user_account=user_account)
+        organizations = UserOrganization.objects.filter(
+                            user_account=user_account,
+                            status_active='A')
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
         type_user_organization = UserOrganization.objects.get(
                                     user_account=user_account,
-                                    organization=organization_active.organization_active_id).type_user
+                                    organization=organization_active).type_user
         return TemplateResponse(request,
                                 self.template_name,
                                 {'organizations': organizations,
@@ -255,14 +265,36 @@ class EditPassword(base.View):
                                  'title': self.title})
 
     def post(self, request):
-        user_account = User.objects.get(id=request.user.id)
-        user_account.set_password(request.POST['password'])
-        user_account.save()
-        return TemplateResponse(request,
-                                self.template_name,
-                                {'title': self.title,
-                                 'success': "Sua senha foi alterada com \
-                                 sucesso"})
+        user_account = User.objects.get(id=request.user.id).id
+        organizations = UserOrganization.objects.filter(
+                            user_account=user_account,
+                            status_active='A')
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account,
+                                    organization=organization_active).type_user
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user_account = User.objects.get(id=request.user.id)
+            user_account.set_password(request.POST['password'])
+            user_account.save()
+            return TemplateResponse(request,
+                                    self.template_name,
+                                    {'title': self.title,
+                                     'organizations': organizations,
+                                     'type_user_organization': type_user_organization,
+                                     'organization_active': organization_active,
+                                     'success': "Sua senha foi alterada com \
+                                     sucesso"})
+        else:
+            return TemplateResponse(request,
+                                    self.template_name,
+                                    {'title': self.title,
+                                     'organizations': organizations,
+                                     'type_user_organization': type_user_organization,
+                                     'organization_active': organization_active,
+                                     'form': form})
 
 
 class Logout(base.View):

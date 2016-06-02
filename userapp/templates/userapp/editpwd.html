@@ -2,7 +2,7 @@
 {% block title %}Editar Senha{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
   <h2>{{ title }}</h2>
 
   {% if success %}
@@ -11,35 +11,38 @@
       <a href="#" class="alert-link">{{ success }}</a>
     </div>
   </p>
-  {% elif error %}
+  {% elif form.password.errors %}
   <p class="msg-error">
   <div class="alert alert-danger" role="alert">
-    <a href="#" class="alert-link">{{ error }}</a>
+    <a href="#" class="alert-link">{{ form.password.errors }}</a>
   </div>
   {% endif %}
   </p>
-  <form method="POST" action="/editpwd/" onsubmit="return validatePassword();">
-    {% csrf_token %}
-    <input type="hidden" name="id" value="{{ user_account.id }}">
-    <div class="form-group">
-      <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+  <div class="col-xs-12 col-sm-12">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <form method="POST" action="/editpwd/" onsubmit="return validatePassword();">
+          {% csrf_token %}
+          <span id="helpBlock" class="help-block">A Senha precisa ter 8 caracteres e conter ao menos uma letra e um número ou caracter especial.</span>
+          <input type="hidden" name="id" value="{{ user_account.id }}">
+          <div class="form-group">
+            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+          </div>
+          <div class="form-group">
+            <label for="id_password">Senha</label>
+            <input type="password" class="form-control" name="password" id="id_password">
+          </div>
+          <div class="form-group">
+            <label for="id_confirm_password">Repita a senha</label>
+            <input type="password" class="form-control" name="confirm_password" id="id_confirm_password">
+          </div>
+          <p class="text-right">
+            <button type="submit" class="btn btn-success">Salvar</button>
+          </p>
+        </form>
+      </div>
     </div>
-    <div class="form-group">
-      <label for="id_password">Senha</label>
-      <input type="password" class="form-control" name="password" id="id_password">
-      {% if form.password.errors %}
-        {{ form.password.errors }}
-      {% endif %}
-    </div>
-    <div class="form-group">
-      <label for="id_confirm_password">Repita a senha</label>
-      <input type="password" class="form-control" name="confirm_password" id="id_confirm_password">
-    </div>
-    <p class="text-right">
-      <button type="submit" class="btn btn-success">Salvar</button>
-      <input type="button" class="btn btn-default" value="Voltar" onclick="javascript:location.href='/';">
-    </p>
-  </form>
+  </div>
 </div>
 {% endblock %}
 {% block customjs %}
