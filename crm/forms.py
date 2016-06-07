@@ -1,6 +1,6 @@
 # coding:utf-8
 from django import forms
-from crm.models import Organization, UserOrganization
+from crm.models import Organization, UserOrganization, OccupationArea
 from userapp.models import UserComplement
 from django.contrib.auth.models import User
 
@@ -65,3 +65,16 @@ class SellerForm(forms.ModelForm):
         self.fields['last_name'].required = False
         self.fields['last_name'].label = 'Sobrenome'
         self.fields['last_name'].widget.attrs.update({'class': 'form-control'})
+
+
+class OccupationAreaForm(forms.ModelForm):
+
+    class Meta:
+        model = OccupationArea
+        fields = ('name',)
+
+    def __init__(self, *args, **kwargs):
+        super(OccupationAreaForm, self).__init__(*args, **kwargs)
+        self.fields['name'].required = True
+        self.fields['name'].label = 'Nome'
+        self.fields['name'].widget.attrs.update({'class': 'form-control'})

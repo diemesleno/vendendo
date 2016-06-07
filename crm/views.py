@@ -6,8 +6,8 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from crm.models import Organization, UserOrganization
-from crm.forms import OrganizationForm, SellerFindForm, SellerForm
+from crm.models import Organization, UserOrganization, OccupationArea
+from crm.forms import OrganizationForm, SellerFindForm, SellerForm, OccupationAreaForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
@@ -18,7 +18,7 @@ import hashlib
 
 
 class Sendx(object):
-    
+
     @staticmethod
     def send_invite(self, user_organization):
         subject = "Você foi convidado! Vendendo CRM"
@@ -316,3 +316,39 @@ class SellerInvite(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateView)
         self.object = self.get_object()
         Sendx.send_invite(self, self.object)
         return redirect('crm:seller-index')
+
+
+# Occupation Area Views
+class OccupationAreaIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/occupationarea_index.html'
+    context_object_name = 'my_occupationareas'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                  user_account=user_account).organization_active
+        return OccupationArea.objects.filter(organization=organization_active)
+
+
+class OccupationAreaCreate(LoginRequiredMixin, SessionMixin, CreateView):
+    model = OccupationArea
+    form_class = OccupationAreaForm
+
+    def form_valid(self, form):
+        occupation_area = form.save(commit=False)
+        user_account = User.objects.get(id=self.request.user.id).id
+        organization_active = UserComplement.objects.get(
+                                 user_account=user_account).organization_active
+        occupation_area.organization = organization_active
+        occupation_area.save()
+        return super(OccupationAreaCreate, self).form_valid(form)
+
+
+class OccupationAreaUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = OccupationArea
+    form_class = OccupationAreaForm
+
+
+class OccupationAreaDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+    model = OccupationArea
+    success_url = reverse_lazy('crm:occupationarea-index')
