@@ -31,7 +31,7 @@ class UserOrganization(models.Model):
     code_activating = models.CharField(max_length=200, null=True)
 
     def __unicode__(self):
-        return str(self.id)
+        return str(self.id) + ' : ' + str(self.user_account.first_name) + ' (' + str(self.organization.name) + ')'
 
     def get_absolute_url(self):
         return reverse('crm:seller-index')

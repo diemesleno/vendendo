@@ -162,6 +162,7 @@ class EditUser(base.View):
                                      'form': form,
                                      'user_account': user_account})
 
+
 class UserLogin(base.View):
     template_name = "userapp/userlogin.html"
     title = 'Entrar'

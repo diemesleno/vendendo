@@ -21,14 +21,18 @@ class Sendx(object):
     
     @staticmethod
     def send_invite(self, user_organization):
-        subject = "Você foi convidado! Vendendo CRM"
-        body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus vendedores na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
-        print "subject: " + str(subject)
-        print "body: " + str(body)
-        print "to: " + str(user_organization.user_account.email)
-        send_mail(subject, body, "hostmaster@vendendo.com.br",
-                                 [user_organization.user_account.email],
-                                 html_message=body)
+        try:
+            subject = "Você foi convidado! Vendendo CRM"
+            body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus vendedores na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
+            print "subject: " + str(subject)
+            print "body: " + str(body)
+            print "to: " + str(user_organization.user_account.email)
+            send_mail(subject, body, "hostmaster@vendendo.com.br",
+                                     [user_organization.user_account.email],
+                                     html_message=body)
+            return True
+        except Exception, e:
+            return "Erro interno: " + str(e.message)
 
 
 class SessionMixin(object):
