@@ -25,6 +25,11 @@ urlpatterns = [
     url(r'^occupationarea/add/$', views.OccupationAreaCreate.as_view(), name='occupationarea-add'),
     url(r'^occupationarea/$', views.OccupationAreaIndex.as_view(), name='occupationarea-index'),
 
+    url(r'^customer/(?P<pk>[0-9]+)/delete/$', views.CustomerDelete.as_view(), name='customer-delete'),
+    url(r'^customer/(?P<pk>[0-9]+)/$', views.CustomerUpdate.as_view(), name='customer-update'),
+    url(r'^customer/add/$', views.CustomerCreate.as_view(), name='customer-add'),
+    url(r'^customer/$', views.CustomerIndex.as_view(), name='customer-index'),
+
 
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 

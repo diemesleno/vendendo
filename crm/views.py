@@ -6,8 +6,9 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from crm.models import Organization, UserOrganization, OccupationArea
-from crm.forms import OrganizationForm, SellerFindForm, SellerForm, OccupationAreaForm
+from crm.models import Organization, UserOrganization, OccupationArea, Customer
+from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
+    OccupationAreaForm, CustomerForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
@@ -102,12 +103,14 @@ class OrganizationCreate(LoginRequiredMixin, SessionMixin, CreateView):
         return super(OrganizationCreate, self).form_valid(form)
 
 
-class OrganizationUpdate(LoginRequiredMixin, SessionMixin, OrganizationSecMixin, UpdateView):
+class OrganizationUpdate(LoginRequiredMixin, SessionMixin,
+                         OrganizationSecMixin, UpdateView):
     model = Organization
     form_class = OrganizationForm
 
 
-class OrganizationDelete(LoginRequiredMixin, SessionMixin, OrganizationSecMixin, DeleteView):
+class OrganizationDelete(LoginRequiredMixin, SessionMixin,
+                         OrganizationSecMixin, DeleteView):
     model = Organization
     success_url = reverse_lazy('crm:organization-index')
 
@@ -214,7 +217,7 @@ class SellerCreate(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.type_user = 'S'
         code_activating = hashlib.md5(user.email +
                                       str(organization_active.id)
-                                     ).hexdigest()[-30:]
+                                      ).hexdigest()[-30:]
         user_organization.code_activating = code_activating
         user_organization.save()
         try:
@@ -252,14 +255,15 @@ class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.type_user = 'S'
         code_activating = hashlib.md5(self.request.session['email_find'] +
                                       str(organization_active.id)
-                                     ).hexdigest()[-30:]
+                                      ).hexdigest()[-30:]
         user_organization.code_activating = code_activating
         user_organization.save()
         Sendx.send_invite(self, user_organization)
         return super(SellerJoin, self).form_valid(form)
 
 
-class SellerDeactivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateView):
+class SellerDeactivate(LoginRequiredMixin, SessionMixin,
+                       SellerSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
@@ -269,7 +273,8 @@ class SellerDeactivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateV
         return redirect('crm:seller-index')
 
 
-class SellerActivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateView):
+class SellerActivate(LoginRequiredMixin, SessionMixin,
+                     SellerSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
@@ -279,7 +284,8 @@ class SellerActivate(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateVie
         return redirect('crm:seller-index')
 
 
-class SellerDelete(LoginRequiredMixin, SessionMixin, SellerSecMixin, DeleteView):
+class SellerDelete(LoginRequiredMixin, SessionMixin,
+                   SellerSecMixin, DeleteView):
     model = UserOrganization
     success_url = reverse_lazy('crm:seller-index')
 
@@ -289,7 +295,8 @@ class SellerDelete(LoginRequiredMixin, SessionMixin, SellerSecMixin, DeleteView)
         user_account = self.object.user_account
         self.object.delete()
 
-        if not UserOrganization.objects.filter(user_account=user_account).exists():
+        if not UserOrganization.objects.filter(
+                user_account=user_account).exists():
             user_account.delete()
         return HttpResponseRedirect(success_url)
 
@@ -309,7 +316,8 @@ class SellerInviteActivate(base.View):
         return redirect('crm:error-index')
 
 
-class SellerInvite(LoginRequiredMixin, SessionMixin, SellerSecMixin, UpdateView):
+class SellerInvite(LoginRequiredMixin, SessionMixin,
+                   SellerSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
@@ -326,7 +334,7 @@ class OccupationAreaIndex(LoginRequiredMixin, SessionMixin, ListView):
     def get_queryset(self):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
-                                  user_account=user_account).organization_active
+                                user_account=user_account).organization_active
         return OccupationArea.objects.filter(organization=organization_active)
 
 
@@ -352,3 +360,45 @@ class OccupationAreaUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class OccupationAreaDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = OccupationArea
     success_url = reverse_lazy('crm:occupationarea-index')
+
+
+# Customer Area Views
+class CustomerIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/customer_index.html'
+    context_object_name = 'my_customers'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return Customer.objects.filter(organization=organization_active)
+
+
+class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
+    model = Customer
+    form_class = CustomerForm
+
+    def form_valid(self, form):
+        customer = form.save(commit=False)
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                 user_account=user_account).organization_active
+        customer.organization = organization_active
+        customer.responsible_seller = user_account
+        customer.save()
+        user_complement = UserComplement.objects.get(
+                                 user_account=user_account,
+                                 organization_active=organization_active)
+        user_complement.customers.add(customer)
+        user_complement.save()
+        return super(CustomerCreate, self).form_valid(form)
+
+
+class CustomerUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = Customer
+    form_class = CustomerForm
+
+
+class CustomerDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+    model = Customer
+    success_url = reverse_lazy('crm:customer-index')

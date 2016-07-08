@@ -52,6 +52,9 @@
         <ul class="nav navbar-nav">
           <li><a href="{% url 'crm:dashboard-index' %}">Visão Geral</a></li>
         </ul>
+        <ul class="nav navbar-nav">
+          <li><a href="{% url 'crm:customer-index' %}">Clientes</a></li>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if type_user_organization == "A" %}
           <li class="dropdown">

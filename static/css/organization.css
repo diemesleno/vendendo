@@ -5,3 +5,7 @@
 .table .action-column {
     width: 10px;
 }
+
+ul{
+    list-style-type: none;
+}
