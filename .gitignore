@@ -1,3 +1,5 @@
 *.pyc
 migrations/
+htmlcov/
+.coverage
 *.sqlite3

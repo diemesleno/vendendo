@@ -70,6 +70,10 @@ class RegisterUser(base.View):
                     user_organization.organization = organization
                     user_organization.type_user = 'A'
                     user_organization.status_active = 'A'
+                    code_activating = hashlib.md5(str(u.email) +
+                                                  str(uc.organization_active.id)
+                                                 ).hexdigest()[-30:]
+                    user_organization.code_activating = code_activating
                     user_organization.save()
                     return HttpResponseRedirect("/")
                 else:
