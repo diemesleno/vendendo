@@ -76,7 +76,7 @@ class OrganizationSecMixin(object):
         if not UserOrganization.objects.filter(user_account=u,
                                                organization=o,
                                                type_user='A').exists():
-            return redirect('crm:organization-index')
+            return redirect('crm:error-index')
         return super(OrganizationSecMixin, self).dispatch(*args, **kwargs)
 
 
@@ -224,7 +224,7 @@ class SellerCreate(LoginRequiredMixin, SessionMixin, CreateView):
         try:
             Sendx.send_invite(self, user_organization)
         except Exception, e:
-            print str(e.message)
+            form.add_error(None, str(e.message))
         return super(SellerCreate, self).form_valid(form)
 
 
