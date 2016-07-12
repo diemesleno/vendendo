@@ -30,6 +30,10 @@ urlpatterns = [
     url(r'^customer/add/$', views.CustomerCreate.as_view(), name='customer-add'),
     url(r'^customer/$', views.CustomerIndex.as_view(), name='customer-index'),
 
+    url(r'^salestage/(?P<pk>[0-9]+)/delete/$', views.SaleStageDelete.as_view(), name='salestage-delete'),
+    url(r'^salestage/(?P<pk>[0-9]+)/$', views.SaleStageUpdate.as_view(), name='salestage-update'),
+    url(r'^salestage/add/$', views.SaleStageCreate.as_view(), name='salestage-add'),
+    url(r'^salestage/$', views.SaleStageIndex.as_view(), name='salestage-index'),
 
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 

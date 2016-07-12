@@ -6,9 +6,9 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from crm.models import Organization, UserOrganization, OccupationArea, Customer
+from crm.models import Organization, UserOrganization, OccupationArea, Customer, SaleStage
 from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
-    OccupationAreaForm, CustomerForm
+    OccupationAreaForm, CustomerForm, SaleStageForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
@@ -402,3 +402,39 @@ class CustomerUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class CustomerDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('crm:customer-index')
+
+
+# SaleStage Views
+class SaleStageIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/salestage_index.html'
+    context_object_name = 'my_salestages'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return SaleStage.objects.filter(organization=organization_active)
+
+
+class SaleStageCreate(LoginRequiredMixin, SessionMixin, CreateView):
+    model = SaleStage
+    form_class = SaleStageForm
+
+    def form_valid(self, form):
+        salestage = form.save(commit=False)
+        user_account = User.objects.get(id=self.request.user.id).id
+        organization_active = UserComplement.objects.get(
+                                 user_account=user_account).organization_active
+        salestage.organization = organization_active
+        salestage.save()
+        return super(SaleStageCreate, self).form_valid(form)
+
+
+class SaleStageUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = SaleStage
+    form_class = SaleStageForm
+
+
+class SaleStageDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+    model = SaleStage
+    success_url = reverse_lazy('crm:salestage-index')

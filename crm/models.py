@@ -81,3 +81,14 @@ class Customer(models.Model):
 
     def get_absolute_url(self):
         return reverse('crm:customer-index')
+
+
+class SaleStage(models.Model):
+    name = models.CharField(max_length=100)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:salestage-index')
