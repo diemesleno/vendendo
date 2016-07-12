@@ -19,7 +19,18 @@ urlpatterns = [
     url(r'^seller/add/$', views.SellerCreate.as_view(), name='seller-add'),
     url(r'^seller/join/$', views.SellerJoin.as_view(), name='seller-join'),
     url(r'^sellers/$', views.SellerIndex.as_view(), name='seller-index'),
-    
+
+    url(r'^occupationarea/(?P<pk>[0-9]+)/delete/$', views.OccupationAreaDelete.as_view(), name='occupationarea-delete'),
+    url(r'^occupationarea/(?P<pk>[0-9]+)/$', views.OccupationAreaUpdate.as_view(), name='occupationarea-update'),
+    url(r'^occupationarea/add/$', views.OccupationAreaCreate.as_view(), name='occupationarea-add'),
+    url(r'^occupationarea/$', views.OccupationAreaIndex.as_view(), name='occupationarea-index'),
+
+    url(r'^customer/(?P<pk>[0-9]+)/delete/$', views.CustomerDelete.as_view(), name='customer-delete'),
+    url(r'^customer/(?P<pk>[0-9]+)/$', views.CustomerUpdate.as_view(), name='customer-update'),
+    url(r'^customer/add/$', views.CustomerCreate.as_view(), name='customer-add'),
+    url(r'^customer/$', views.CustomerIndex.as_view(), name='customer-index'),
+
+
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 
     url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),

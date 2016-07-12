@@ -1,0 +1,48 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Adicionando um novo Cliente{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="main">
+        <h3 class="page-header">Cliente</h3>
+        <div class="col-xs-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group {% if field.errors %}has-error{% endif %}">
+                            {% if 'contact1_name' in field.name  %}
+                            <div class="col-xs-12 col-sm-12"><h3>Contatos</h3></div>
+                            {% endif  %}
+                            {% if 'contact' in field.name  %}
+                            <div class="col-xs-3 col-sm-3">
+                                {% else %}
+                                <div class="col-xs-12 col-sm-12">
+                                    {% endif  %}
+                                <label class="control-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                <span id="helpBlock2" class="help-block">{{ field.errors }}</span>
+                                {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <div class="form-group action-buttons">
+                                <button type="submit" class="btn btn-success">Salvar</button>
+                                <a href="{% url 'crm:customer-index' %}" class="btn btn-default">Voltar</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {% endblock %}

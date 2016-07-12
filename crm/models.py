@@ -35,3 +35,49 @@ class UserOrganization(models.Model):
 
     def get_absolute_url(self):
         return reverse('crm:seller-index')
+
+
+class OccupationArea(models.Model):
+    name = models.CharField(max_length=100)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:occupationarea-index')
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=100)
+    legal_personality_choices = ((u'N', u'Pessoa Física'),
+                                 (u'L', u'Pessoa Jurídica'))
+    legal_personality = models.CharField(max_length=1,
+                                         choices=legal_personality_choices)
+    category_choices = ((u'U', u'Não Qualificado'),
+                        (u'Q', u'Qualificado'),
+                        (u'P', u'Prospecção'))
+    category = models.CharField(max_length=1,
+                                choices=category_choices)
+    contact1_name = models.CharField(max_length=200)
+    contact1_email = models.EmailField(max_length=254)
+    contact1_tel = models.CharField(max_length=20)
+    contact1_position = models.CharField(max_length=100)
+    contact2_name = models.CharField(max_length=200)
+    contact2_email = models.EmailField(max_length=254)
+    contact2_tel = models.CharField(max_length=20)
+    contact2_position = models.CharField(max_length=100)
+    contact3_name = models.CharField(max_length=200)
+    contact3_email = models.EmailField(max_length=254)
+    contact3_tel = models.CharField(max_length=20)
+    contact3_position = models.CharField(max_length=100)
+    notes = models.TextField(null=True, blank=True)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    occupationarea = models.ForeignKey('OccupationArea')
+    responsible_seller = models.ForeignKey('auth.User')
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:customer-index')

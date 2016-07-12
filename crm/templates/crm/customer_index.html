@@ -1,0 +1,40 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Áreas de Atuação{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Clientes</h3>
+
+    <!-- Panel Indicators -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12">
+        <p>
+          <a href="{% url 'crm:customer-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Cliente</a>
+        </p>
+        <table class="table">
+          {% for my_customer in my_customers %}
+          <tr>
+            <td class="action-column">
+              <form action="{% url 'crm:customer-delete' my_customer.id %}" method="post">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+              </form>
+            </td>
+            <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.name }}</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
