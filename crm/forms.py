@@ -1,6 +1,6 @@
 # coding:utf-8
 from django import forms
-from crm.models import Organization, UserOrganization, OccupationArea, Customer
+from crm.models import Organization, UserOrganization, OccupationArea, Customer, SaleStage
 from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
@@ -155,3 +155,16 @@ class CustomerForm(forms.ModelForm):
         self.fields['contact3_position'].required = False
         self.fields['contact3_position'].label = 'Cargo'
         self.fields['contact3_position'].widget.attrs.update({'class': 'form-control'})
+
+
+class SaleStageForm(forms.ModelForm):
+
+    class Meta:
+        model = SaleStage
+        fields = ('name',)
+
+    def __init__(self, *args, **kwargs):
+        super(SaleStageForm, self).__init__(*args, **kwargs)
+        self.fields['name'].required = True
+        self.fields['name'].label = 'Nome'
+        self.fields['name'].widget.attrs.update({'class': 'form-control'})

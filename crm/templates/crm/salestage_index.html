@@ -1,0 +1,40 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Fases de Oportunidades{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Fases de Oportunidades</h3>
+
+    <!-- Panel Indicators -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12">
+        <p>
+          <a href="{% url 'crm:salestage-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Fase de Oportunidades</a>
+        </p>
+        <table class="table">
+          {% for my_salestage in my_salestages %}
+          <tr>
+            <td class="action-column">
+              <form action="{% url 'crm:salestage-delete' my_salestage.id %}" method="post">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+              </form>
+            </td>
+            <td><a href="{% url 'crm:salestage-update' my_salestage.id %}">{{ my_salestage.name }}</a></td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
