@@ -1,0 +1,41 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Produtos e Serviços{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Produtos e Serviços</h3>
+
+    <!-- Panel Indicators -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12">
+        <p>
+          <a href="{% url 'crm:customerservice-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Produto ou Serviço</a>
+        </p>
+        <table class="table">
+          {% for my_customerservice in my_customerservices %}
+          <tr>
+            <td class="action-column">
+              <form action="{% url 'crm:customerservice-delete' my_customerservice.id %}" method="post">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+              </form>
+            </td>
+            <td><a href="{% url 'crm:customerservice-update' my_customerservice.id %}">{{ my_customerservice.name }}</a></td>
+            <td>{{ my_customerservice.get_definition_display }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

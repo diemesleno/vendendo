@@ -1,6 +1,7 @@
 # coding:utf-8
 from django import forms
-from crm.models import Organization, UserOrganization, OccupationArea, Customer, SaleStage
+from crm.models import Organization, UserOrganization, OccupationArea,\
+                       Customer, SaleStage, CustomerService
 from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
@@ -168,3 +169,33 @@ class SaleStageForm(forms.ModelForm):
         self.fields['name'].required = True
         self.fields['name'].label = 'Nome'
         self.fields['name'].widget.attrs.update({'class': 'form-control'})
+
+
+class CustomerServiceForm(forms.ModelForm):
+
+    class Meta:
+        model = CustomerService
+        fields = ('name', 'definition', 'description', 'notes', 'status',)
+
+    def __init__(self, *args, **kwargs):
+        super(CustomerServiceForm, self).__init__(*args, **kwargs)
+        # field name
+        self.fields['name'].required = True
+        self.fields['name'].label = 'Nome'
+        self.fields['name'].widget.attrs.update({'class': 'form-control'})
+        # field definition
+        self.fields['definition'].required = True
+        self.fields['definition'].label = 'Tipo'
+        self.fields['definition'].widget.attrs.update({'class': 'form-control'})
+        # field description
+        self.fields['description'].required = False
+        self.fields['description'].label = 'Descrição'
+        self.fields['description'].widget.attrs.update({'class': 'form-control'})
+        # field notes
+        self.fields['notes'].required = False
+        self.fields['notes'].label = 'Notas'
+        self.fields['notes'].widget.attrs.update({'class': 'form-control'})
+        # field status
+        self.fields['status'].required = True
+        self.fields['status'].label = 'Status'
+        self.fields['status'].widget.attrs.update({'class': 'form-control'})

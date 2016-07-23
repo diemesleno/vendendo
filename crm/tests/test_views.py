@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.contrib.auth.models import User
-from crm.models import Organization, UserOrganization
+from crm.models import Organization, UserOrganization, CustomerService
 from django.conf import settings
 from importlib import import_module
 from crm.views import *
@@ -262,3 +262,54 @@ class SendxTests(TestCase):
         result = Sendx.send_invite(self, user_organization)
         self.assertTrue(result) 
 
+
+class CustomerServiceTests(TestCase):
+
+    def setUp(self):
+        self.factory = RequestFactory()
+        user_organization = create_user_organization()
+        self.user_session = user_organization.user_account
+        self.data = {"name":"service_test",
+                     "definition":"P"}
+
+    def create_customerservice(user_test=None, organization_test=None, customerservice_test=None):
+        if not user_test:
+            user_test = User.objects.create_user(username='user_test',
+                                                 email='a@a.com',
+                                                 password='1234',
+                                                 first_name='name_test')
+        if not organization_test:
+            organization_test = Organization.objects.create(
+                                    name='organization_test')
+        if not customerservice_test:
+            customerservice_test = CustomerService.objects.create(
+                                       name='service_test',
+                                       organization=organization_test,
+                                       definition='S',
+                                       status='A')
+
+        UserComplement.objects.create(user_account=user_test,
+                                      organization_active=organization_test)
+        return UserOrganization.objects.create(
+            user_account=user_test,
+            organization=organization_test,
+            type_user='A',
+            status_active='A')
+
+    def test_index_should_render_customerservices_index_page(self):
+        request = self.factory.get("/customerservice/")
+        request.user = self.user_session
+
+        request = add_middleware_to_request(request, SessionMiddleware)
+        request.session.save()
+
+        response = CustomerServiceIndex.as_view()(request)
+        self.assertContains(response, "Produtos e Serviços")
+
+    def test_create_a_new_customerservice_form_valid(self):
+        request = self.factory.post("/customerservice/add/", self.data)
+        request.user = self.user_session
+        request = add_middleware_to_request(request, SessionMiddleware)
+        request.session.save()
+        response = CustomerServiceCreate.as_view()(request)
+        self.assertEqual(response.status_code, 302)

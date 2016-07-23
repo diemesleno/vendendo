@@ -97,6 +97,8 @@ class SaleStage(models.Model):
 class CustomerService(models.Model):
     definition_types = ((u'P', u'Produto'),
                         (u'S', u'Serviço'))
+    status_choices = ((u'A', u'Active'),
+                      (u'I', u'Inactive'))
 
     name = models.CharField(max_length=200, null=False)
     definition = models.CharField(max_length=1,
@@ -105,6 +107,10 @@ class CustomerService(models.Model):
     description = models.TextField()
     notes = models.TextField()
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    status = models.CharField(max_length=1,
+                              choices=status_choices,
+                              default='A',
+                              null=False)
 
     def __unicode__(self):
         return self.name

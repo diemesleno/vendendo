@@ -6,9 +6,11 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from crm.models import Organization, UserOrganization, OccupationArea, Customer, SaleStage
+from crm.models import Organization, UserOrganization, OccupationArea, \
+                       Customer, SaleStage, CustomerService
 from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
-    OccupationAreaForm, CustomerForm, SaleStageForm
+                      OccupationAreaForm, CustomerForm, SaleStageForm,\
+                      CustomerServiceForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
@@ -442,3 +444,53 @@ class SaleStageUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class SaleStageDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = SaleStage
     success_url = reverse_lazy('crm:salestage-index')
+
+
+
+# CustomerService Views
+class CustomerServiceSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        o = CustomerService.objects.get(pk=self.kwargs['pk']).organization
+
+        if not UserOrganization.objects.filter(user_account=u,
+                                               organization=o,
+                                               type_user='A').exists():
+            return redirect('crm:error-index')
+        return super(CustomerServiceSecMixin, self).dispatch(*args, **kwargs)
+
+
+class CustomerServiceIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/customerservice_index.html'
+    context_object_name = 'my_customerservices'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return CustomerService.objects.filter(organization=organization_active)
+
+
+class CustomerServiceCreate(LoginRequiredMixin, SessionMixin, CreateView):
+    model = CustomerService
+    form_class = CustomerServiceForm
+
+    def form_valid(self, form):
+        customerservice = form.save(commit=False)
+        user_account = User.objects.get(id=self.request.user.id).id
+        organization_active = UserComplement.objects.get(
+                                 user_account=user_account).organization_active
+        customerservice.organization = organization_active
+        customerservice.save()
+        return super(CustomerServiceCreate, self).form_valid(form)
+
+
+class CustomerServiceDelete(LoginRequiredMixin, SessionMixin, CustomerServiceSecMixin, DeleteView):
+    model = CustomerService
+    success_url = reverse_lazy('crm:customerservice-index')
+
+
+class CustomerServiceUpdate(LoginRequiredMixin, SessionMixin, CustomerServiceSecMixin, UpdateView):
+    model = CustomerService
+    form_class = CustomerServiceForm
