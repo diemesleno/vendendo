@@ -35,6 +35,8 @@ urlpatterns = [
     url(r'^salestage/add/$', views.SaleStageCreate.as_view(), name='salestage-add'),
     url(r'^salestage/$', views.SaleStageIndex.as_view(), name='salestage-index'),
 
+    url(r'^customerservice/$', views.CustomerServiceIndex.as_view(), name='customerservice-index'),
+
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 
     url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),

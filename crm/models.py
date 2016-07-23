@@ -92,3 +92,22 @@ class SaleStage(models.Model):
 
     def get_absolute_url(self):
         return reverse('crm:salestage-index')
+
+
+class CustomerService(models.Model):
+    definition_types = ((u'P', u'Produto'),
+                        (u'S', u'Serviço'))
+
+    name = models.CharField(max_length=200, null=False)
+    definition = models.CharField(max_length=1,
+                                  choices=definition_types,
+                                  null=False)
+    description = models.TextField()
+    notes = models.TextField()
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:customerservice-index')
