@@ -117,3 +117,21 @@ class CustomerService(models.Model):
 
     def get_absolute_url(self):
         return reverse('crm:customerservice-index')
+
+
+
+class Opportunity(models.Model):
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    seller = models.ForeignKey('auth.User')
+    stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
+    customer_services = models.ManyToManyField('CustomerService')
+    expected_value = models.DecimalField(max_digits=19, decimal_places=2)
+    expected_month = models.CharField(max_length=5)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.id.__str__() + ':' + self.organization.name.__str__() + self.customer.name.__str__()
+
+    def get_absolute_url(self):
+        return reverse('crm:oppotunity-index')
