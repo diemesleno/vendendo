@@ -119,19 +119,32 @@ class CustomerService(models.Model):
         return reverse('crm:customerservice-index')
 
 
-
 class Opportunity(models.Model):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     seller = models.ForeignKey('auth.User')
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
-    customer_services = models.ManyToManyField('CustomerService')
     expected_value = models.DecimalField(max_digits=19, decimal_places=2)
-    expected_month = models.CharField(max_length=5)
+    expected_month = models.CharField(max_length=6)
     created = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return self.id.__str__() + ':' + self.organization.name.__str__() + self.customer.name.__str__()
+        return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.customer.name.__str__()
 
     def get_absolute_url(self):
-        return reverse('crm:oppotunity-index')
+        return reverse('crm:opportunity-index')
+
+
+
+class OpportunityItem(models.Model):
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    opportunity = models.ForeignKey('Opportunity', on_delete=models.CASCADE)
+    customer_service = models.ForeignKey('CustomerService', on_delete=models.CASCADE)
+    description = models.TextField(null=True)
+    expected_value = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expected_amount = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+
+    def __unicode__(self):
+        return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.opportunity.id.__str__() + ' [' + self.customer_service.name.__str__() + ']'
+
+

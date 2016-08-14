@@ -7,10 +7,11 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from crm.models import Organization, UserOrganization, OccupationArea, \
-                       Customer, SaleStage, CustomerService
+                       Customer, SaleStage, CustomerService, Opportunity, \
+                       OpportunityItem
 from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
                       OccupationAreaForm, CustomerForm, SaleStageForm,\
-                      CustomerServiceForm
+                      CustomerServiceForm, OpportunityForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import redirect
@@ -494,3 +495,101 @@ class CustomerServiceDelete(LoginRequiredMixin, SessionMixin, CustomerServiceSec
 class CustomerServiceUpdate(LoginRequiredMixin, SessionMixin, CustomerServiceSecMixin, UpdateView):
     model = CustomerService
     form_class = CustomerServiceForm
+
+
+
+# Opportunity
+class OpportunitySecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        o = Opportunity.objects.get(pk=self.kwargs['pk']).organization
+
+        if not UserOrganization.objects.filter(user_account=u,
+                                               organization=o,
+                                               type_user='A').exists():
+            return redirect('crm:error-index')
+        return super(OpportunitySecMixin, self).dispatch(*args, **kwargs)
+
+
+class OpportunityIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/opportunity_index.html'
+    context_object_name = 'my_opportunities'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return Opportunity.objects.filter(organization=organization_active)
+
+
+class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
+    model = Opportunity
+    form_class = OpportunityForm
+
+    def get_context_data(self, **kwargs):
+        context = super(OpportunityCreate, self).get_context_data(**kwargs)
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        customer_services = CustomerService.objects.filter(
+                                organization=organization_active)
+        context['customer_services'] = customer_services
+        return context
+
+    def form_valid(self, form):
+        opportunity = form.save(commit=False)
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                 user_account=user_account).organization_active
+        opportunity.organization = organization_active
+        opportunity.seller = user_account
+        opportunity.save()
+        return super(OpportunityCreate, self).form_valid(form)
+
+
+class OpportunityDelete(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, DeleteView):
+    model = Opportunity
+    success_url = reverse_lazy('crm:opportunity-index')
+
+
+class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, UpdateView):
+    model = Opportunity
+    form_class = OpportunityForm
+
+    def get_context_data(self, **kwargs):
+        context = super(OpportunityUpdate, self).get_context_data(**kwargs)
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        customer_services = CustomerService.objects.filter(
+                                organization=organization_active)
+        opportunity = Opportunity.objects.get(pk=self.kwargs['pk'])
+        opportunity_items = OpportunityItem.objects.filter(
+                                organization=organization_active,
+                                opportunity=opportunity)
+        context['customer_services'] = customer_services
+        context['opportunity_items'] = opportunity_items
+        return context
+
+    def form_valid(self, form):
+        opportunity = form.save()
+        products = self.request.POST.getlist('product')
+        descriptions = self.request.POST.getlist('description')
+        expected_values = self.request.POST.getlist('expected_value_item')
+        expected_amounts = self.request.POST.getlist('expected_amount')
+        # clear Opportunity Items
+        OpportunityItem.objects.filter(opportunity=opportunity).delete()
+        # create news opportunity items
+        if products:
+            for idx,product in enumerate(products):
+                opportunity_item = OpportunityItem()
+                opportunity_item.opportunity = opportunity
+                opportunity_item.organization = opportunity.organization
+                customer_service = CustomerService.objects.get(id=product)
+                opportunity_item.customer_service = customer_service
+                opportunity_item.description = descriptions[idx]
+                opportunity_item.expected_value = expected_values[idx]
+                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.save()
+        return super(OpportunityUpdate, self).form_valid(form)

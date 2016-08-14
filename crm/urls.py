@@ -44,6 +44,11 @@ urlpatterns = [
     url(r'^customerservice/add/$', views.CustomerServiceCreate.as_view(), name='customerservice-add'),
     url(r'^customerservice/$', views.CustomerServiceIndex.as_view(), name='customerservice-index'),
 
+    url(r'^opportunity/(?P<pk>[0-9]+)/$', views.OpportunityUpdate.as_view(), name='opportunity-update'),
+    url(r'^opportunity/(?P<pk>[0-9]+)/delete/$', views.OpportunityDelete.as_view(), name='opportunity-delete'),
+    url(r'^opportunity/add/$', views.OpportunityCreate.as_view(), name='opportunity-add'),
+    url(r'^opportunity/$', views.OpportunityIndex.as_view(), name='opportunity-index'),
+
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 
     url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),

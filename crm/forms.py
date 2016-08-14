@@ -1,7 +1,7 @@
 # coding:utf-8
 from django import forms
 from crm.models import Organization, UserOrganization, OccupationArea,\
-                       Customer, SaleStage, CustomerService
+                       Customer, SaleStage, CustomerService, Opportunity
 from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
@@ -199,3 +199,29 @@ class CustomerServiceForm(forms.ModelForm):
         self.fields['status'].required = True
         self.fields['status'].label = 'Status'
         self.fields['status'].widget.attrs.update({'class': 'form-control'})
+
+
+class OpportunityForm(forms.ModelForm):
+
+    class Meta:
+        model = Opportunity
+        fields = ('customer', 'stage', 'expected_value', 'expected_month',)
+
+    def __init__(self, *args, **kwargs):
+        super(OpportunityForm, self).__init__(*args, **kwargs)
+        # field customer
+        self.fields['customer'].required = True
+        self.fields['customer'].label = 'Cliente'
+        self.fields['customer'].widget.attrs.update({'class': 'form-control'})
+        # field stage
+        self.fields['stage'].required = True
+        self.fields['stage'].label = 'Etapa'
+        self.fields['stage'].widget.attrs.update({'class': 'form-control'})
+        # field expected_value
+        self.fields['expected_value'].required = False
+        self.fields['expected_value'].label = 'Valor estimado'
+        self.fields['expected_value'].widget.attrs.update({'class': 'form-control'})
+        # field expected_month
+        self.fields['expected_month'].required = False
+        self.fields['expected_month'].label = 'Mês estimado'
+        self.fields['expected_month'].widget.attrs.update({'class': 'form-control'})

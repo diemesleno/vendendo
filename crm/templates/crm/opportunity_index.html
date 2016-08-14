@@ -1,0 +1,42 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Oportunidades{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class"container-fluid">
+  <div class="main">
+    <h3 class="page-header">Oportunidades</h3>
+
+    <!-- Panel Indicators -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12">
+        <p>
+          <a href="{% url 'crm:opportunity-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Oportunidade</a>
+        </p>
+        <table class="table">
+          {% for my_opportunity in my_opportunities %}
+          <tr>
+            <td class="action-column">
+              <form action="{% url 'crm:opportunity-delete' my_opportunity.id %}" method="post">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
+              </form>
+            </td>
+            <td><a href="{% url 'crm:opportunity-update' my_opportunity.id %}">{{ my_opportunity.customer.name }}</a></td>
+            <td>{{ my_opportunity.stage.name }}</td>
+            <td>{{ my_opportunity.expected_value }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
