@@ -420,7 +420,9 @@ class SaleStageIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return SaleStage.objects.filter(organization=organization_active)
+        stages = SaleStage.objects.filter(
+            organization=organization_active).order_by('order_number')
+        return stages
 
 
 class SaleStageCreate(LoginRequiredMixin, SessionMixin, CreateView):
@@ -433,6 +435,8 @@ class SaleStageCreate(LoginRequiredMixin, SessionMixin, CreateView):
         organization_active = UserComplement.objects.get(
                                  user_account=user_account).organization_active
         salestage.organization = organization_active
+        salestage.order_number = total_stages = SaleStage.objects.filter(
+            organization=organization_active).count()
         salestage.save()
         return super(SaleStageCreate, self).form_valid(form)
 
@@ -446,6 +450,54 @@ class SaleStageDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = SaleStage
     success_url = reverse_lazy('crm:salestage-index')
 
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        organization = self.object.organization
+        self.object.delete()
+        stages = SaleStage.objects.filter(
+                     organization=organization).order_by('order_number')
+        for idx,stage in enumerate(stages):
+            stage.order_number = idx
+            stage.save()
+        return redirect('crm:salestage-index')
+
+
+class SaleStageUp(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = SaleStage
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        current_order = self.object.order_number
+        organization = self.object.organization
+        if current_order > 0:
+            previous_stage = SaleStage.objects.get(
+                                 organization=organization,
+                                 order_number=current_order-1)
+            previous_stage.order_number = current_order
+            previous_stage.save()
+            self.object.order_number = current_order-1
+            self.object.save()
+        return redirect('crm:salestage-index')
+
+
+class SaleStageDown(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = SaleStage
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        current_order = self.object.order_number
+        organization = self.object.organization
+        total_stages = SaleStage.objects.filter(
+            organization=organization).count()
+        if current_order < total_stages-1:
+            next_stage = SaleStage.objects.get(
+                                 organization=organization,
+                                 order_number=current_order+1)
+            next_stage.order_number = current_order
+            next_stage.save()
+            self.object.order_number = current_order+1
+            self.object.save()
+        return redirect('crm:salestage-index')
 
 
 # CustomerService Views

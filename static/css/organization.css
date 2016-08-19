@@ -6,6 +6,10 @@
     width: 10px;
 }
 
+.table .action-column-order {
+    width: 80px;
+}
+
 ul{
     list-style-type: none;
 }

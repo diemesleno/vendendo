@@ -85,6 +85,7 @@ class Customer(models.Model):
 
 class SaleStage(models.Model):
     name = models.CharField(max_length=100)
+    order_number = models.IntegerField(default=0)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
 
     def __unicode__(self):
@@ -135,7 +136,6 @@ class Opportunity(models.Model):
         return reverse('crm:opportunity-index')
 
 
-
 class OpportunityItem(models.Model):
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     opportunity = models.ForeignKey('Opportunity', on_delete=models.CASCADE)
@@ -146,5 +146,3 @@ class OpportunityItem(models.Model):
 
     def __unicode__(self):
         return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.opportunity.id.__str__() + ' [' + self.customer_service.name.__str__() + ']'
-
-
