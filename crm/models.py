@@ -166,17 +166,21 @@ class OpportunityItem(models.Model):
 class Activity(models.Model):
     title = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
+    opportunity = models.ForeignKey('Opportunity', on_delete=models.CASCADE)
     type_activity_choices = ((u'T', u'Telefonema'),
-                              (u'E', u'E-mail'),
-                              (u'V', u'Visita'),
-                              (u'O', u'Outras Tarefas'))
+                             (u'E', u'E-mail'),
+                             (u'V', u'Visita'),
+                             (u'O', u'Outras Tarefas'))
     type_activity = models.CharField(max_length=1,
-                                         choices=type_activity_choices)
+                                     choices=type_activity_choices)
     details = models.TextField(null=True, blank=True)
     deadline = models.DateField(null=False)
     created = models.DateTimeField(auto_now_add=True)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     responsible_seller = models.ForeignKey('auth.User')
+
+    def __unicode__(self):
+        return self.name
 
     def get_absolute_url(self):
         return reverse('crm:activity-index')

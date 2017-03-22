@@ -246,7 +246,7 @@ class ActivityForm(forms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = ('title', 'description', 'type_activity', 'details', 'deadline')
+        fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline')
 
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -258,6 +258,10 @@ class ActivityForm(forms.ModelForm):
         self.fields['description'].required = True
         self.fields['description'].label = 'Descrição'
         self.fields['description'].widget.attrs.update({'class': 'form-control'})
+        # field opportunity
+        self.fields['opportunity'].required = True
+        self.fields['opportunity'].label = 'Oportunidade'
+        self.fields['opportunity'].widget.attrs.update({'class': 'form-control'})
         # field type_activity
         self.fields['type_activity'].required = False
         self.fields['type_activity'].label = 'Tipo de Atividade'
