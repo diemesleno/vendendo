@@ -55,6 +55,12 @@
         <ul class="nav navbar-nav">
           <li><a href="{% url 'crm:customer-index' %}">Clientes</a></li>
         </ul>
+        <ul class="nav navbar-nav">
+          <li><a href="{% url 'crm:opportunity-index' %}">Oportunidades</a></li>
+        </ul>
+        <ul class="nav navbar-nav">
+          <li><a href="{% url 'crm:activity-index' %}">Atividades</a></li>
+        </ul>
         <ul class="nav navbar-nav navbar-right">
           {% if type_user_organization == "A" %}
           <li class="dropdown">
@@ -65,7 +71,6 @@
               <li><a href="/occupationarea/">Áreas de Atuação de Clientes</a></li>
               <li><a href="/salestage/">Fases de Oportunidades</a></li>
               <li><a href="{% url 'crm:customerservice-index' %}">Produtos e Serviços</a></li>
-              <li><a href="{% url 'crm:opportunity-index' %}">Oportunidades</a></li>
             </ul>
           </li>
           {% endif %}
