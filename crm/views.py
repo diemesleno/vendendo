@@ -14,6 +14,7 @@ from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
                       CustomerServiceForm, OpportunityForm, ActivityForm
 from userapp.models import UserComplement
 from django.core.urlresolvers import reverse_lazy
+from django.utils.functional import cached_property
 from django.shortcuts import redirect
 from django.conf import settings
 from django.core.mail import send_mail
@@ -40,6 +41,13 @@ class Sendx(object):
 
 
 class SessionMixin(object):
+
+    @cached_property
+    def organization_active(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return organization_active
 
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
@@ -692,10 +700,22 @@ class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         activity.save()
         return super(ActivityCreate, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
+
 
 class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
     model = Activity
     form_class = ActivityForm
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
 
 
 class ActivityDelete(LoginRequiredMixin, SessionMixin, DeleteView):
