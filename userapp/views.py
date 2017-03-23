@@ -232,8 +232,7 @@ class ResetPassword(base.View):
                 except Exception, e:
                     return TemplateResponse(request,
                                             self.template_name,
-                                            {'error': "Erro interno: " +
-                                             str(e.message)})
+                                            {'error': "Erro interno: "})
             else:
                 return TemplateResponse(request,
                                         self.template_name,
