@@ -248,7 +248,7 @@ class ActivityForm(forms.ModelForm):
         model = Activity
         fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, organization, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
         # field title
         self.fields['title'].required = True
@@ -262,6 +262,7 @@ class ActivityForm(forms.ModelForm):
         self.fields['opportunity'].required = True
         self.fields['opportunity'].label = 'Oportunidade'
         self.fields['opportunity'].widget.attrs.update({'class': 'form-control'})
+        self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False)
         # field type_activity
         self.fields['type_activity'].required = False
         self.fields['type_activity'].label = 'Tipo de Atividade'
@@ -273,4 +274,7 @@ class ActivityForm(forms.ModelForm):
         # field deadline
         self.fields['deadline'].required = False
         self.fields['deadline'].label = 'Prazo'
-        self.fields['deadline'].widget = forms.SelectDateWidget()
+        self.fields['deadline'].widget = forms.widgets.DateInput(format="%d/%m/%Y")
+        self.fields['deadline'].input_formats = ['%d/%m/%Y']
+        self.fields['deadline'].help_text = "Formato: <em>DD-MM-AAAA</em>."
+        self.fields['deadline'].widget.attrs.update({'class': 'form-control'})
