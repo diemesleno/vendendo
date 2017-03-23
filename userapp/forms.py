@@ -16,7 +16,6 @@ class NewUserForm(forms.ModelForm):
     })
     username = forms.CharField(required=False)
     password = forms.CharField(required=True, error_messages=error_messages)
-    organization = forms.CharField(required=True, error_messages=error_messages)
 
     class Meta:
         model = User

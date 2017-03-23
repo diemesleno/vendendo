@@ -6,6 +6,7 @@ app_name = 'crm'
 urlpatterns = [
 
     url(r'^organization/(?P<pk>[0-9]+)/delete/$', views.OrganizationDelete.as_view(), name='organization-delete'),
+    url(r'^organization/(?P<pk>[0-9]+)/activate/$', views.OrganizationActivate.as_view(), name='organization-activate'),
     url(r'^organization/(?P<pk>\d+)/$', views.OrganizationUpdate.as_view(), name='organization-update'),
     url(r'^organization/add/$', views.OrganizationCreate.as_view(), name='organization-add'),
     url(r'^organizations/$', views.OrganizationIndex.as_view(), name='organization-index'),

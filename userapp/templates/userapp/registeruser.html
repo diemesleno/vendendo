@@ -61,13 +61,6 @@
     {% else %}
     <input type="hidden" class="form-control" name="password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
     {% endif %}
-    <div class="form-group">
-      <label for="id_organization">Organização</label>
-      <input type="text" class="form-control" name="organization" id="id_organization" value="{% if form %}{{ form.organization.value }}{% else %}{% if user_account %}{{ user_account.organization }}{% endif %}{% endif %}">
-      {% if form.organization.errors %}
-      {{ form.organization.errors }}
-      {% endif %}
-    </div>
     <p class="text-right">
       {% if user_account.id %}
       <input type="button" class="btn btn-danger" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';">

@@ -57,24 +57,9 @@ class RegisterUser(base.View):
                     u.username = hashlib.md5(u.email).hexdigest()[-30:]
                     u.set_password(request.POST['password'])
                     u.save()
-                    organization = Organization()
-                    organization.user_account = u
-                    organization.name = request.POST['organization']
-                    organization.save()
                     uc = UserComplement()
                     uc.user_account = u
-                    uc.organization_active = organization
                     uc.save()
-                    user_organization = UserOrganization()
-                    user_organization.user_account = u
-                    user_organization.organization = organization
-                    user_organization.type_user = 'A'
-                    user_organization.status_active = 'A'
-                    code_activating = hashlib.md5(str(u.email) +
-                                                  str(uc.organization_active.id)
-                                                 ).hexdigest()[-30:]
-                    user_organization.code_activating = code_activating
-                    user_organization.save()
                     return HttpResponseRedirect("/")
                 else:
                     return TemplateResponse(request,
@@ -102,9 +87,12 @@ class EditUser(base.View):
                             status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account,
-                                    organization=organization_active).type_user
+        if organization_active:
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=organization_active).type_user
+        else:
+            type_user_organization = None
         return TemplateResponse(request,
                                 self.template_name,
                                 {'organizations': organizations,
@@ -120,9 +108,12 @@ class EditUser(base.View):
                             status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account,
-                                    organization=organization_active).type_user
+        if organization_active:
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=organization_active).type_user
+        else:
+            type_user_organization = None
         form = self.form_class(request.POST, instance=user_account)
         if form.is_valid():
             if request.POST['email'] != request.user.email:
@@ -258,9 +249,12 @@ class EditPassword(base.View):
                             status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account,
-                                    organization=organization_active).type_user
+        if organization_active:
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=organization_active).type_user
+        else:
+            type_user_organization = None
         return TemplateResponse(request,
                                 self.template_name,
                                 {'organizations': organizations,
@@ -275,9 +269,12 @@ class EditPassword(base.View):
                             status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account,
-                                    organization=organization_active).type_user
+        if organization_active:
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=organization_active).type_user
+        else:
+            type_user_organization = None
         form = self.form_class(request.POST)
         if form.is_valid():
             user_account = User.objects.get(id=request.user.id)

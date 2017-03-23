@@ -49,9 +49,12 @@ class SessionMixin(object):
                             status_active='A')
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        type_user_organization = UserOrganization.objects.get(
-                                    user_account=user_account,
-                                    organization=organization_active).type_user
+        if organization_active:
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=organization_active).type_user
+        else:
+            type_user_organization = None
         context['type_user_organization'] = type_user_organization
         context['organization_active'] = organization_active
         context['organizations'] = organizations
@@ -120,6 +123,18 @@ class OrganizationDelete(LoginRequiredMixin, SessionMixin,
                          OrganizationSecMixin, DeleteView):
     model = Organization
     success_url = reverse_lazy('crm:organization-index')
+
+
+class OrganizationActivate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = Organization
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        user_account = User.objects.get(id=self.request.user.id)
+        user_complement = UserComplement.objects.get(user_account=user_account)
+        user_complement.organization_active = self.object
+        user_complement.save()
+        return redirect('crm:dashboard-index')
 
 
 # Seller Views

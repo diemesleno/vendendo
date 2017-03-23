@@ -38,29 +38,35 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ organization_active }}<span class="caret"></span></a>
-            <ul class="dropdown-menu">
-              {% for organization in organizations %}
-              <li><a href="#">{{ organization.organization }}</a></li>
-              {% endfor %}
-              <li role="separator" class="divider"></li>
-              <li><a href="{% url 'crm:organization-add' %}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Organização</a></li>
-            </ul>
-          </li>
+          {% if organizations %}
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% if organization_active %}{{ organization_active }}{% else %}Selecione uma Organização{% endif %}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                {% for user_organization in organizations %}
+                <li><a href="{% url 'crm:organization-activate' user_organization.organization.id %}">{{ user_organization.organization }}</a></li>
+                {% endfor %}
+                <li role="separator" class="divider"></li>
+                <li><a href="{% url 'crm:organization-add' %}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Organização</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li><a href="{% url 'crm:organization-add' %}"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Criar Organização</a></li>
+          {% endif %}
         </ul>
-        <ul class="nav navbar-nav">
-          <li><a href="{% url 'crm:dashboard-index' %}">Visão Geral</a></li>
-        </ul>
-        <ul class="nav navbar-nav">
-          <li><a href="{% url 'crm:customer-index' %}">Clientes</a></li>
-        </ul>
-        <ul class="nav navbar-nav">
-          <li><a href="{% url 'crm:opportunity-index' %}">Oportunidades</a></li>
-        </ul>
-        <ul class="nav navbar-nav">
-          <li><a href="{% url 'crm:activity-index' %}">Atividades</a></li>
-        </ul>
+        {% if organization_active %}
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'crm:dashboard-index' %}">Visão Geral</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'crm:customer-index' %}">Clientes</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'crm:opportunity-index' %}">Oportunidades</a></li>
+          </ul>
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'crm:activity-index' %}">Atividades</a></li>
+          </ul>
+        {% endif %}
         <ul class="nav navbar-nav navbar-right">
           {% if type_user_organization == "A" %}
           <li class="dropdown">
