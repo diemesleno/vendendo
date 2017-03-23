@@ -55,10 +55,23 @@ class Customer(models.Model):
     legal_personality = models.CharField(max_length=1,
                                          choices=legal_personality_choices)
     category_choices = ((u'U', u'Não Qualificado'),
-                        (u'Q', u'Qualificado'),
-                        (u'P', u'Prospecção'))
+                        (u'Q', u'Cliente Potencial'),
+                        (u'P', u'Cliente da Base'))
     category = models.CharField(max_length=1,
                                 choices=category_choices)
+    relevance_choices = ((0, u'0%'),
+                         (10, u'10%'),
+                         (20, u'20%'),
+                         (30, u'30%'),
+                         (40, u'40%'),
+                         (50, u'50%'),
+                         (60, u'60%'),
+                         (70, u'70%'),
+                         (80, u'80%'),
+                         (90, u'90%'),
+                         (100, u'100%'))
+    relevance = models.IntegerField(default=0,
+                                    choices=relevance_choices)
     contact1_name = models.CharField(max_length=200)
     contact1_email = models.EmailField(max_length=254)
     contact1_tel = models.CharField(max_length=20)
@@ -87,6 +100,8 @@ class SaleStage(models.Model):
     name = models.CharField(max_length=100)
     order_number = models.IntegerField(default=0)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    final_stage = models.BooleanField(default=False)
+    add_customer = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
@@ -146,3 +161,26 @@ class OpportunityItem(models.Model):
 
     def __unicode__(self):
         return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.opportunity.id.__str__() + ' [' + self.customer_service.name.__str__() + ']'
+
+
+class Activity(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    opportunity = models.ForeignKey('Opportunity', on_delete=models.CASCADE)
+    type_activity_choices = ((u'T', u'Telefonema'),
+                             (u'E', u'E-mail'),
+                             (u'V', u'Visita'),
+                             (u'O', u'Outras Tarefas'))
+    type_activity = models.CharField(max_length=1,
+                                     choices=type_activity_choices)
+    details = models.TextField(null=True, blank=True)
+    deadline = models.DateField(null=False)
+    created = models.DateTimeField(auto_now_add=True)
+    organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
+    responsible_seller = models.ForeignKey('auth.User')
+
+    def __unicode__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse('crm:activity-index')

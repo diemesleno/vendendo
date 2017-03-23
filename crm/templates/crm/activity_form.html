@@ -1,0 +1,36 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Vendendo | Adicionando uma nova Atividade{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="main">
+    <h3 class="page-header">Atividade</h3>
+
+    <div class="col-xs-12 col-sm-12">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+
+        <form action="" method="post">
+          {% csrf_token %}
+          {% include 'crm/form-template.html' %}
+          <div class="form-group action-buttons">
+            <button type="submit" class="btn btn-success">Salvar</button>
+            <a href="{% url 'crm:activity-index' %}" class="btn btn-default">Voltar</a>
+          </div>
+        </form>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}

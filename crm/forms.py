@@ -1,10 +1,13 @@
 # coding:utf-8
 from django import forms
 from crm.models import Organization, UserOrganization, OccupationArea,\
-                       Customer, SaleStage, CustomerService, Opportunity
+                       Customer, SaleStage, CustomerService, Opportunity,\
+                       Activity
 from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
+from django.contrib.admin.widgets import AdminDateWidget
+
 
 class OrganizationForm(forms.ModelForm):
 
@@ -89,6 +92,7 @@ class CustomerForm(forms.ModelForm):
                   'legal_personality',
                   'category',
                   'occupationarea',
+                  'relevance',
                   'notes',
                   'contact1_name',
                   'contact1_tel',
@@ -117,6 +121,9 @@ class CustomerForm(forms.ModelForm):
         self.fields['occupationarea'].required = True
         self.fields['occupationarea'].label = 'Área de Atuação'
         self.fields['occupationarea'].widget.attrs.update({'class': 'form-control'})
+        self.fields['relevance'].required = True
+        self.fields['relevance'].label = 'Relevância'
+        self.fields['relevance'].widget.attrs.update({'class': 'form-control'})
         self.fields['notes'].required = False
         self.fields['notes'].label = 'Notas'
         self.fields['notes'].widget.attrs.update({'class': 'form-control'})
@@ -162,13 +169,21 @@ class SaleStageForm(forms.ModelForm):
 
     class Meta:
         model = SaleStage
-        fields = ('name',)
+        fields = ('name','final_stage','add_customer')
 
     def __init__(self, *args, **kwargs):
         super(SaleStageForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = True
         self.fields['name'].label = 'Nome'
         self.fields['name'].widget.attrs.update({'class': 'form-control'})
+        # field final_stage
+        self.fields['final_stage'].required = False
+        self.fields['final_stage'].label = 'Fase final'
+        self.fields['final_stage'].widget = forms.CheckboxInput()
+        # field add_customer
+        self.fields['add_customer'].required = False
+        self.fields['add_customer'].label = 'Adicionar cliente na base'
+        self.fields['add_customer'].widget = forms.CheckboxInput()
 
 
 class CustomerServiceForm(forms.ModelForm):
@@ -205,7 +220,7 @@ class OpportunityForm(forms.ModelForm):
 
     class Meta:
         model = Opportunity
-        fields = ('customer', 'stage', 'expected_value', 'expected_month',)
+        fields = ('customer', 'stage', 'expected_value', 'expected_month')
 
     def __init__(self, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
@@ -225,3 +240,37 @@ class OpportunityForm(forms.ModelForm):
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'
         self.fields['expected_month'].widget.attrs.update({'class': 'form-control'})
+
+
+class ActivityForm(forms.ModelForm):
+
+    class Meta:
+        model = Activity
+        fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline')
+
+    def __init__(self, *args, **kwargs):
+        super(ActivityForm, self).__init__(*args, **kwargs)
+        # field title
+        self.fields['title'].required = True
+        self.fields['title'].label = 'Título'
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        # field description
+        self.fields['description'].required = True
+        self.fields['description'].label = 'Descrição'
+        self.fields['description'].widget.attrs.update({'class': 'form-control'})
+        # field opportunity
+        self.fields['opportunity'].required = True
+        self.fields['opportunity'].label = 'Oportunidade'
+        self.fields['opportunity'].widget.attrs.update({'class': 'form-control'})
+        # field type_activity
+        self.fields['type_activity'].required = False
+        self.fields['type_activity'].label = 'Tipo de Atividade'
+        self.fields['type_activity'].widget.attrs.update({'class': 'form-control'})
+        # field details
+        self.fields['details'].required = False
+        self.fields['details'].label = 'Detalhes'
+        self.fields['details'].widget.attrs.update({'class': 'form-control'})
+        # field deadline
+        self.fields['deadline'].required = False
+        self.fields['deadline'].label = 'Prazo'
+        self.fields['deadline'].widget = forms.SelectDateWidget()
