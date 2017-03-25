@@ -8,9 +8,10 @@
 {% endblock %}
 
 {% block content %}
+
+{% if organization_active %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header"></h3>
     <!-- Panel Indicators -->
     <div class="row placeholders">
       <div class="col-xs-12 col-sm-4 placeholder">
@@ -251,6 +252,13 @@
     </section>
   </div> <!-- end main -->
 </div> <!-- and container -->
+
+{% else %}
+
+{% include 'crm/initialpage.html' %}
+
+{% endif %}
+
 <footer class="footer">
   <div class="row">
   </div>

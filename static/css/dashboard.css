@@ -1,9 +1,14 @@
 body {
-    background-color: #EEEEEE;
+    /*background-color: #EEEEEE;*/
+    /*background-color: #f1f6f9;*/
+    background-color: #ffffff;
+    padding-top: 70px;
 }
+
 .main {
   padding: 20px;
 }
+
 @media (min-width: 768px) {
   .main {
     padding-right: 40px;
@@ -30,7 +35,7 @@ body {
   float:right;
 }
 .table{
-  background-color: #FFFFFF;
+  background-color: #f1f6f9;
 }
 th {
   background-color: #F6F6F6;
@@ -100,4 +105,24 @@ th {
 .activities .activity-controls .label {
   color: #fff;
   font-weight: normal;
+}
+
+/* INITIAL PAGE */
+
+.page-title {
+  padding: 0px;
+  font-size: 30px;
+  /*letter-spacing: -1px;*/
+  display: block;
+  color: #666;
+  margin: 20px 0px 15px 0px;
+  font-weight: 300;
+}
+
+.page-title-steps {
+  padding: 0px;
+  /*letter-spacing: -1px;*/
+  display: block;
+  margin: 20px 0px 15px 0px;
+  font-weight: 300;
 }
