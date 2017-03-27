@@ -222,12 +222,13 @@ class OpportunityForm(forms.ModelForm):
         model = Opportunity
         fields = ('customer', 'stage', 'expected_value', 'expected_month')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, organization, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
         # field customer
         self.fields['customer'].required = True
         self.fields['customer'].label = 'Cliente'
         self.fields['customer'].widget.attrs.update({'class': 'form-control'})
+        self.fields['customer'].queryset = Customer.objects.filter(organization=organization)
         # field stage
         self.fields['stage'].required = True
         self.fields['stage'].label = 'Etapa'

@@ -621,6 +621,12 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         opportunity.seller = user_account
         return super(OpportunityCreate, self).form_valid(form)
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
+
 
 class OpportunityDelete(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, DeleteView):
     model = Opportunity
@@ -672,6 +678,12 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
                 opportunity_item.expected_amount = expected_amounts[idx]
                 opportunity_item.save()
         return super(OpportunityUpdate, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
 
 
 # Activity Area Views
