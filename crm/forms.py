@@ -274,7 +274,6 @@ class ActivityForm(forms.ModelForm):
         # field deadline
         self.fields['deadline'].required = False
         self.fields['deadline'].label = 'Prazo'
-        self.fields['deadline'].widget = forms.widgets.DateInput(format="%d/%m/%Y")
-        self.fields['deadline'].input_formats = ['%d/%m/%Y']
-        self.fields['deadline'].help_text = "Formato: <em>DD-MM-AAAA</em>."
+        self.fields['deadline'].widget = forms.widgets.DateInput(format="%d/%m/%Y %H:%M")
+        self.fields['deadline'].input_formats = ['%d/%m/%Y %H:%M']
         self.fields['deadline'].widget.attrs.update({'class': 'form-control'})
