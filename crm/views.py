@@ -77,9 +77,15 @@ class ErrorPage(TemplateView):
     template_name = 'crm/error-template.html'
 
 
-class Dashboard(LoginRequiredMixin, SessionMixin, TemplateView):
+class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/dashboard.html'
+    context_object_name = 'my_activities'
 
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        organization_active = UserComplement.objects.get(
+                                user_account=user_account).organization_active
+        return Activity.objects.filter(organization=organization_active).order_by('deadline')[:4]
 
 # Organization Views
 class OrganizationSecMixin(object):

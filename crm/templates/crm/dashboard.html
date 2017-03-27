@@ -121,121 +121,56 @@
     </div> <!-- end row -->
     <!-- Panel Activity and Chart -->
     <section class="activities">
-      <h3 class="page-header">Atividades</h3>
+      <h3 class="page-header">Atividades<br><a href="{% url 'crm:activity-add' %}" id="form_btn_add" class="btn btn-primary btn-xs">Adicionar</a></h3>
+
       <div class="row">
         <div class="col-xs-12 col-sm-8 placeholder">
-          <!-- Activity One -->
+          <!-- Activity -->
+          {% for my_activity in my_activities %}
           <div class="panel-group">
             <div class="panel panel-default">
               <div class="panel-body">
-
                 <div class="col-xs-12 col-sm-6 placeholder">
                   <div class="icon-place">
+                    {% if my_activity.type_activity = "T" %}
                     <span class="glyphicon glyphicon-phone-alt activity-icon" aria-hidden="true"></span>
+                    {% elif my_activity.type_activity = "E" %}
+                    <span class="glyphicon glyphicon-envelope activity-icon" aria-hidden="true"></span>
+                    {% elif my_activity.type_activity = "V" %}
+                    <span class="glyphicon glyphicon-briefcase activity-icon" aria-hidden="true"></span>
+                    {% else %}
+                    <span class="glyphicon glyphicon-list-alt activity-icon" aria-hidden="true"></span>
+                    {% endif %}
+                
                   </div>
+
                   <div class="activity-text">
-                    <p><a href="#">Titulo</a></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ornare quam sollicitudin velit vulputate consectetur.</p>
+                    <p><a href="{% url 'crm:activity-update' my_activity.id %}">{{ my_activity.title }}</a></p>
+                    <p>{{ my_activity.description }}</p>
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-6 placeholder">
                   <div class="activity-controls">
                     <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    <span style="">20/05/2016 13:30</span>
+                    <span style="">{{ my_activity.deadline|date:"d/m/Y H:i" }}</span>
+                    <a tabindex="{{ forloop.counter }}" style="text-decoration: none;" data-toggle="popover" role="button" data-trigger="focus" data-content="{{ my_activity.details }}">
                     <span class="glyphicon glyphicon-comment" aria-hidden="true" style="vertical-align: middle;"></span>
                     <span style="font-family: arial; color: gray; font-size: x-small; margin-left:5px;">Detalhes</span>
-                    <span class="label label-danger">Atrasado</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- Activity Two -->
-          <div class="panel-group">
-            <div class="panel panel-default">
-              <div class="panel-body">
-
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="icon-place">
-                    <span class="glyphicon glyphicon-send activity-icon" aria-hidden="true"></span>
-                  </div>
-                  <div class="activity-text">
-                    <p><a href="#">Titulo</a></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ornare quam sollicitudin velit vulputate consectetur.</p>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="activity-controls">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    <span style="">20/05/2016 13:30</span>
-                    <span class="glyphicon glyphicon-comment" aria-hidden="true" style="vertical-align: middle;"></span>
-                    <span style="font-family: arial; color: gray; font-size: x-small; margin-left:5px;">Detalhes</span>
+                    </a>
+                    {% if my_activity.is_late %}
+                    <span class="label label-danger"> Atrasado</span>
+                    {% else %}
                     <span class="label label-success">Pendente</span>
+                    {% endif %}
                   </div>
                 </div>
 
               </div>
             </div>
           </div>
+          {% endfor %}
 
-          <!-- Activity Three -->
-          <div class="panel-group">
-            <div class="panel panel-default">
-              <div class="panel-body">
-
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="icon-place">
-                    <span class="glyphicon glyphicon-send activity-icon" aria-hidden="true"></span>
-                  </div>
-                  <div class="activity-text">
-                    <p><a href="#">Titulo</a></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ornare quam sollicitudin velit vulputate consectetur.</p>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="activity-controls">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    <span style="">20/05/2016 13:30</span>
-                    <span class="glyphicon glyphicon-comment" aria-hidden="true" style="vertical-align: middle;"></span>
-                    <span style="font-family: arial; color: gray; font-size: x-small; margin-left:5px;">Detalhes</span>
-                    <span class="label label-success">Pendente</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
-          <!-- Activity Four -->
-          <div class="panel-group">
-            <div class="panel panel-default">
-              <div class="panel-body">
-
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="icon-place">
-                    <span class="glyphicon glyphicon-send activity-icon" aria-hidden="true"></span>
-                  </div>
-                  <div class="activity-text">
-                    <p><a href="#">Titulo</a></p>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ornare quam sollicitudin velit vulputate consectetur.</p>
-                  </div>
-                </div>
-                <div class="col-xs-12 col-sm-6 placeholder">
-                  <div class="activity-controls">
-                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
-                    <span style="">20/05/2016 13:30</span>
-                    <span class="glyphicon glyphicon-comment" aria-hidden="true" style="vertical-align: middle;"></span>
-                    <span style="font-family: arial; color: gray; font-size: x-small; margin-left:5px;">Detalhes</span>
-                    <span class="label label-success">Pendente</span>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-
+          <h5 align="right"><a href="{% url 'crm:activity-index' %}"<span class="label label-default">Ver todas</span></a></h5>
         </div>
 
         <div class="col-xs-12 col-sm-4 placeholder">
@@ -331,6 +266,10 @@ $(function () {
         }]
     });
 });
+
+$(function () {
+  $('[data-toggle="popover"]').popover()
+})
 
 </script>
 
