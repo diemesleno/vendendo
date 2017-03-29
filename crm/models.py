@@ -174,10 +174,12 @@ class Activity(models.Model):
     type_activity = models.CharField(max_length=1,
                                      choices=type_activity_choices)
     details = models.TextField(null=True, blank=True)
-    deadline = models.DateField(null=False)
+    deadline = models.DateTimeField(null=False)
     created = models.DateTimeField(auto_now_add=True)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     responsible_seller = models.ForeignKey('auth.User')
+    completed = models.BooleanField(default=False)
+    completed_date = models.DateField(null=True, blank=True)
 
     def __unicode__(self):
         return self.name

@@ -247,7 +247,7 @@ class ActivityForm(forms.ModelForm):
 
     class Meta:
         model = Activity
-        fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline')
+        fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline', 'completed',)
 
     def __init__(self, organization, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
@@ -279,3 +279,7 @@ class ActivityForm(forms.ModelForm):
         self.fields['deadline'].input_formats = ['%d/%m/%Y']
         self.fields['deadline'].help_text = "Formato: <em>DD-MM-AAAA</em>."
         self.fields['deadline'].widget.attrs.update({'class': 'form-control'})
+        # field completed
+        self.fields['completed'].required = False
+        self.fields['completed'].label = 'Concluída'
+        self.fields['completed'].widget = forms.CheckboxInput()

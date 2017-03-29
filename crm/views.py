@@ -18,6 +18,7 @@ from django.utils.functional import cached_property
 from django.shortcuts import redirect
 from django.conf import settings
 from django.core.mail import send_mail
+from datetime import datetime
 import uuid
 import hashlib
 
@@ -709,6 +710,12 @@ class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
                                  user_account=user_account).organization_active
         activity.organization = organization_active
         activity.responsible_seller = user_account
+        # add completed_date
+        if activity.completed:
+            if activity.completed_date is None:
+                activity.completed_date = datetime.now()
+        else:
+            activity.completed_date = None
         activity.save()
         return super(ActivityCreate, self).form_valid(form)
 
@@ -722,6 +729,17 @@ class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
 class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
     model = Activity
     form_class = ActivityForm
+
+    def form_valid(self, form):
+        activity = form.save()
+        # add completed_date
+        if activity.completed:
+            if activity.completed_date is None:
+                activity.completed_date = datetime.now()
+        else:
+            activity.completed_date = None
+        activity.save()
+        return super(ActivityUpdate, self).form_valid(form)
 
     def get_form(self, form_class=None):
         if form_class is None:
