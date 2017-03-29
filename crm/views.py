@@ -86,7 +86,7 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return Activity.objects.filter(organization=organization_active).order_by('deadline')[:4]
+        return Activity.objects.filter(organization=organization_active, completed=False).order_by('deadline')[:4]
 
 # Organization Views
 class OrganizationSecMixin(object):
