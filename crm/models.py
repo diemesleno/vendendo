@@ -74,18 +74,6 @@ class Customer(models.Model):
                          (100, u'100%'))
     relevance = models.IntegerField(default=0,
                                     choices=relevance_choices)
-    contact1_name = models.CharField(max_length=200, null=True, blank=True)
-    contact1_email = models.EmailField(max_length=254, null=True, blank=True)
-    contact1_tel = models.CharField(max_length=20, null=True, blank=True)
-    contact1_position = models.CharField(max_length=100, null=True, blank=True)
-    contact2_name = models.CharField(max_length=200, null=True, blank=True)
-    contact2_email = models.EmailField(max_length=254, null=True, blank=True)
-    contact2_tel = models.CharField(max_length=20, null=True, blank=True)
-    contact2_position = models.CharField(max_length=100, null=True, blank=True)
-    contact3_name = models.CharField(max_length=200, null=True, blank=True)
-    contact3_email = models.EmailField(max_length=254, null=True, blank=True)
-    contact3_tel = models.CharField(max_length=20, null=True, blank=True)
-    contact3_position = models.CharField(max_length=100, null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     occupationarea = models.ForeignKey('OccupationArea')
@@ -192,3 +180,14 @@ class Activity(models.Model):
 
     def get_absolute_url(self):
         return reverse('crm:activity-index')
+
+
+class Contact(models.Model):
+    customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
+    contact_name = models.CharField(max_length=200)
+    contact_email = models.EmailField(max_length=254)
+    contact_tel = models.CharField(max_length=20)
+    contact_position = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.name
