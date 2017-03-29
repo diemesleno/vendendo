@@ -2,6 +2,8 @@
 from django.db import models
 from django.contrib import auth
 from django.core.urlresolvers import reverse
+from datetime import date, datetime
+from django.utils import timezone
 
 
 class Organization(models.Model):
@@ -181,8 +183,12 @@ class Activity(models.Model):
     completed = models.BooleanField(default=False)
     completed_date = models.DateField(null=True, blank=True)
 
+    @property
+    def is_late(self):
+        return timezone.now() > self.deadline
+
     def __unicode__(self):
-        return self.name
+        return self.title
 
     def get_absolute_url(self):
         return reverse('crm:activity-index')
