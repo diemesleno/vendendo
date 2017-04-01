@@ -19,6 +19,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.mail import send_mail
 from datetime import datetime
+from django.db.models import Q, F, Sum
 import uuid
 import hashlib
 
@@ -82,11 +83,18 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/dashboard.html'
     context_object_name = 'my_activities'
 
+    def get_context_data(self, **kwargs):
+        context = super(Dashboard, self).get_context_data(**kwargs)
+        context['customers_potential_count'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
+        context['customers_potential_top5'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').order_by('-relevance')[:5]
+        context['opportunities_open_count'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False).count()
+        context['opportunities_open_top5'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)
+        context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
+        context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
+        return context
+
     def get_queryset(self):
-        user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                user_account=user_account).organization_active
-        return Activity.objects.filter(organization=organization_active, completed=False).order_by('deadline')[:4]
+        return Activity.objects.filter(organization=self.organization_active, completed=False).order_by('deadline')[:4]
 
 # Organization Views
 class OrganizationSecMixin(object):

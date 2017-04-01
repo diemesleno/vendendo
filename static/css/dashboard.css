@@ -39,6 +39,7 @@ body {
 }
 th {
   background-color: #F6F6F6;
+  text-align: center;
 }
 .row-dashboard{
   padding: 0px;
@@ -83,12 +84,12 @@ th {
 }
 
 .activities .activity-controls {
-  
+
 }
 
 .activities .activity-controls .glyphicon {
   vertical-align: middle;
-  font-family: 'Glyphicons Halflings'; 
+  font-family: 'Glyphicons Halflings';
   color: gray;
   font-size: medium;
   margin-left:5px;
@@ -96,9 +97,9 @@ th {
 }
 
 .activities .activity-controls span {
-  font-family: arial; 
-  color: gray; 
-  font-size: x-small; 
+  font-family: arial;
+  color: gray;
+  font-size: x-small;
   margin-left:5px;
 }
 
