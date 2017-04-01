@@ -1,0 +1,102 @@
+{% extends "crm/basemenu.html" %}
+{% block title %}Visão Geral{% endblock %}
+
+{% block customcss %}
+
+<link href="/static/css/dashboard.css" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+
+{% include 'crm/initialpage.html' %}
+
+
+<footer class="footer">
+  <div class="row">
+  </div>
+</footer>
+{% endblock %}
+
+{% block customjs %}
+
+<script src="/static/highcharts/js/highcharts.js"></script>
+<script>
+
+$(function () {
+    $('#container_chart').highcharts({
+        chart: {
+            type: 'column'
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    enabled: false,
+                    align: 'left'
+                }
+            }
+        },
+        title: {
+            text: 'Oportunidades'
+        },
+        xAxis: {
+            categories: ['Oportunidades']
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Total de Oportunidades'
+            },
+            stackLabels: {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
+                }
+            }
+        },
+
+        legend: {
+           enabled: false
+        },
+        tooltip: {
+            headerFormat: '<b>{point.x}</b><br/>',
+            pointFormat: '{series.name}: $ {point.y}<br/>Total: $ {point.stackTotal}'
+        },
+        plotOptions: {
+            column: {
+                stacking: 'normal',
+                dataLabels: {
+                    enabled: true,
+                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+                    format: '$ {y}',
+                    style: {
+
+                        textShadow: '0 0 3px black'
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Prospecção',
+            data: [5000]
+        }, {
+            name: 'Apresentação',
+            data: [2500]
+        }, {
+            name: 'Proposta',
+            data: [356.50]
+        }, {
+            name: 'Negociação',
+            data: [200]
+        }]
+    });
+});
+
+$(function () {
+  $('[data-toggle="popover"]').popover()
+})
+
+</script>
+
+{% endblock %}

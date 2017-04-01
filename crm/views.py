@@ -765,3 +765,7 @@ class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class ActivityDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = Activity
     success_url = reverse_lazy('crm:activity-index')
+
+
+class Help(LoginRequiredMixin, SessionMixin, TemplateView):
+    template_name = 'crm/help_index.html'
