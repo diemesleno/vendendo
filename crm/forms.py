@@ -233,6 +233,7 @@ class OpportunityForm(forms.ModelForm):
         self.fields['stage'].required = True
         self.fields['stage'].label = 'Etapa'
         self.fields['stage'].widget.attrs.update({'class': 'form-control'})
+        self.fields['stage'].queryset = SaleStage.objects.filter(organization=organization)
         # field expected_month
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'
