@@ -220,7 +220,7 @@ class OpportunityForm(forms.ModelForm):
 
     class Meta:
         model = Opportunity
-        fields = ('customer', 'stage', 'expected_value', 'expected_month')
+        fields = ('customer', 'stage', 'expected_month')
 
     def __init__(self, organization, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
@@ -233,10 +233,6 @@ class OpportunityForm(forms.ModelForm):
         self.fields['stage'].required = True
         self.fields['stage'].label = 'Etapa'
         self.fields['stage'].widget.attrs.update({'class': 'form-control'})
-        # field expected_value
-        self.fields['expected_value'].required = False
-        self.fields['expected_value'].label = 'Valor estimado'
-        self.fields['expected_value'].widget.attrs.update({'class': 'form-control'})
         # field expected_month
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'

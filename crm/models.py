@@ -4,6 +4,7 @@ from django.contrib import auth
 from django.core.urlresolvers import reverse
 from datetime import date, datetime
 from django.utils import timezone
+from django.db.models import Q, F, Sum
 
 
 class Organization(models.Model):
@@ -142,9 +143,12 @@ class Opportunity(models.Model):
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     seller = models.ForeignKey('auth.User')
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
-    expected_value = models.DecimalField(max_digits=19, decimal_places=2)
     expected_month = models.CharField(max_length=6)
     created = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def expected_value(self):
+        return OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
 
     def __unicode__(self):
         return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.customer.name.__str__()
