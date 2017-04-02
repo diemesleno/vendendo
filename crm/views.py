@@ -51,6 +51,17 @@ class SessionMixin(object):
                                 user_account=user_account).organization_active
         return organization_active
 
+    @cached_property
+    def is_admin(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        type_user_organization = UserOrganization.objects.get(
+                                    user_account=user_account,
+                                    organization=self.organization_active).type_user
+        if type_user_organization == "A":
+            return True
+        else:
+            return False
+
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
         user_account = User.objects.get(id=self.request.user.id)
@@ -94,7 +105,11 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         return context
 
     def get_queryset(self):
-        return Activity.objects.filter(organization=self.organization_active, completed=False).order_by('deadline')[:4]
+        if self.is_admin:
+            return Activity.objects.filter(organization=self.organization_active, completed=False).order_by('deadline')[:4]
+        else:
+            return Activity.objects.filter(organization=self.organization_active, completed=False, responsible_seller=user_account).order_by('deadline')[:4]
+
 
 # Organization Views
 class OrganizationSecMixin(object):
@@ -733,8 +748,10 @@ class ActivityIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return Activity.objects.filter(organization=organization_active)
-
+        if self.is_admin:
+            return Activity.objects.filter(organization=organization_active)
+        else:
+            return Activity.objects.filter(organization=organization_active, responsible_seller=user_account)
 
 class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Activity
