@@ -112,6 +112,14 @@ class SaleStage(models.Model):
     def get_absolute_url(self):
         return reverse('crm:salestage-index')
 
+    @property
+    def get_opportunity_value(self):
+        result = 0
+        opportunities = Opportunity.objects.filter(stage=self)
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        return result
+
 
 class CustomerService(models.Model):
     definition_types = ((u'P', u'Produto'),

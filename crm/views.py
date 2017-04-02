@@ -113,6 +113,18 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['opportunities_open_top5'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)
         context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
         context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
+        # calculate opportunity values by stage
+        stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
+        opportunity_value_stages = "["
+        idx = 0
+        for stage in stages:
+            if stage.get_opportunity_value > 0:
+                if idx > 0:
+                    opportunity_value_stages += ","
+                opportunity_value_stages += "['%s', %s]" % (stage.name, str(stage.get_opportunity_value))
+                idx += 1
+        opportunity_value_stages += "]"
+        context['opportunity_value_stages'] = opportunity_value_stages
         return context
 
     def get_queryset(self):

@@ -107,11 +107,11 @@
               <div class="panel-body">
                 <div class="col-xs-12 col-sm-6 placeholder">
                   <div class="icon-place">
-                    {% if my_activity.type_activity = "T" %}
+                    {% if my_activity.type_activity == "T" %}
                     <span class="glyphicon glyphicon-phone-alt activity-icon" aria-hidden="true"></span>
-                    {% elif my_activity.type_activity = "E" %}
+                    {% elif my_activity.type_activity == "E" %}
                     <span class="glyphicon glyphicon-envelope activity-icon" aria-hidden="true"></span>
-                    {% elif my_activity.type_activity = "V" %}
+                    {% elif my_activity.type_activity == "V" %}
                     <span class="glyphicon glyphicon-briefcase activity-icon" aria-hidden="true"></span>
                     {% else %}
                     <span class="glyphicon glyphicon-list-alt activity-icon" aria-hidden="true"></span>
@@ -177,12 +177,13 @@
 {% block customjs %}
 
 <script src="/static/highcharts/js/highcharts.js"></script>
+<script src="/static/highcharts/js/modules/funnel.js"></script>
 <script>
 
 $(function () {
     $('#container_chart').highcharts({
         chart: {
-            type: 'column'
+            type: 'funnel'
         },
         exporting: {
             buttons: {
@@ -193,61 +194,34 @@ $(function () {
             }
         },
         title: {
-            text: 'Oportunidades'
+            text: 'Funil de vendas'
         },
-        xAxis: {
-            categories: ['Oportunidades']
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Total de Oportunidades'
-            },
-            stackLabels: {
-                enabled: true,
-                style: {
-                    fontWeight: 'bold',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                }
-            }
-        },
-
         legend: {
            enabled: false
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b><br/>',
-            pointFormat: '{series.name}: $ {point.y}<br/>Total: $ {point.stackTotal}'
+          valueDecimals: 2,
+          valuePrefix: 'R$ ',
         },
         plotOptions: {
-            column: {
-                stacking: 'normal',
-                dataLabels: {
+        series: {
+            dataLabels: {
                     enabled: true,
                     color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                    format: '$ {y}',
+                    format: 'R$ {y:,.2f}',
+                    distance: -100,
                     style: {
-
                         textShadow: '0 0 3px black'
                     }
                 }
             }
         },
         series: [{
-            name: 'Prospecção',
-            data: [5000]
-        }, {
-            name: 'Apresentação',
-            data: [2500]
-        }, {
-            name: 'Proposta',
-            data: [356.50]
-        }, {
-            name: 'Negociação',
-            data: [200]
+          name: 'Valor estimado',
+          data: {{ opportunity_value_stages|safe }}
         }]
     });
-});
+});   
 
 $(function () {
   $('[data-toggle="popover"]').popover()
