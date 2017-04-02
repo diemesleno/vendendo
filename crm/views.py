@@ -634,6 +634,29 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
                                  user_account=user_account).organization_active
         opportunity.organization = organization_active
         opportunity.seller = user_account
+        opportunity.save()
+        products = self.request.POST.getlist('product')
+        descriptions = self.request.POST.getlist('description')
+        expected_values = self.request.POST.getlist('expected_value_item')
+        expected_amounts = self.request.POST.getlist('expected_amount')
+        # clear Opportunity Items
+        OpportunityItem.objects.filter(opportunity=opportunity).delete()
+        # create news opportunity items
+        if products:
+            for idx,product in enumerate(products):
+                opportunity_item = OpportunityItem()
+                opportunity_item.opportunity = opportunity
+                opportunity_item.organization = opportunity.organization
+                customer_service = CustomerService.objects.get(id=product)
+                opportunity_item.customer_service = customer_service
+                opportunity_item.description = descriptions[idx]
+                opportunity_item.expected_value = expected_values[idx]
+                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.save()
+        #add customer
+        if opportunity.stage.add_customer:
+            opportunity.customer.category = 'P'
+            opportunity.customer.save()
         return super(OpportunityCreate, self).form_valid(form)
 
     def get_form(self, form_class=None):
@@ -673,11 +696,6 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
         descriptions = self.request.POST.getlist('description')
         expected_values = self.request.POST.getlist('expected_value_item')
         expected_amounts = self.request.POST.getlist('expected_amount')
-        #add customer
-        if opportunity.stage.add_customer:
-            opportunity.customer.category = 'P'
-            opportunity.customer.save()
-        opportunity.save()
         # clear Opportunity Items
         OpportunityItem.objects.filter(opportunity=opportunity).delete()
         # create news opportunity items
@@ -692,6 +710,11 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
                 opportunity_item.expected_value = expected_values[idx]
                 opportunity_item.expected_amount = expected_amounts[idx]
                 opportunity_item.save()
+        #add customer
+        if opportunity.stage.add_customer:
+            opportunity.customer.category = 'P'
+            opportunity.customer.save()
+        opportunity.save()
         return super(OpportunityUpdate, self).form_valid(form)
 
     def get_form(self, form_class=None):
