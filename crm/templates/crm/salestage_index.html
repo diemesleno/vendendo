@@ -10,17 +10,21 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Fases de Oportunidades</h3>
+    <h3 class="page-header">Fases de Oportunidades
+        <br>
+          <a href="{% url 'crm:salestage-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:salestage-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Fase de Oportunidades</a>
-        </p>
         <table class="table">
+            <tr>
+                <th></th>
+                <th>Fase</th>
+            <tr>
           {% for my_salestage in my_salestages %}
-          <tr>
             <td class="action-column-order">
               <div style="float:left; margin-right: 10px;">
               <form action="{% url 'crm:salestage-delete' my_salestage.id %}" method="post">
