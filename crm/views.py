@@ -46,21 +46,32 @@ class SessionMixin(object):
 
     @cached_property
     def organization_active(self):
-        user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                user_account=user_account).organization_active
-        return organization_active
+        return UserComplement.objects.get(user_account=self.user_account).organization_active
+
+    @cached_property
+    def user_account(self):
+        return User.objects.get(id=self.request.user.id)
 
     @cached_property
     def is_admin(self):
         user_account = User.objects.get(id=self.request.user.id)
-        type_user_organization = UserOrganization.objects.get(
+        if UserOrganization.objects.filter(
                                     user_account=user_account,
-                                    organization=self.organization_active).type_user
-        if type_user_organization == "A":
-            return True
-        else:
-            return False
+                                    organization=self.organization_active).exists():
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=self.organization_active).type_user
+            if type_user_organization == "A":
+                return True
+            else:
+                return False
+        return False
+
+    @cached_property
+    def organizations(self):
+        return UserOrganization.objects.filter(
+                            user_account=self.user_account,
+                            status_active='A')
 
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
@@ -105,10 +116,21 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         return context
 
     def get_queryset(self):
+
         if self.is_admin:
             return Activity.objects.filter(organization=self.organization_active, completed=False).order_by('deadline')[:4]
         else:
-            return Activity.objects.filter(organization=self.organization_active, completed=False, responsible_seller=user_account).order_by('deadline')[:4]
+            return Activity.objects.filter(organization=self.organization_active, completed=False, responsible_seller=self.user_account).order_by('deadline')[:4]
+
+    def get_template_names(self):
+        if self.template_name is None:
+            raise ImproperlyConfigured(
+                "TemplateResponseMixin requires either a definition of "
+                "'template_name' or an implementation of 'get_template_names()'")
+        else:
+            if not self.organizations:
+                self.template_name = 'crm/help_index.html'
+            return [self.template_name]
 
 
 # Organization Views
