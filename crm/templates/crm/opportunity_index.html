@@ -22,6 +22,7 @@
         <table class="table">
             <th></th>
             <th>Cliente</th>
+            <th>Descrição</th>
             <th>Etapa</th>
             <th>Valor</th>
           {% for my_opportunity in my_opportunities %}
@@ -35,6 +36,7 @@
               </form>
             </td>
             <td><a href="{% url 'crm:opportunity-update' my_opportunity.id %}">{{ my_opportunity.customer.name }}</a></td>
+            <td>{{ my_opportunity.description_opportunity }}</td>
             <td>{{ my_opportunity.stage.name }}</td>
             <td>{{ my_opportunity.expected_value|default:"0.00" }}</td>
           </tr>

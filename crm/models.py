@@ -153,13 +153,14 @@ class Opportunity(models.Model):
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
     expected_month = models.CharField(max_length=6)
     created = models.DateTimeField(auto_now_add=True)
+    description_opportunity = models.CharField(max_length=100)
 
     @property
     def expected_value(self):
         return OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
 
     def __unicode__(self):
-        return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.customer.name.__str__()
+        return self.customer.name.__str__() + ' - ' + self.description.__str__()
 
     def get_absolute_url(self):
         return reverse('crm:opportunity-index')
