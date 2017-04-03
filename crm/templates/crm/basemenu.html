@@ -68,6 +68,43 @@
           </ul>
         {% endif %}
         <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-envelope"></i> {% if invites %}<span class="label label-warning">{{ invites.count }}</span>{% endif %}</span></a>
+            <ul class="dropdown-menu">
+              {% for invite in invites %}
+              <li>
+                <div class="row" style="min-width:450px; padding: 10px;">
+                  <div class="col-md-2" style="font-size: 3.0em !important; color:silver; text-align:center;">
+                    <i class="glyphicon glyphicon-question-sign"></i>
+                  </div>
+                  <div class="col-md-8">
+                    Você foi convidado pela Organização <strong>[{{ invite.organization.name }}]</strong> para ser um de seus vendedores.<br />Aceita o convite?
+                  </div>
+                  <div class="col-md-2" style="font-size: 2.0em !important;">
+                    <div> 
+                    <form action="{% url 'crm:invitemessage-activate' invite.code_activating %}" method="post">
+                    {% csrf_token %}
+                      <button type="submit" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Aceitar convite">
+                        <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                      </button>
+                    </form>
+                    </div>
+                    <div> 
+                    <form action="{% url 'crm:invitemessage-leave' invite.code_activating %}" method="post">
+                    {% csrf_token %}
+                      <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Recusar convite">
+                        <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                      </button>
+                    </form>
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li role="separator" class="divider"></li>
+              {% endfor %}
+              <li style="text-align:center; font-weight:bold;"><a href="{% url 'crm:invitemessage-index' %}">Ver todas</a></li>
+            </ul>
+          </li>
           {% if type_user_organization == "A" %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administração<span class="caret"></span></a>
@@ -80,8 +117,9 @@
             </ul>
           </li>
           {% endif %}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>  {{ user.first_name }}<span class="caret"></span></a>
+          <li class="dropdown" style="height: 50px;">
+            <!-- <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>  {{ user.first_name }}<span class="caret"></span></a> -->
+            <a href="#" class="dropdown-toggle" style="padding-bottom:0px;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.first_name }} <span style="margin-left:10px;"><img src="/static/images/anonymous_user.png" class="brand" width="25" height="25" style="vertical-align: middle;"></span></a>
             <ul class="dropdown-menu">
               <li><a href="/edituser/">Minha Conta</a></li>
               <li><a href="/editpwd/">Alterar minha senha</a></li>

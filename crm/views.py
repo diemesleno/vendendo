@@ -65,9 +65,13 @@ class SessionMixin(object):
                                         organization=organization_active).type_user
         else:
             type_user_organization = None
+        # Invite messages
+        invites = UserOrganization.objects.filter(Q(user_account=user_account)&Q(type_user='S')&~Q(status_active='A'))
+
         context['type_user_organization'] = type_user_organization
         context['organization_active'] = organization_active
         context['organizations'] = organizations
+        context['invites'] = invites
         return context
 
 
@@ -777,3 +781,39 @@ class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class ActivityDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = Activity
     success_url = reverse_lazy('crm:activity-index')
+
+
+# Invite messages Views
+class InviteMessageIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/invite_message_index.html'
+    context_object_name = 'my_messages'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        return UserOrganization.objects.filter(user_account=user_account, type_user='S')
+
+
+class InviteMessageActivate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = UserOrganization
+
+    def post(self, request, *args, **kwargs):
+        self.object = UserOrganization.objects.get(code_activating=kwargs['pk'])
+        self.object.status_active = 'A'
+        self.object.save()
+        return redirect('crm:invitemessage-index')
+
+class InviteMessageLeave(LoginRequiredMixin, SessionMixin, DeleteView):
+    model = UserOrganization
+    success_url = reverse_lazy('crm:invitemessage-index')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = UserOrganization.objects.get(code_activating=kwargs['pk'])
+        success_url = self.get_success_url()
+        user_account = self.object.user_account
+        self.object.delete()
+
+        if not UserOrganization.objects.filter(
+                user_account=user_account).exists():
+            user_account.delete()
+        return HttpResponseRedirect(success_url)
+

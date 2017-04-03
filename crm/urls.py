@@ -58,6 +58,10 @@ urlpatterns = [
     url(r'^activity/add/$', views.ActivityCreate.as_view(), name='activity-add'),
     url(r'^activity/$', views.ActivityIndex.as_view(), name='activity-index'),
 
+    url(r'^invitemessage/$', views.InviteMessageIndex.as_view(), name='invitemessage-index'),
+    url(r'^invitemessage/(?P<pk>\w+)/activate/$', views.InviteMessageActivate.as_view(), name='invitemessage-activate'),
+    url(r'^invitemessage/(?P<pk>\w+)/leave/$', views.InviteMessageLeave.as_view(), name='invitemessage-leave'),
+
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 
     url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),
