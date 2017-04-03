@@ -114,7 +114,7 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['customers_potential_count'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
         context['customers_potential_top5'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').order_by('-relevance')[:5]
         context['opportunities_open_count'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False).count()
-        context['opportunities_open_top5'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)
+        context['opportunities_open_top5'] = sorted(Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)[:5], key=lambda o: o.expected_value, reverse=True)
         context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
         context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
         # calculate opportunity values by stage
@@ -882,4 +882,3 @@ class InviteMessageLeave(LoginRequiredMixin, SessionMixin, DeleteView):
 
 class Help(LoginRequiredMixin, SessionMixin, TemplateView):
     template_name = 'crm/help_index.html'
-
