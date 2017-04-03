@@ -157,7 +157,10 @@ class Opportunity(models.Model):
 
     @property
     def expected_value(self):
-        return OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
+        value = OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
+        if not value:
+            value = 0
+        return value
 
     def __unicode__(self):
         return self.customer.name.__str__() + ' - ' + self.description.__str__()
