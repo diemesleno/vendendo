@@ -10,15 +10,23 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Vendedores</h3>
+    <h3 class="page-header">Vendedores
+        <br>
+          <a href="{% url 'crm:seller-find' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:seller-find' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Vendedor</a>
-        </p>
+
         <table class="table">
+            <tr>
+                <th></th>
+                <th>Status</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+            <tr>
           {% for seller in sellers %}
           <tr>
             <td class="action-column">
@@ -77,4 +85,3 @@
   })
 </script>
 {% endblock %}
-

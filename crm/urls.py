@@ -64,6 +64,8 @@ urlpatterns = [
 
     url(r'^dashboard/$', views.Dashboard.as_view(), name='dashboard-index'),
 
+    url(r'^help/$', views.Help.as_view(), name='help-index'),
+
     url(r'^success/$', views.SuccessPage.as_view(), name='success-index'),
     url(r'^error/$', views.ErrorPage.as_view(), name='error-index'),
 ]

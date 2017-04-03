@@ -10,15 +10,19 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Produtos e Serviços</h3>
+    <h3 class="page-header">Produtos e Serviços
+        <br>
+          <a href="{% url 'crm:customerservice-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:customerservice-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Produto ou Serviço</a>
-        </p>
         <table class="table">
+            <th></th>
+            <th>Nome</th>
+            <th>Tipo</th>
           {% for my_customerservice in my_customerservices %}
           <tr>
             <td class="action-column">

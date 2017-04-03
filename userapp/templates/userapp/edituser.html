@@ -1,61 +1,69 @@
 {% extends "crm/basemenu.html" %}
 {% block title %}Editar Usuário{% endblock %}
 
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-  <h2>{{ title }}</h2>
-  {% if success %}
-  <p class="msg-success">
-    <div class="alert alert-success" role="alert">
-      <a href="#" class="alert-link">{{ success }}</a>
+    <div class="main">
+        <h3 class="page-header">{{ title }}</h3>
+        {% if success %}
+        <p class="msg-success">
+            <div class="alert alert-success" role="alert">
+                <a href="#" class="alert-link">{{ success }}</a>
+            </div>
+        </p>
+        {% elif error %}
+        <p class="msg-error">
+            <div class="alert alert-danger" role="alert">
+                <a href="#" class="alert-link">{{ error }}</a>
+            </div>
+            {% endif %}
+        </p>
+        <div class="col-xs-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form method="POST" action="/edituser/">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ user_account.id }}">
+                        <div class="form-group">
+                            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+                            {% if form.username.errors %}
+                            {{ form.username.errors }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email">E-mail</label>
+                            <input type="email" class="form-control" name="email" id="id_email" value="{% if form %}{{ form.email.value }}{% else %}{% if user_account %}{{ user_account.email }}{% endif %}{% endif %}">
+                            {% if form.email.errors %}
+                            {{ form.email.errors }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_first_name">Nome</label>
+                            <input type="text" class="form-control" name="first_name" id="id_first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if user_account %}{{ user_account.first_name }}{% endif %}{% endif %}">
+                            {% if form.first_name.errors %}
+                            {{ form.first_name.errors }}
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_last_name">Sobrenome</label>
+                            <input type="text" class="form-control" name="last_name" id="id_last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if user_account %}{{ user_account.last_name }}{% endif %}{% endif %}">
+                            {% if form.last_name.errors %}
+                            {{ form.last_name.errors }}
+                            {% endif %}
+                        </div>
+                        <p class="text-right">
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </p>
-  {% elif error %}
-  <p class="msg-error">
-    <div class="alert alert-danger" role="alert">
-      <a href="#" class="alert-link">{{ error }}</a>
-    </div>
-  {% endif %}
-  </p>
-  <div class="col-xs-12 col-sm-12">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <form method="POST" action="/edituser/">
-          {% csrf_token %}
-          <input type="hidden" name="id" value="{{ user_account.id }}">
-          <div class="form-group">
-            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
-            {% if form.username.errors %}
-              {{ form.username.errors }}
-            {% endif %}
-          </div>
-          <div class="form-group">
-            <label for="id_email">E-mail</label>
-            <input type="email" class="form-control" name="email" id="id_email" value="{% if form %}{{ form.email.value }}{% else %}{% if user_account %}{{ user_account.email }}{% endif %}{% endif %}">
-            {% if form.email.errors %}
-              {{ form.email.errors }}
-            {% endif %}
-          </div>
-          <div class="form-group">
-            <label for="id_first_name">Nome</label>
-            <input type="text" class="form-control" name="first_name" id="id_first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if user_account %}{{ user_account.first_name }}{% endif %}{% endif %}">
-            {% if form.first_name.errors %}
-              {{ form.first_name.errors }}
-            {% endif %}
-          </div>
-          <div class="form-group">
-            <label for="id_last_name">Sobrenome</label>
-            <input type="text" class="form-control" name="last_name" id="id_last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if user_account %}{{ user_account.last_name }}{% endif %}{% endif %}">
-            {% if form.last_name.errors %}
-              {{ form.last_name.errors }}
-            {% endif %}
-          </div>
-          <p class="text-right">
-            <button type="submit" class="btn btn-success">Salvar</button>
-          </p>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}

@@ -10,15 +10,18 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Minhas Organizações</h3>
+    <h3 class="page-header">Minhas Organizações
+        <br>
+          <a href="{% url 'crm:organization-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:organization-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Organização</a>
-        </p>
         <table class="table">
+            <th></th>
+            <th>Nome</th>
           {% for my_organization in my_organizations %}
           <tr>
             <td class="action-column">
