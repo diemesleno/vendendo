@@ -1,59 +1,66 @@
 {% extends "crm/basemenu.html" %}
 {% block title %}Editar Senha{% endblock %}
 
+{% block customcss %}
+
+<link href="/static/css/organization.css" rel="stylesheet">
+
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
-  <h2>{{ title }}</h2>
-
-  {% if success %}
-  <p class="msg-success">
-    <div class="alert alert-success" role="alert">
-      <a href="#" class="alert-link">{{ success }}</a>
+    <div class="main">
+        <h3 class="page-header">{{ title }}</h3>
+        {% if success %}
+        <p class="msg-success">
+            <div class="alert alert-success" role="alert">
+                <a href="#" class="alert-link">{{ success }}</a>
+            </div>
+        </p>
+        {% elif form.password.errors %}
+        <p class="msg-error">
+            <div class="alert alert-danger" role="alert">
+                <a href="#" class="alert-link">{{ form.password.errors }}</a>
+            </div>
+            {% endif %}
+        </p>
+        <div class="col-xs-12 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form method="POST" action="/editpwd/" onsubmit="return validatePassword();">
+                        {% csrf_token %}
+                        <span id="helpBlock" class="help-block">A Senha precisa ter 8 caracteres e conter ao menos uma letra e um número ou caracter especial.</span>
+                        <input type="hidden" name="id" value="{{ user_account.id }}">
+                        <div class="form-group">
+                            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_password">Senha</label>
+                            <input type="password" class="form-control" name="password" id="id_password">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_confirm_password">Repita a senha</label>
+                            <input type="password" class="form-control" name="confirm_password" id="id_confirm_password">
+                        </div>
+                        <p class="text-right">
+                            <button type="submit" class="btn btn-success">Salvar</button>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-  </p>
-  {% elif form.password.errors %}
-  <p class="msg-error">
-  <div class="alert alert-danger" role="alert">
-    <a href="#" class="alert-link">{{ form.password.errors }}</a>
-  </div>
-  {% endif %}
-  </p>
-  <div class="col-xs-12 col-sm-12">
-    <div class="panel panel-default">
-      <div class="panel-body">
-        <form method="POST" action="/editpwd/" onsubmit="return validatePassword();">
-          {% csrf_token %}
-          <span id="helpBlock" class="help-block">A Senha precisa ter 8 caracteres e conter ao menos uma letra e um número ou caracter especial.</span>
-          <input type="hidden" name="id" value="{{ user_account.id }}">
-          <div class="form-group">
-            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
-          </div>
-          <div class="form-group">
-            <label for="id_password">Senha</label>
-            <input type="password" class="form-control" name="password" id="id_password">
-          </div>
-          <div class="form-group">
-            <label for="id_confirm_password">Repita a senha</label>
-            <input type="password" class="form-control" name="confirm_password" id="id_confirm_password">
-          </div>
-          <p class="text-right">
-            <button type="submit" class="btn btn-success">Salvar</button>
-          </p>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>
 {% endblock %}
 {% block customjs %}
 <script>
-  function validatePassword(){
+function validatePassword(){
     var password = document.getElementById("id_password")
     , confirm_password = document.getElementById("id_confirm_password");
     if(password.value != confirm_password.value) {
-      alert("As senhas não combinam!");
-      return false;
+        alert("As senhas não combinam!");
+        return false;
     }
-  }
+}
 </script>
 {% endblock %}

@@ -10,15 +10,21 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Clientes</h3>
+    <h3 class="page-header">Clientes
+        <br>
+          <a href="{% url 'crm:customer-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:customer-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Cliente</a>
-        </p>
+
         <table class="table">
+            <th></th>
+            <th>Nome</th>
+            <th>Catogoria</th>
+            <th>Área de Atuação</th>
           {% for my_customer in my_customers %}
           <tr>
             <td class="action-column">
@@ -30,6 +36,8 @@
               </form>
             </td>
             <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.name }}</a></td>
+            <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.get_category_display }}</a></td>
+            <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.occupationarea }}</a></td>
           </tr>
           {% endfor %}
         </table>

@@ -10,15 +10,18 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Áreas de Atuação</h3>
+    <h3 class="page-header">Áreas de Atuação
+        <br>
+          <a href="{% url 'crm:occupationarea-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:occupationarea-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Área de Atuação</a>
-        </p>
         <table class="table">
+            <th></th>
+            <th>Nome</th>
           {% for my_occupationarea in my_occupationareas %}
           <tr>
             <td class="action-column">
