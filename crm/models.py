@@ -151,7 +151,7 @@ class Opportunity(models.Model):
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     seller = models.ForeignKey('auth.User')
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
-    expected_month = models.CharField(max_length=6)
+    expected_month = models.CharField(max_length=7)
     created = models.DateTimeField(auto_now_add=True)
     description_opportunity = models.CharField(max_length=100)
 
@@ -163,7 +163,7 @@ class Opportunity(models.Model):
         return value
 
     def __unicode__(self):
-        return self.customer.name.__str__() + ' - ' + self.description.__str__()
+        return self.customer.name.__str__() + ' - ' + self.description_opportunity.__str__()
 
     def get_absolute_url(self):
         return reverse('crm:opportunity-index')
