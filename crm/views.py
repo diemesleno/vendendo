@@ -663,8 +663,10 @@ class OpportunityIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return Opportunity.objects.filter(organization=organization_active)
-
+        if self.is_admin:
+            return Opportunity.objects.filter(organization=organization_active)
+        else:
+            return Opportunity.objects.filter(organization=organization_active, seller=self.user_account)
 
 class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Opportunity
@@ -882,4 +884,3 @@ class InviteMessageLeave(LoginRequiredMixin, SessionMixin, DeleteView):
 
 class Help(LoginRequiredMixin, SessionMixin, TemplateView):
     template_name = 'crm/help_index.html'
-
