@@ -125,10 +125,11 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         opportunity_value_stages = "["
         idx = 0
         for stage in stages:
-            if stage.get_opportunity_value > 0:
+            opportunity_value = stage.get_opportunity_value_by_type_user(is_admin=self.is_admin, user_account=self.user_account)
+            if opportunity_value > 0:
                 if idx > 0:
                     opportunity_value_stages += ","
-                opportunity_value_stages += "['%s', %s]" % (stage.name, str(stage.get_opportunity_value))
+                opportunity_value_stages += "['%s', %s]" % (stage.name, str(opportunity_value))
                 idx += 1
         opportunity_value_stages += "]"
         context['opportunity_value_stages'] = opportunity_value_stages
@@ -649,12 +650,20 @@ class OpportunitySecMixin(object):
 
     def dispatch(self, *args, **kwargs):
         u = self.request.user
-        o = Opportunity.objects.get(pk=self.kwargs['pk']).organization
+        o = Opportunity.objects.get(pk=self.kwargs['pk'])
+        opportunity_organization = o.organization
 
-        if not UserOrganization.objects.filter(user_account=u,
-                                               organization=o,
-                                               type_user='A').exists():
-            return redirect('crm:error-index')
+        if self.is_admin:
+            user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                                   organization=opportunity_organization).exists()
+            if not user_of_organization or opportunity_organization != self.organization_active:
+                return redirect('crm:error-index')
+        else:
+            user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                                   organization=opportunity_organization).exists()
+            user_is_owner_of_opportunity = True if o.seller == self.user_account else False
+            if not user_of_organization or opportunity_organization != self.organization_active or not user_is_owner_of_opportunity:
+                return redirect('crm:error-index')
         return super(OpportunitySecMixin, self).dispatch(*args, **kwargs)
 
 

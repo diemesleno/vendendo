@@ -120,6 +120,16 @@ class SaleStage(models.Model):
             result += opportunity.expected_value
         return result
 
+    def get_opportunity_value_by_type_user(self, is_admin, user_account):
+        result = 0
+        if is_admin:
+            opportunities = Opportunity.objects.filter(stage=self)
+        else:
+            opportunities = Opportunity.objects.filter(stage=self, seller=user_account)
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        return result
+
 
 class CustomerService(models.Model):
     definition_types = ((u'P', u'Produto'),
