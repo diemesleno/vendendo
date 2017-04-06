@@ -117,6 +117,9 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['opportunities_open_top5'] = sorted(Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)[:5], key=lambda o: o.expected_value, reverse=True)
         context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
         context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
+        context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
+        context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
+        context['customers_base_complete'] = range(context['customers_base_count'], 5)
         # calculate opportunity values by stage
         stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
         opportunity_value_stages = "["
