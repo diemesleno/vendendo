@@ -7,6 +7,7 @@ from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
 from django.contrib.admin.widgets import AdminDateWidget
+from django.core.validators import RegexValidator
 
 
 class OrganizationForm(forms.ModelForm):
@@ -241,7 +242,10 @@ class OpportunityForm(forms.ModelForm):
         # field expected_month
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'
+        my_validator = RegexValidator(r"\d{2}/\d{4}", "Use o formato mm/aaaa")
+        self.fields['expected_month'].validators = [my_validator]
         self.fields['expected_month'].widget.attrs.update({'class': 'form-control'})
+        self.fields['expected_month'].help_text="Por favor, use o formato: MM/AAAA."
 
 
 class ActivityForm(forms.ModelForm):
@@ -279,6 +283,7 @@ class ActivityForm(forms.ModelForm):
         self.fields['deadline'].widget = forms.widgets.DateInput(format="%d/%m/%Y %H:%M")
         self.fields['deadline'].input_formats = ['%d/%m/%Y %H:%M']
         self.fields['deadline'].widget.attrs.update({'class': 'form-control'})
+        self.fields['deadline'].help_text="Por favor, use o formato: DD/MM/AAAA HH:MM."
         # field completed
         self.fields['completed'].required = False
         self.fields['completed'].label = 'Concluída'

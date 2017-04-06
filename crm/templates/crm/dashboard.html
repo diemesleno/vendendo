@@ -34,6 +34,12 @@
                   <td>{{ customer_potential.relevance }}%</td>
                 </tr>
                 {% endfor %}
+                {% for _ in customers_potential_complete %}
+                <tr>
+                  <td>-</td>
+                  <td>-</td>
+                </tr>
+                {% endfor %}
               </table>
             </div>
           </div>
@@ -61,6 +67,13 @@
                     <td>{{ opportunity.expected_value|default:"0.00" }}</td>
                   </tr>
                   {% endfor %}
+                  {% for _ in opportunities_open_complete %}
+                  <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  {% endfor %}
                 </table>
             </div>
           </div>
@@ -86,6 +99,13 @@
                     <td>{{ customer.name }}</td>
                     <td>{{ customer.occupationarea }}</td>
                     <td>{{ customer.relevance }}%</td>
+                  </tr>
+                  {% endfor %}
+                  {% for _ in customers_base_complete %}
+                  <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
                   </tr>
                   {% endfor %}
                 </table>
@@ -221,7 +241,7 @@ $(function () {
           data: {{ opportunity_value_stages|safe }}
         }]
     });
-});   
+});
 
 $(function () {
   $('[data-toggle="popover"]').popover()
