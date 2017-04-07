@@ -700,7 +700,8 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         organization_active = UserComplement.objects.get(
                                  user_account=user_account).organization_active
         opportunity.organization = organization_active
-        opportunity.seller = user_account
+        if not self.is_admin:
+            opportunity.seller = user_account
         opportunity.save()
         products = self.request.POST.getlist('product')
         descriptions = self.request.POST.getlist('description')
@@ -759,6 +760,8 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
 
     def form_valid(self, form):
         opportunity = form.save()
+        if not self.is_admin:
+            opportunity.seller = self.user_account
         products = self.request.POST.getlist('product')
         descriptions = self.request.POST.getlist('description')
         expected_values = self.request.POST.getlist('expected_value_item')

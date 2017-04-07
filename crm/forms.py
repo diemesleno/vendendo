@@ -221,7 +221,7 @@ class OpportunityForm(forms.ModelForm):
 
     class Meta:
         model = Opportunity
-        fields = ('customer', 'description_opportunity', 'stage', 'expected_month')
+        fields = ('customer', 'description_opportunity', 'stage', 'seller', 'expected_month')
 
     def __init__(self, organization, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
@@ -239,6 +239,11 @@ class OpportunityForm(forms.ModelForm):
         self.fields['stage'].label = 'Etapa'
         self.fields['stage'].widget.attrs.update({'class': 'form-control'})
         self.fields['stage'].queryset = SaleStage.objects.filter(organization=organization)
+        # field seller
+        self.fields['seller'].required = False
+        self.fields['seller'].label = 'Vendedor'
+        self.fields['seller'].widget.attrs.update({'class': 'form-control'})
+        self.fields['seller'].choices = [(user.pk, user.get_full_name()) for user in User.objects.filter(userorganization__organization=organization)]
         # field expected_month
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'
