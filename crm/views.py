@@ -431,6 +431,20 @@ class SellerInvite(LoginRequiredMixin, SessionMixin,
 
 
 # Occupation Area Views
+class OccupationAreaSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        oa = OccupationArea.objects.get(pk=self.kwargs['pk'])
+        occupation_area_organization = oa.organization
+
+        user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                               organization=occupation_area_organization).exists()
+        if not user_of_organization or occupation_area_organization != self.organization_active:
+            return redirect('crm:error-index')
+        return super(OccupationAreaSecMixin, self).dispatch(*args, **kwargs)
+
+
 class OccupationAreaIndex(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/occupationarea_index.html'
     context_object_name = 'my_occupationareas'
@@ -456,17 +470,31 @@ class OccupationAreaCreate(LoginRequiredMixin, SessionMixin, CreateView):
         return super(OccupationAreaCreate, self).form_valid(form)
 
 
-class OccupationAreaUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+class OccupationAreaUpdate(LoginRequiredMixin, SessionMixin, OccupationAreaSecMixin, UpdateView):
     model = OccupationArea
     form_class = OccupationAreaForm
 
 
-class OccupationAreaDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+class OccupationAreaDelete(LoginRequiredMixin, SessionMixin, OccupationAreaSecMixin, DeleteView):
     model = OccupationArea
     success_url = reverse_lazy('crm:occupationarea-index')
 
 
 # Customer Area Views
+class CutomerSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        c = Customer.objects.get(pk=self.kwargs['pk'])
+        customer_organization = c.organization
+
+        user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                               organization=customer_organization).exists()
+        if not user_of_organization or customer_organization != self.organization_active:
+            return redirect('crm:error-index')
+        return super(CutomerSecMixin, self).dispatch(*args, **kwargs)
+
+
 class CustomerIndex(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/customer_index.html'
     context_object_name = 'my_customers'
@@ -518,7 +546,7 @@ class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
                 contact_item.save()
 
 
-class CustomerUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+class CustomerUpdate(LoginRequiredMixin, SessionMixin, CutomerSecMixin, UpdateView):
     model = Customer
     form_class = CustomerForm
 
@@ -553,12 +581,26 @@ class CustomerUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
                 contact_item.save()
 
 
-class CustomerDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+class CustomerDelete(LoginRequiredMixin, SessionMixin, CutomerSecMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('crm:customer-index')
 
 
 # SaleStage Views
+class SaleStageSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        ss = SaleStage.objects.get(pk=self.kwargs['pk'])
+        sale_stage_organization = ss.organization
+
+        user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                               organization=sale_stage_organization).exists()
+        if not user_of_organization or sale_stage_organization != self.organization_active:
+            return redirect('crm:error-index')
+        return super(SaleStageSecMixin, self).dispatch(*args, **kwargs)
+
+
 class SaleStageIndex(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/salestage_index.html'
     context_object_name = 'my_salestages'
@@ -588,12 +630,12 @@ class SaleStageCreate(LoginRequiredMixin, SessionMixin, CreateView):
         return super(SaleStageCreate, self).form_valid(form)
 
 
-class SaleStageUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+class SaleStageUpdate(LoginRequiredMixin, SessionMixin, SaleStageSecMixin, UpdateView):
     model = SaleStage
     form_class = SaleStageForm
 
 
-class SaleStageDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+class SaleStageDelete(LoginRequiredMixin, SessionMixin, SaleStageSecMixin, DeleteView):
     model = SaleStage
     success_url = reverse_lazy('crm:salestage-index')
 
@@ -609,7 +651,7 @@ class SaleStageDelete(LoginRequiredMixin, SessionMixin, DeleteView):
         return redirect('crm:salestage-index')
 
 
-class SaleStageUp(LoginRequiredMixin, SessionMixin, UpdateView):
+class SaleStageUp(LoginRequiredMixin, SessionMixin, SaleStageSecMixin, UpdateView):
     model = SaleStage
 
     def post(self, request, *args, **kwargs):
@@ -627,7 +669,7 @@ class SaleStageUp(LoginRequiredMixin, SessionMixin, UpdateView):
         return redirect('crm:salestage-index')
 
 
-class SaleStageDown(LoginRequiredMixin, SessionMixin, UpdateView):
+class SaleStageDown(LoginRequiredMixin, SessionMixin, SaleStageSecMixin, UpdateView):
     model = SaleStage
 
     def post(self, request, *args, **kwargs):
@@ -848,6 +890,20 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
 
 
 # Activity Area Views
+class ActivitySecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        u = self.request.user
+        a = Activity.objects.get(pk=self.kwargs['pk'])
+        activity_organization = a.organization
+
+        user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                               organization=activity_organization).exists()
+        if not user_of_organization or activity_organization != self.organization_active:
+            return redirect('crm:error-index')
+        return super(ActivitySecMixin, self).dispatch(*args, **kwargs)
+
+
 class ActivityIndex(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/activity_index.html'
     context_object_name = 'my_activities'
@@ -860,6 +916,7 @@ class ActivityIndex(LoginRequiredMixin, SessionMixin, ListView):
             return Activity.objects.filter(organization=organization_active)
         else:
             return Activity.objects.filter(organization=organization_active, responsible_seller=user_account)
+
 
 class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Activity
@@ -888,7 +945,7 @@ class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
                           **self.get_form_kwargs())
 
 
-class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
+class ActivityUpdate(LoginRequiredMixin, SessionMixin, ActivitySecMixin, UpdateView):
     model = Activity
     form_class = ActivityForm
 
@@ -910,7 +967,7 @@ class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
                           **self.get_form_kwargs())
 
 
-class ActivityDelete(LoginRequiredMixin, SessionMixin, DeleteView):
+class ActivityDelete(LoginRequiredMixin, SessionMixin, ActivitySecMixin, DeleteView):
     model = Activity
     success_url = reverse_lazy('crm:activity-index')
 
@@ -933,6 +990,7 @@ class InviteMessageActivate(LoginRequiredMixin, SessionMixin, UpdateView):
         self.object.status_active = 'A'
         self.object.save()
         return redirect('crm:invitemessage-index')
+
 
 class InviteMessageLeave(LoginRequiredMixin, SessionMixin, DeleteView):
     model = UserOrganization
