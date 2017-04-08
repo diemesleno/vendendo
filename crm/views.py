@@ -36,7 +36,7 @@ class Sendx(object):
             print "subject: " + str(subject)
             print "body: " + str(body)
             print "to: " + str(user_organization.user_account.email)
-            send_mail(subject, body, "hostmaster@vendendo.com.br",
+            send_mail(subject, body, "Vendendo CRM <do-not-reply@vendendocrm.com>",
                                      [user_organization.user_account.email],
                                      html_message=body)
             return True
