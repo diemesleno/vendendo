@@ -216,4 +216,4 @@ class Contact(models.Model):
     contact_position = models.CharField(max_length=100)
 
     def __unicode__(self):
-        return self.name
+        return self.contact_name

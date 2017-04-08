@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from crm.models import Organization, UserOrganization, OccupationArea, \
                        Customer, SaleStage, CustomerService, Opportunity, \
-                       OpportunityItem, Activity
+                       OpportunityItem, Activity, Contact
 from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
                       OccupationAreaForm, CustomerForm, SaleStageForm,\
                       CustomerServiceForm, OpportunityForm, ActivityForm
@@ -493,12 +493,62 @@ class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
                                  organization_active=organization_active)
         user_complement.customers.add(customer)
         user_complement.save()
+        # contacts
+        self.save_contacts(customer=customer)
         return super(CustomerCreate, self).form_valid(form)
+
+    def save_contacts(self, customer):
+        contacts_name = self.request.POST.getlist('contact_name')
+        contacts_email = self.request.POST.getlist('contact_email')
+        contacts_tel = self.request.POST.getlist('contact_tel')
+        contacts_position = self.request.POST.getlist('contact_position')
+        # clear contacts
+        Contact.objects.filter(customer=customer).delete()
+        # create news contacts
+        if contacts_name:
+            for idx,contact_name in enumerate(contacts_name):
+                contact_item = Contact()
+                contact_item.customer = customer
+                contact_item.contact_name = contact_name
+                contact_item.contact_email = contacts_email[idx]
+                contact_item.contact_tel = contacts_tel[idx]
+                contact_item.contact_position = contacts_position[idx]
+                contact_item.save()
 
 
 class CustomerUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
     model = Customer
     form_class = CustomerForm
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerUpdate, self).get_context_data(**kwargs)
+        contacts = Contact.objects.filter(customer=self.kwargs['pk'])
+        context['contacts'] = contacts
+        return context
+
+    def form_valid(self, form):
+        customer = form.save()
+        # contacts
+        self.save_contacts(customer=customer)
+        return super(CustomerUpdate, self).form_valid(form)
+
+    def save_contacts(self, customer):
+        contacts_name = self.request.POST.getlist('contact_name')
+        contacts_email = self.request.POST.getlist('contact_email')
+        contacts_tel = self.request.POST.getlist('contact_tel')
+        contacts_position = self.request.POST.getlist('contact_position')
+        # clear contacts
+        Contact.objects.filter(customer=customer).delete()
+        # create news contacts
+        if contacts_name:
+            for idx,contact_name in enumerate(contacts_name):
+                contact_item = Contact()
+                contact_item.customer = customer
+                contact_item.contact_name = contact_name
+                contact_item.contact_email = contacts_email[idx]
+                contact_item.contact_tel = contacts_tel[idx]
+                contact_item.contact_position = contacts_position[idx]
+                contact_item.save()
 
 
 class CustomerDelete(LoginRequiredMixin, SessionMixin, DeleteView):
@@ -679,6 +729,7 @@ class OpportunityIndex(LoginRequiredMixin, SessionMixin, ListView):
             return Opportunity.objects.filter(organization=organization_active)
         else:
             return Opportunity.objects.filter(organization=organization_active, seller=self.user_account)
+
 
 class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Opportunity
