@@ -22,6 +22,8 @@ from datetime import datetime
 from django.db.models import Q, F, Sum
 import uuid
 import hashlib
+import locale
+locale.setlocale(locale.LC_ALL, 'pt_BR')
 
 
 class Sendx(object):
@@ -828,8 +830,8 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
                 customer_service = CustomerService.objects.get(id=product)
                 opportunity_item.customer_service = customer_service
                 opportunity_item.description = descriptions[idx]
-                opportunity_item.expected_value = expected_values[idx]
-                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.expected_value = locale.atof(expected_values[idx])
+                opportunity_item.expected_amount = locale.atof(expected_amounts[idx])
                 opportunity_item.save()
         #add customer
         if opportunity.stage.add_customer:
