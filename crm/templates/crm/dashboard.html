@@ -19,31 +19,27 @@
           <div class="panel panel-default">
             <div class="panel-body panel-count">
               <img src="/static/images/potenciais.png"/>
-              235
+              {{ customers_potential_count }}
               <H6>CLIENTES POTENCIAIS</H6>
             </div>
             <div class="panel-body">
               <table class="table">
                 <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
+                    <th>Cliente</th>
+                    <th>Relevância</th>
                 </tr>
+                {% for customer_potential in customers_potential_top5 %}
                 <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
+                  <td>{{ customer_potential.name }}</td>
+                  <td>{{ customer_potential.relevance }}%</td>
                 </tr>
+                {% endfor %}
+                {% for _ in customers_potential_complete %}
                 <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
+                  <td>-</td>
+                  <td>-</td>
                 </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
+                {% endfor %}
               </table>
             </div>
           </div>
@@ -54,32 +50,31 @@
           <div class="panel panel-default">
             <div class="panel-body panel-count">
               <img src="/static/images/oportunidades.png" />
-              85
+              {{ opportunities_open_count }}
               <H6>OPORTUNIDADES</H6>
             </div>
             <div class="panel-body">
-              <table class="table">
-                <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-              </table>
+                <table class="table">
+                  <tr>
+                      <th>Cliente</th>
+                      <th>Fase</th>
+                      <th>Valor Estimado</th>
+                  </tr>
+                  {% for opportunity in opportunities_open_top5 %}
+                  <tr>
+                    <td>{{ opportunity.customer }}</td>
+                    <td>{{ opportunity.stage }}</td>
+                    <td>{{ opportunity.expected_value|default:"0.00" }}</td>
+                  </tr>
+                  {% endfor %}
+                  {% for _ in opportunities_open_complete %}
+                  <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  {% endfor %}
+                </table>
             </div>
           </div>
         </div>
@@ -89,32 +84,31 @@
           <div class="panel panel-default">
             <div class="panel-body panel-count">
               <img src="/static/images/clientes.png" />
-              3500
+              {{ customers_base_count }}
               <H6>CLIENTES DA BASE</H6>
             </div>
             <div class="panel-body">
-              <table class="table">
-                <tr>
-                  <td>1,001</td>
-                  <td>Lorem</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-                <tr>
-                  <td>1,002</td>
-                  <td>amet</td>
-                </tr>
-              </table>
+                <table class="table">
+                  <tr>
+                      <th>Cliente</th>
+                      <th>Área de Atuação</th>
+                      <th>Relevância</th>
+                  </tr>
+                  {% for customer in customers_base_top5 %}
+                  <tr>
+                    <td>{{ customer.name }}</td>
+                    <td>{{ customer.occupationarea }}</td>
+                    <td>{{ customer.relevance }}%</td>
+                  </tr>
+                  {% endfor %}
+                  {% for _ in customers_base_complete %}
+                  <tr>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                  </tr>
+                  {% endfor %}
+                </table>
             </div>
           </div>
         </div>
@@ -133,16 +127,16 @@
               <div class="panel-body">
                 <div class="col-xs-12 col-sm-6 placeholder">
                   <div class="icon-place">
-                    {% if my_activity.type_activity = "T" %}
+                    {% if my_activity.type_activity == "T" %}
                     <span class="glyphicon glyphicon-phone-alt activity-icon" aria-hidden="true"></span>
-                    {% elif my_activity.type_activity = "E" %}
+                    {% elif my_activity.type_activity == "E" %}
                     <span class="glyphicon glyphicon-envelope activity-icon" aria-hidden="true"></span>
-                    {% elif my_activity.type_activity = "V" %}
+                    {% elif my_activity.type_activity == "V" %}
                     <span class="glyphicon glyphicon-briefcase activity-icon" aria-hidden="true"></span>
                     {% else %}
                     <span class="glyphicon glyphicon-list-alt activity-icon" aria-hidden="true"></span>
                     {% endif %}
-                
+
                   </div>
 
                   <div class="activity-text">
@@ -203,12 +197,13 @@
 {% block customjs %}
 
 <script src="/static/highcharts/js/highcharts.js"></script>
+<script src="/static/highcharts/js/modules/funnel.js"></script>
 <script>
 
 $(function () {
     $('#container_chart').highcharts({
         chart: {
-            type: 'column'
+            type: 'funnel'
         },
         exporting: {
             buttons: {
@@ -219,58 +214,31 @@ $(function () {
             }
         },
         title: {
-            text: 'Oportunidades'
+            text: 'Funil de vendas'
         },
-        xAxis: {
-            categories: ['Oportunidades']
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Total de Oportunidades'
-            },
-            stackLabels: {
-                enabled: true,
-                style: {
-                    fontWeight: 'bold',
-                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'gray'
-                }
-            }
-        },
-
         legend: {
            enabled: false
         },
         tooltip: {
-            headerFormat: '<b>{point.x}</b><br/>',
-            pointFormat: '{series.name}: $ {point.y}<br/>Total: $ {point.stackTotal}'
+          valueDecimals: 2,
+          valuePrefix: 'R$ ',
         },
         plotOptions: {
-            column: {
-                stacking: 'normal',
-                dataLabels: {
+        series: {
+            dataLabels: {
                     enabled: true,
                     color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-                    format: '$ {y}',
+                    format: 'R$ {y:,.2f}',
+                    distance: -100,
                     style: {
-
                         textShadow: '0 0 3px black'
                     }
                 }
             }
         },
         series: [{
-            name: 'Prospecção',
-            data: [5000]
-        }, {
-            name: 'Apresentação',
-            data: [2500]
-        }, {
-            name: 'Proposta',
-            data: [356.50]
-        }, {
-            name: 'Negociação',
-            data: [200]
+          name: 'Valor estimado',
+          data: {{ opportunity_value_stages|safe }}
         }]
     });
 });

@@ -4,6 +4,7 @@ from django.contrib import auth
 from django.core.urlresolvers import reverse
 from datetime import date, datetime
 from django.utils import timezone
+from django.db.models import Q, F, Sum
 
 
 class Organization(models.Model):
@@ -33,7 +34,7 @@ class UserOrganization(models.Model):
     code_activating = models.CharField(max_length=200, null=True)
 
     def __unicode__(self):
-        return str(self.id) + ' : ' + str(self.user_account.first_name) + ' (' + str(self.organization.name) + ')'
+        return str(self.user_account.first_name) + ' ' + str(self.user_account.last_name)
 
     def get_absolute_url(self):
         return reverse('crm:seller-index')
@@ -99,6 +100,24 @@ class SaleStage(models.Model):
     def get_absolute_url(self):
         return reverse('crm:salestage-index')
 
+    @property
+    def get_opportunity_value(self):
+        result = 0
+        opportunities = Opportunity.objects.filter(stage=self)
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        return result
+
+    def get_opportunity_value_by_type_user(self, is_admin, user_account):
+        result = 0
+        if is_admin:
+            opportunities = Opportunity.objects.filter(stage=self)
+        else:
+            opportunities = Opportunity.objects.filter(stage=self, seller=user_account)
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        return result
+
 
 class CustomerService(models.Model):
     definition_types = ((u'P', u'Produto'),
@@ -130,12 +149,19 @@ class Opportunity(models.Model):
     customer = models.ForeignKey('Customer', on_delete=models.CASCADE)
     seller = models.ForeignKey('auth.User')
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
-    expected_value = models.DecimalField(max_digits=19, decimal_places=2)
-    expected_month = models.CharField(max_length=6)
+    expected_month = models.CharField(max_length=7)
     created = models.DateTimeField(auto_now_add=True)
+    description_opportunity = models.CharField(max_length=100)
+
+    @property
+    def expected_value(self):
+        value = OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
+        if not value:
+            value = 0
+        return value
 
     def __unicode__(self):
-        return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.customer.name.__str__()
+        return self.customer.name.__str__() + ' - ' + self.description_opportunity.__str__()
 
     def get_absolute_url(self):
         return reverse('crm:opportunity-index')

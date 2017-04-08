@@ -7,6 +7,7 @@ from userapp.models import UserComplement
 from django.contrib.auth.models import User
 from django.forms.widgets import RadioSelect
 from django.contrib.admin.widgets import AdminDateWidget
+from django.core.validators import RegexValidator
 
 
 class OrganizationForm(forms.ModelForm):
@@ -220,7 +221,7 @@ class OpportunityForm(forms.ModelForm):
 
     class Meta:
         model = Opportunity
-        fields = ('customer', 'stage', 'expected_value', 'expected_month')
+        fields = ('customer', 'description_opportunity', 'stage', 'seller', 'expected_month')
 
     def __init__(self, organization, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
@@ -229,18 +230,27 @@ class OpportunityForm(forms.ModelForm):
         self.fields['customer'].label = 'Cliente'
         self.fields['customer'].widget.attrs.update({'class': 'form-control'})
         self.fields['customer'].queryset = Customer.objects.filter(organization=organization)
+        # field description_opportunity
+        self.fields['description_opportunity'].required = True
+        self.fields['description_opportunity'].label = 'Descrição'
+        self.fields['description_opportunity'].widget.attrs.update({'class': 'form-control'})
         # field stage
         self.fields['stage'].required = True
         self.fields['stage'].label = 'Etapa'
         self.fields['stage'].widget.attrs.update({'class': 'form-control'})
-        # field expected_value
-        self.fields['expected_value'].required = False
-        self.fields['expected_value'].label = 'Valor estimado'
-        self.fields['expected_value'].widget.attrs.update({'class': 'form-control'})
+        self.fields['stage'].queryset = SaleStage.objects.filter(organization=organization)
+        # field seller
+        self.fields['seller'].required = False
+        self.fields['seller'].label = 'Vendedor'
+        self.fields['seller'].widget.attrs.update({'class': 'form-control'})
+        self.fields['seller'].choices = [(user.pk, user.get_full_name()) for user in User.objects.filter(userorganization__organization=organization)]
         # field expected_month
         self.fields['expected_month'].required = False
         self.fields['expected_month'].label = 'Mês estimado'
+        my_validator = RegexValidator(r"\d{2}/\d{4}", "Use o formato mm/aaaa")
+        self.fields['expected_month'].validators = [my_validator]
         self.fields['expected_month'].widget.attrs.update({'class': 'form-control'})
+        self.fields['expected_month'].help_text="Por favor, use o formato: MM/AAAA."
 
 
 class ActivityForm(forms.ModelForm):
@@ -273,11 +283,12 @@ class ActivityForm(forms.ModelForm):
         self.fields['details'].label = 'Detalhes'
         self.fields['details'].widget.attrs.update({'class': 'form-control'})
         # field deadline
-        self.fields['deadline'].required = False
+        self.fields['deadline'].required = True
         self.fields['deadline'].label = 'Prazo'
         self.fields['deadline'].widget = forms.widgets.DateInput(format="%d/%m/%Y %H:%M")
         self.fields['deadline'].input_formats = ['%d/%m/%Y %H:%M']
         self.fields['deadline'].widget.attrs.update({'class': 'form-control'})
+        self.fields['deadline'].help_text="Por favor, use o formato: DD/MM/AAAA HH:MM."
         # field completed
         self.fields['completed'].required = False
         self.fields['completed'].label = 'Concluída'

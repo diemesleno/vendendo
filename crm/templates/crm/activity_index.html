@@ -10,15 +10,20 @@
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Atividades</h3>
+    <h3 class="page-header">Atividades
+        <br>
+          <a href="{% url 'crm:activity-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+        </br>
+    </h3>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <p>
-          <a href="{% url 'crm:activity-add' %}" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar Atividade</a>
-        </p>
         <table class="table">
+            <th></th>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Oportunidade</th>
           {% for my_activity in my_activities %}
           <tr>
             <td class="action-column">
@@ -30,6 +35,8 @@
               </form>
             </td>
             <td><a href="{% url 'crm:activity-update' my_activity.id %}">{{ my_activity.title }}</a></td>
+            <td><a href="{% url 'crm:activity-update' my_activity.id %}">{{ my_activity.description }}</a></td>
+            <td><a href="{% url 'crm:activity-update' my_activity.id %}">{{ my_activity.opportunity }}</a></td>
           </tr>
           {% endfor %}
         </table>

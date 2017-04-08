@@ -19,6 +19,7 @@ from django.shortcuts import redirect
 from django.conf import settings
 from django.core.mail import send_mail
 from datetime import datetime
+from django.db.models import Q, F, Sum
 import uuid
 import hashlib
 
@@ -45,10 +46,32 @@ class SessionMixin(object):
 
     @cached_property
     def organization_active(self):
+        return UserComplement.objects.get(user_account=self.user_account).organization_active
+
+    @cached_property
+    def user_account(self):
+        return User.objects.get(id=self.request.user.id)
+
+    @cached_property
+    def is_admin(self):
         user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                user_account=user_account).organization_active
-        return organization_active
+        if UserOrganization.objects.filter(
+                                    user_account=user_account,
+                                    organization=self.organization_active).exists():
+            type_user_organization = UserOrganization.objects.get(
+                                        user_account=user_account,
+                                        organization=self.organization_active).type_user
+            if type_user_organization == "A":
+                return True
+            else:
+                return False
+        return False
+
+    @cached_property
+    def organizations(self):
+        return UserOrganization.objects.filter(
+                            user_account=self.user_account,
+                            status_active='A')
 
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
@@ -64,9 +87,13 @@ class SessionMixin(object):
                                         organization=organization_active).type_user
         else:
             type_user_organization = None
+        # Invite messages
+        invites = UserOrganization.objects.filter(Q(user_account=user_account)&Q(type_user='S')&~Q(status_active='A'))
+
         context['type_user_organization'] = type_user_organization
         context['organization_active'] = organization_active
         context['organizations'] = organizations
+        context['invites'] = invites
         return context
 
 
@@ -82,11 +109,49 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     template_name = 'crm/dashboard.html'
     context_object_name = 'my_activities'
 
+    def get_context_data(self, **kwargs):
+        context = super(Dashboard, self).get_context_data(**kwargs)
+        context['customers_potential_count'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
+        context['customers_potential_top5'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').order_by('-relevance')[:5]
+        context['opportunities_open_count'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False).count()
+        context['opportunities_open_top5'] = sorted(Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)[:5], key=lambda o: o.expected_value, reverse=True)
+        context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
+        context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
+        context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
+        context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
+        context['customers_base_complete'] = range(context['customers_base_count'], 5)
+        # calculate opportunity values by stage
+        stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
+        opportunity_value_stages = "["
+        idx = 0
+        for stage in stages:
+            opportunity_value = stage.get_opportunity_value_by_type_user(is_admin=self.is_admin, user_account=self.user_account)
+            if opportunity_value > 0:
+                if idx > 0:
+                    opportunity_value_stages += ","
+                opportunity_value_stages += "['%s', %s]" % (stage.name, str(opportunity_value))
+                idx += 1
+        opportunity_value_stages += "]"
+        context['opportunity_value_stages'] = opportunity_value_stages
+        return context
+
     def get_queryset(self):
-        user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                user_account=user_account).organization_active
-        return Activity.objects.filter(organization=organization_active, completed=False).order_by('deadline')[:4]
+
+        if self.is_admin:
+            return Activity.objects.filter(organization=self.organization_active, completed=False).order_by('deadline')[:4]
+        else:
+            return Activity.objects.filter(organization=self.organization_active, completed=False, responsible_seller=self.user_account).order_by('deadline')[:4]
+
+    def get_template_names(self):
+        if self.template_name is None:
+            raise ImproperlyConfigured(
+                "TemplateResponseMixin requires either a definition of "
+                "'template_name' or an implementation of 'get_template_names()'")
+        else:
+            if not self.organizations:
+                self.template_name = 'crm/help_index.html'
+            return [self.template_name]
+
 
 # Organization Views
 class OrganizationSecMixin(object):
@@ -585,12 +650,20 @@ class OpportunitySecMixin(object):
 
     def dispatch(self, *args, **kwargs):
         u = self.request.user
-        o = Opportunity.objects.get(pk=self.kwargs['pk']).organization
+        o = Opportunity.objects.get(pk=self.kwargs['pk'])
+        opportunity_organization = o.organization
 
-        if not UserOrganization.objects.filter(user_account=u,
-                                               organization=o,
-                                               type_user='A').exists():
-            return redirect('crm:error-index')
+        if self.is_admin:
+            user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                                   organization=opportunity_organization).exists()
+            if not user_of_organization or opportunity_organization != self.organization_active:
+                return redirect('crm:error-index')
+        else:
+            user_of_organization = UserOrganization.objects.filter(user_account=self.user_account,
+                                                                   organization=opportunity_organization).exists()
+            user_is_owner_of_opportunity = True if o.seller == self.user_account else False
+            if not user_of_organization or opportunity_organization != self.organization_active or not user_is_owner_of_opportunity:
+                return redirect('crm:error-index')
         return super(OpportunitySecMixin, self).dispatch(*args, **kwargs)
 
 
@@ -602,8 +675,10 @@ class OpportunityIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return Opportunity.objects.filter(organization=organization_active)
-
+        if self.is_admin:
+            return Opportunity.objects.filter(organization=organization_active)
+        else:
+            return Opportunity.objects.filter(organization=organization_active, seller=self.user_account)
 
 class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Opportunity
@@ -625,7 +700,31 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         organization_active = UserComplement.objects.get(
                                  user_account=user_account).organization_active
         opportunity.organization = organization_active
-        opportunity.seller = user_account
+        if not self.is_admin:
+            opportunity.seller = user_account
+        opportunity.save()
+        products = self.request.POST.getlist('product')
+        descriptions = self.request.POST.getlist('description')
+        expected_values = self.request.POST.getlist('expected_value_item')
+        expected_amounts = self.request.POST.getlist('expected_amount')
+        # clear Opportunity Items
+        OpportunityItem.objects.filter(opportunity=opportunity).delete()
+        # create news opportunity items
+        if products:
+            for idx,product in enumerate(products):
+                opportunity_item = OpportunityItem()
+                opportunity_item.opportunity = opportunity
+                opportunity_item.organization = opportunity.organization
+                customer_service = CustomerService.objects.get(id=product)
+                opportunity_item.customer_service = customer_service
+                opportunity_item.description = descriptions[idx]
+                opportunity_item.expected_value = expected_values[idx]
+                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.save()
+        #add customer
+        if opportunity.stage.add_customer:
+            opportunity.customer.category = 'P'
+            opportunity.customer.save()
         return super(OpportunityCreate, self).form_valid(form)
 
     def get_form(self, form_class=None):
@@ -661,15 +760,12 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
 
     def form_valid(self, form):
         opportunity = form.save()
+        if not self.is_admin:
+            opportunity.seller = self.user_account
         products = self.request.POST.getlist('product')
         descriptions = self.request.POST.getlist('description')
         expected_values = self.request.POST.getlist('expected_value_item')
         expected_amounts = self.request.POST.getlist('expected_amount')
-        #add customer
-        if opportunity.stage.add_customer:
-            opportunity.customer.category = 'P'
-            opportunity.customer.save()
-        opportunity.save()
         # clear Opportunity Items
         OpportunityItem.objects.filter(opportunity=opportunity).delete()
         # create news opportunity items
@@ -684,6 +780,11 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
                 opportunity_item.expected_value = expected_values[idx]
                 opportunity_item.expected_amount = expected_amounts[idx]
                 opportunity_item.save()
+        #add customer
+        if opportunity.stage.add_customer:
+            opportunity.customer.category = 'P'
+            opportunity.customer.save()
+        opportunity.save()
         return super(OpportunityUpdate, self).form_valid(form)
 
     def get_form(self, form_class=None):
@@ -702,8 +803,10 @@ class ActivityIndex(LoginRequiredMixin, SessionMixin, ListView):
         user_account = User.objects.get(id=self.request.user.id)
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
-        return Activity.objects.filter(organization=organization_active)
-
+        if self.is_admin:
+            return Activity.objects.filter(organization=organization_active)
+        else:
+            return Activity.objects.filter(organization=organization_active, responsible_seller=user_account)
 
 class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = Activity
@@ -757,3 +860,42 @@ class ActivityUpdate(LoginRequiredMixin, SessionMixin, UpdateView):
 class ActivityDelete(LoginRequiredMixin, SessionMixin, DeleteView):
     model = Activity
     success_url = reverse_lazy('crm:activity-index')
+
+
+# Invite messages Views
+class InviteMessageIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/invite_message_index.html'
+    context_object_name = 'my_messages'
+
+    def get_queryset(self):
+        user_account = User.objects.get(id=self.request.user.id)
+        return UserOrganization.objects.filter(user_account=user_account, type_user='S')
+
+
+class InviteMessageActivate(LoginRequiredMixin, SessionMixin, UpdateView):
+    model = UserOrganization
+
+    def post(self, request, *args, **kwargs):
+        self.object = UserOrganization.objects.get(code_activating=kwargs['pk'])
+        self.object.status_active = 'A'
+        self.object.save()
+        return redirect('crm:invitemessage-index')
+
+class InviteMessageLeave(LoginRequiredMixin, SessionMixin, DeleteView):
+    model = UserOrganization
+    success_url = reverse_lazy('crm:invitemessage-index')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = UserOrganization.objects.get(code_activating=kwargs['pk'])
+        success_url = self.get_success_url()
+        user_account = self.object.user_account
+        self.object.delete()
+
+        if not UserOrganization.objects.filter(
+                user_account=user_account).exists():
+            user_account.delete()
+        return HttpResponseRedirect(success_url)
+
+
+class Help(LoginRequiredMixin, SessionMixin, TemplateView):
+    template_name = 'crm/help_index.html'
