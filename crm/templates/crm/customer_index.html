@@ -39,6 +39,10 @@
             <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.get_category_display }}</a></td>
             <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.occupationarea }}</a></td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align:center;"><i>Nenhum registro</i></td>
+          </tr>
           {% endfor %}
         </table>
       </div>

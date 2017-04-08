@@ -53,6 +53,10 @@
             </td>
             <td><a href="{% url 'crm:salestage-update' my_salestage.id %}">{{ my_salestage.name }}</a></td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2" style="text-align:center;"><i>Nenhum registro</i></td>
+          </tr>
           {% endfor %}
         </table>
       </div>

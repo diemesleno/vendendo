@@ -40,6 +40,10 @@
             <td>{{ my_opportunity.stage.name }}</td>
             <td>{{ my_opportunity.expected_value|default:"0,00" }}</td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align:center;"><i>Nenhum registro</i></td>
+          </tr>
           {% endfor %}
         </table>
       </div>
