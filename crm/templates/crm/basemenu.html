@@ -81,7 +81,7 @@
                     Você foi convidado pela Organização <strong>[{{ invite.organization.name }}]</strong> para ser um de seus vendedores.<br />Aceita o convite?
                   </div>
                   <div class="col-md-2" style="font-size: 2.0em !important;">
-                    <div> 
+                    <div>
                     <form action="{% url 'crm:invitemessage-activate' invite.code_activating %}" method="post">
                     {% csrf_token %}
                       <button type="submit" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Aceitar convite">
@@ -89,7 +89,7 @@
                       </button>
                     </form>
                     </div>
-                    <div> 
+                    <div>
                     <form action="{% url 'crm:invitemessage-leave' invite.code_activating %}" method="post">
                     {% csrf_token %}
                       <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Recusar convite">
@@ -111,7 +111,7 @@
             <ul class="dropdown-menu">
               <li><a href="/organizations/">Organizações</a></li>
               <li><a href="{% url 'crm:customerservice-index' %}">Produtos e Serviços</a></li>
-              <li><a href="/salestage/">Fases de Oportunidades</a></li>
+              <li><a href="/salestage/">Etapas de Oportunidades</a></li>
               <li><a href="{% url 'crm:seller-index' %}">Vendedores</a></li>
               <li><a href="/occupationarea/">Áreas de Atuação de Clientes</a></li>
             </ul>
