@@ -12,7 +12,8 @@
 
       <form class="form-signin" method="post" action="/">
         {% csrf_token %}
-        <h3 class="form-signin-heading">{{ title }}</h3>
+        <div style="margin-bottom:42px;text-align:center;"><img src="/static/images/vendendo_logo.png"></div>
+        <!--<h3 class="form-signin-heading">{{ title }}</h3>-->
         <label for="inputEmail" class="sr-only">E-mail</label>
         <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
         <label for="inputPassword" class="sr-only">Senha</label>
