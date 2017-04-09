@@ -122,8 +122,8 @@ class SaleStage(models.Model):
 class CustomerService(models.Model):
     definition_types = ((u'P', u'Produto'),
                         (u'S', u'Serviço'))
-    status_choices = ((u'A', u'Active'),
-                      (u'I', u'Inactive'))
+    status_choices = ((u'A', u'Ativo'),
+                      (u'I', u'Inativo'))
 
     name = models.CharField(max_length=200, null=False)
     definition = models.CharField(max_length=1,
