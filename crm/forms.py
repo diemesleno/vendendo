@@ -96,7 +96,7 @@ class CustomerForm(forms.ModelForm):
                   'relevance',
                   'notes',)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, organization, *args, **kwargs):
         super(CustomerForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = True
         self.fields['name'].label = 'Nome'
@@ -110,6 +110,7 @@ class CustomerForm(forms.ModelForm):
         self.fields['occupationarea'].required = True
         self.fields['occupationarea'].label = 'Área de Atuação'
         self.fields['occupationarea'].widget.attrs.update({'class': 'form-control'})
+        self.fields['occupationarea'].queryset = OccupationArea.objects.filter(organization=organization)
         self.fields['relevance'].required = True
         self.fields['relevance'].label = 'Relevância'
         self.fields['relevance'].widget.attrs.update({'class': 'form-control'})

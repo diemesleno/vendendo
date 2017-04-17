@@ -545,6 +545,12 @@ class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
                 contact_item.contact_position = contacts_position[idx]
                 contact_item.save()
 
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
+
 
 class CustomerUpdate(LoginRequiredMixin, SessionMixin, CutomerSecMixin, UpdateView):
     model = Customer
@@ -579,6 +585,12 @@ class CustomerUpdate(LoginRequiredMixin, SessionMixin, CutomerSecMixin, UpdateVi
                 contact_item.contact_tel = contacts_tel[idx]
                 contact_item.contact_position = contacts_position[idx]
                 contact_item.save()
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(organization=self.organization_active,
+                          **self.get_form_kwargs())
 
 
 class CustomerDelete(LoginRequiredMixin, SessionMixin, CutomerSecMixin, DeleteView):
