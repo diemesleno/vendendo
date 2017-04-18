@@ -797,7 +797,7 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         customer_services = CustomerService.objects.filter(
-                                organization=organization_active)
+                                organization=organization_active, status='A')
         context['customer_services'] = customer_services
         return context
 
