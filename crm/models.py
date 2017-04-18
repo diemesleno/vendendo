@@ -161,7 +161,7 @@ class Opportunity(models.Model):
         return value
 
     def __unicode__(self):
-        return self.customer.name.__str__() + ' - ' + self.description_opportunity.__str__()
+        return  self.customer.name + ' - ' +  self.description_opportunity
 
     def get_absolute_url(self):
         return reverse('crm:opportunity-index')
@@ -176,7 +176,7 @@ class OpportunityItem(models.Model):
     expected_amount = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 
     def __unicode__(self):
-        return self.id.__str__() + ':' + self.organization.name.__str__() + ' | ' + self.opportunity.id.__str__() + ' [' + self.customer_service.name.__str__() + ']'
+        return self.id + ':' + self.organization.name + ' | ' + self.opportunity.id + ' [' + self.customer_service.name + ']'
 
 
 class Activity(models.Model):
