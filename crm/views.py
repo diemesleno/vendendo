@@ -856,7 +856,7 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         customer_services = CustomerService.objects.filter(
-                                organization=organization_active)
+                                organization=organization_active, status='A')
         opportunity = Opportunity.objects.get(pk=self.kwargs['pk'])
         opportunity_items = OpportunityItem.objects.filter(
                                 organization=organization_active,
