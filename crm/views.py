@@ -825,8 +825,8 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
                 customer_service = CustomerService.objects.get(id=product)
                 opportunity_item.customer_service = customer_service
                 opportunity_item.description = descriptions[idx]
-                opportunity_item.expected_value = expected_values[idx]
-                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.expected_value = locale.atof(expected_values[idx])
+                opportunity_item.expected_amount = locale.atof(expected_amounts[idx])
                 opportunity_item.save()
         #add customer
         if opportunity.stage.add_customer:
