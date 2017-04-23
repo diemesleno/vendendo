@@ -797,7 +797,7 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         customer_services = CustomerService.objects.filter(
-                                organization=organization_active)
+                                organization=organization_active, status='A')
         context['customer_services'] = customer_services
         return context
 
@@ -825,8 +825,8 @@ class OpportunityCreate(LoginRequiredMixin, SessionMixin, CreateView):
                 customer_service = CustomerService.objects.get(id=product)
                 opportunity_item.customer_service = customer_service
                 opportunity_item.description = descriptions[idx]
-                opportunity_item.expected_value = expected_values[idx]
-                opportunity_item.expected_amount = expected_amounts[idx]
+                opportunity_item.expected_value = locale.atof(expected_values[idx])
+                opportunity_item.expected_amount = locale.atof(expected_amounts[idx])
                 opportunity_item.save()
         #add customer
         if opportunity.stage.add_customer:
@@ -856,7 +856,7 @@ class OpportunityUpdate(LoginRequiredMixin, SessionMixin, OpportunitySecMixin, U
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         customer_services = CustomerService.objects.filter(
-                                organization=organization_active)
+                                organization=organization_active, status='A')
         opportunity = Opportunity.objects.get(pk=self.kwargs['pk'])
         opportunity_items = OpportunityItem.objects.filter(
                                 organization=organization_active,
