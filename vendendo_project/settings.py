@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'crm',
     'coverage',
     'django_nose',
+    'social_django',
 ]
 
 # Use nose to run all tests
@@ -72,6 +73,8 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -113,8 +116,32 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# OAUTH
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = ''
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/error/'
+SOCIAL_AUTH_LOGIN_URL = '/'
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    #'social_core.pipeline.user.create_user',
+    'userapp.utils.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
 # Authentication backends
 AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
 )
 

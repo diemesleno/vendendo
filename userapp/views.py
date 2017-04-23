@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from .forms import NewUserForm, EditUserForm, EditPasswordForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from crm.models import Organization, UserOrganization
 from .models import UserComplement
