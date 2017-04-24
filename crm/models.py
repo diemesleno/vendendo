@@ -155,7 +155,7 @@ class Opportunity(models.Model):
 
     @property
     def expected_value(self):
-        value = OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value')))['num']
+        value = OpportunityItem.objects.filter(opportunity=self).aggregate(num=Sum(F('expected_amount')*F('expected_value'),output_field=models.DecimalField(decimal_places=2)))['num']
         if not value:
             value = 0
         return value
