@@ -108,7 +108,7 @@ class CustomerForm(forms.ModelForm):
         self.fields['category'].label = 'Categoria'
         self.fields['category'].widget = forms.RadioSelect(choices=Customer.category_choices)
         self.fields['occupationarea'].required = True
-        self.fields['occupationarea'].label = 'Área de Atuação'
+        self.fields['occupationarea'].label = 'Segmento'
         self.fields['occupationarea'].widget.attrs.update({'class': 'form-control'})
         self.fields['occupationarea'].queryset = OccupationArea.objects.filter(organization=organization)
         self.fields['relevance'].required = True
