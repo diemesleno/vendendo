@@ -37,7 +37,7 @@ class UserOrganization(models.Model):
         return str(self.user_account.first_name) + ' ' + str(self.user_account.last_name)
 
     def get_absolute_url(self):
-        return reverse('crm:seller-index')
+        return reverse('crm:member-index')
 
 
 class OccupationArea(models.Model):

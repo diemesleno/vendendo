@@ -30,10 +30,10 @@
             </td>
             <td>
               {% if my_message.status_active == 'N' %}
-                Você foi convidado(a) pela Organização [<strong>{{ my_message.organization.name }}</strong>] para ser um de seus vendedores.
+                Você foi convidado(a) pela Organização [<strong>{{ my_message.organization.name }}</strong>] para ser um de seus membros.
                 <br />Aceita o convite?
                 <br><br>
-                <div style="float:left;margin-right: 5px;"> 
+                <div style="float:left;margin-right: 5px;">
                 <form action="{% url 'crm:invitemessage-activate' my_message.code_activating %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-success" data-toggle="tooltip" data-placement="top" title="Aceitar convite">
@@ -41,7 +41,7 @@
                   </button>
                 </form>
                 </div>
-                <div> 
+                <div>
                 <form action="{% url 'crm:invitemessage-leave' my_message.code_activating %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-danger" data-toggle="tooltip" data-placement="top" title="Recusar convite">
@@ -50,20 +50,20 @@
                 </form>
                 </div>
               {% elif  my_message.status_active == 'A' %}
-                Você agora é um(a) vendedor(a) da Organização [<strong>{{ my_message.organization.name }}</strong>] !
+                Você agora é um membro da Organização [<strong>{{ my_message.organization.name }}</strong>] !
                 <br>
                 <br>
-                <div> 
+                <div>
                 <form action="{% url 'crm:invitemessage-leave' my_message.code_activating %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-danger btn-xs">Sair da organização</button>
                 </form>
                 </div>
               {% elif  my_message.status_active == 'I' %}
-                Seu registro de vendedor(a) na Organização [<strong>{{ my_message.organization.name }}</strong>] foi <strong>INATIVADO</strong>!
+                Seu registro de membro na Organização [<strong>{{ my_message.organization.name }}</strong>] foi <strong>INATIVADO</strong>!
                 <br>
                 <br>
-                <div> 
+                <div>
                 <form action="{% url 'crm:invitemessage-leave' my_message.code_activating %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-danger btn-xs">Sair da organização</button>

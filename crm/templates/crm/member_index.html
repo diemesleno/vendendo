@@ -1,18 +1,18 @@
 {% extends "crm/basemenu.html" %}
-{% block title %}Vendendo | Vendedores{% endblock %}
+{% block title %}Vendendo | Membros{% endblock %}
 
 {% block customcss %}
 
-<link href="/static/css/seller.css" rel="stylesheet">
+<link href="/static/css/member.css" rel="stylesheet">
 
 {% endblock %}
 
 {% block content %}
 <div class"container-fluid">
   <div class="main">
-    <h3 class="page-header">Vendedores
+    <h3 class="page-header">Membros
         <br>
-          <a href="{% url 'crm:seller-find' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
+          <a href="{% url 'crm:member-find' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
         </br>
     </h3>
 
@@ -27,30 +27,30 @@
                 <th>Nome</th>
                 <th>E-mail</th>
             <tr>
-          {% for seller in sellers %}
+          {% for member in members %}
           <tr>
             <td class="action-column">
-              {% if seller.status_active == 'A' %}
+              {% if member.status_active == 'A' %}
 
-              <form action="{% url 'crm:seller-deactivate' seller.id %}" method="post">
+              <form action="{% url 'crm:member-deactivate' member.id %}" method="post">
               {% csrf_token %}
-                <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Desativar vendedor">
+                <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Desativar membro">
                   <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                 </button>
               </form>
 
-              {% elif seller.status_active == 'I' %}
+              {% elif member.status_active == 'I' %}
 
-              <form action="{% url 'crm:seller-activate' seller.id %}" method="post">
+              <form action="{% url 'crm:member-activate' member.id %}" method="post">
               {% csrf_token %}
-                <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ativar vendedor">
+                <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Ativar membro">
                   <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                 </button>
               </form>
 
-              {% elif seller.status_active == 'N' %}
+              {% elif member.status_active == 'N' %}
               <div>
-                <form action="{% url 'crm:seller-delete' seller.id %}" method="post">
+                <form action="{% url 'crm:member-delete' member.id %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Cancelar convite">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -58,7 +58,7 @@
                 </form>
               </div>
               <div>
-                <form action="{% url 'crm:seller-invite' seller.id %}" method="post">
+                <form action="{% url 'crm:member-invite' member.id %}" method="post">
                 {% csrf_token %}
                   <button type="submit" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="Reenviar convite">
                     <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
@@ -67,9 +67,9 @@
               </div>
               {% endif %}
             </td>
-            <td width="10px">{% if seller.status_active == 'A' %}<span class="label label-success">Ativo</span>{% elif seller.status_active == 'I' %}<span class="label label-default">Inativo</span>{% elif seller.status_active == 'N' %}<span class="label label-info">Aguardando ativação</span>{% endif %}</td>
-            <td>{{ seller.user_account.first_name }}</td>
-            <td>{{ seller.user_account.email }}</td>
+            <td width="10px">{% if member.status_active == 'A' %}<span class="label label-success">Ativo</span>{% elif member.status_active == 'I' %}<span class="label label-default">Inativo</span>{% elif member.status_active == 'N' %}<span class="label label-info">Aguardando ativação</span>{% endif %}</td>
+            <td>{{ member.user_account.first_name }}</td>
+            <td>{{ member.user_account.email }}</td>
           </tr>
           {% empty %}
           <tr>

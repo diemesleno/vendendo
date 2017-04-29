@@ -23,7 +23,7 @@ class OrganizationForm(forms.ModelForm):
         self.fields['name'].widget.attrs.update({'class': 'form-control'})
 
 
-class SellerFindForm(forms.ModelForm):
+class MemberFindForm(forms.ModelForm):
 
     class Meta:
         model = User
@@ -31,13 +31,13 @@ class SellerFindForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user')
-        super(SellerFindForm, self).__init__(*args, **kwargs)
+        super(MemberFindForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
-        self.fields['email'].label = 'E-mail do Vendedor'
+        self.fields['email'].label = 'E-mail'
         self.fields['email'].widget.attrs.update({'class': 'form-control'})
 
     def clean(self):
-        cleaned_data = super(SellerFindForm, self).clean()
+        cleaned_data = super(MemberFindForm, self).clean()
         email = cleaned_data.get('email')
         # Obtain user admin and organization logon
         user_account = User.objects.get(id=self.user.id)
@@ -45,15 +45,15 @@ class SellerFindForm(forms.ModelForm):
                            user_account=user_account).organization_active
         # Verify if new e-mail
         if User.objects.filter(email=email).exists():
-            seller = User.objects.get(email=email)
+            member = User.objects.get(email=email)
             if UserOrganization.objects.filter(
-                    user_account=seller, organization=organization).exists():
-                    self.add_error('email', 'O vendedor já faz parte desta \
+                    user_account=member, organization=organization).exists():
+                    self.add_error('email', 'Esse usuário já é membro desta \
                                     organização')
         return cleaned_data
 
 
-class SellerForm(forms.ModelForm):
+class MemberForm(forms.ModelForm):
 
     class Meta:
         model = User
@@ -61,7 +61,7 @@ class SellerForm(forms.ModelForm):
                   'last_name',)
 
     def __init__(self, *args, **kwargs):
-        super(SellerForm, self).__init__(*args, **kwargs)
+        super(MemberForm, self).__init__(*args, **kwargs)
 
         self.fields['first_name'].required = True
         self.fields['first_name'].label = 'Nome'

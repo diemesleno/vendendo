@@ -9,7 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from crm.models import Organization, UserOrganization, OccupationArea, \
                        Customer, SaleStage, CustomerService, Opportunity, \
                        OpportunityItem, Activity, Contact
-from crm.forms import OrganizationForm, SellerFindForm, SellerForm, \
+from crm.forms import OrganizationForm, MemberFindForm, MemberForm, \
                       OccupationAreaForm, CustomerForm, SaleStageForm,\
                       CustomerServiceForm, OpportunityForm, ActivityForm
 from userapp.models import UserComplement
@@ -32,7 +32,7 @@ class Sendx(object):
     def send_invite(self, user_organization):
         try:
             subject = "Você foi convidado! Vendendo CRM"
-            body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus vendedores na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
+            body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus membros na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
             print "subject: " + str(subject)
             print "body: " + str(body)
             print "to: " + str(user_organization.user_account.email)
@@ -219,8 +219,8 @@ class OrganizationActivate(LoginRequiredMixin, SessionMixin, UpdateView):
         return redirect('crm:dashboard-index')
 
 
-# Seller Views
-class SellerSecMixin(object):
+# Member Views
+class MemberSecMixin(object):
 
     def dispatch(self, *args, **kwargs):
         user = self.request.user
@@ -230,19 +230,19 @@ class SellerSecMixin(object):
         if not UserOrganization.objects.filter(user_account=user,
                                                organization=organization,
                                                type_user='A').exists():
-            return redirect('crm:seller-index')
-        return super(SellerSecMixin, self).dispatch(*args, **kwargs)
+            return redirect('crm:member-index')
+        return super(MemberSecMixin, self).dispatch(*args, **kwargs)
 
 
-class SellerUserSecMixin(object):
+class MemberUserSecMixin(object):
 
     def dispatch(self, *args, **kwargs):
         user = self.request.user
         organization_active = UserComplement.objects.get(
                                   user_account=user).organization_active
-        seller_user = User.objects.get(pk=self.kwargs['pk'])
-        is_seller_here = UserOrganization.objects.filter(
-                             user_account=seller_user,
+        member_user = User.objects.get(pk=self.kwargs['pk'])
+        is_member_here = UserOrganization.objects.filter(
+                             user_account=member_user,
                              organization=organization_active,
                              type_user='S').exists()
         is_admin_logon = UserOrganization.objects.filter(
@@ -250,14 +250,14 @@ class SellerUserSecMixin(object):
                              organization=organization_active,
                              type_user='A').exists()
 
-        if is_seller_here and is_admin_logon:
-            return super(SellerUserSecMixin, self).dispatch(*args, **kwargs)
-        return redirect('crm:seller-index')
+        if is_member_here and is_admin_logon:
+            return super(MemberUserSecMixin, self).dispatch(*args, **kwargs)
+        return redirect('crm:member-index')
 
 
-class SellerIndex(LoginRequiredMixin, SessionMixin, ListView):
-    template_name = 'crm/seller_index.html'
-    context_object_name = 'sellers'
+class MemberIndex(LoginRequiredMixin, SessionMixin, ListView):
+    template_name = 'crm/member_index.html'
+    context_object_name = 'members'
 
     def get_queryset(self):
         user_account = User.objects.get(id=self.request.user.id).id
@@ -267,12 +267,12 @@ class SellerIndex(LoginRequiredMixin, SessionMixin, ListView):
             organization=organization_active, type_user='S')
 
 
-class SellerFind(LoginRequiredMixin, SessionMixin, FormView):
-    template_name = 'crm/seller_find_form.html'
-    form_class = SellerFindForm
+class MemberFind(LoginRequiredMixin, SessionMixin, FormView):
+    template_name = 'crm/member_find_form.html'
+    form_class = MemberFindForm
 
     def get_form_kwargs(self):
-        kwargs = super(SellerFind, self).get_form_kwargs()
+        kwargs = super(MemberFind, self).get_form_kwargs()
         kwargs.update({'user': self.request.user})
         return kwargs
 
@@ -280,21 +280,21 @@ class SellerFind(LoginRequiredMixin, SessionMixin, FormView):
         self.request.session['email_find'] = form.cleaned_data['email']
         # Verify if new e-mail
         if User.objects.filter(email=form.cleaned_data['email']).exists():
-            self.success_url = reverse_lazy('crm:seller-join')
+            self.success_url = reverse_lazy('crm:member-join')
         else:
-            # Create Seller
-            self.success_url = reverse_lazy('crm:seller-add')
-        return super(SellerFind, self).form_valid(form)
+            # Create Member
+            self.success_url = reverse_lazy('crm:member-add')
+        return super(MemberFind, self).form_valid(form)
 
 
-class SellerCreate(LoginRequiredMixin, SessionMixin, CreateView):
+class MemberCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = UserOrganization
-    template_name = 'crm/seller_form.html'
-    success_url = reverse_lazy('crm:seller-index')
-    form_class = SellerForm
+    template_name = 'crm/member_form.html'
+    success_url = reverse_lazy('crm:member-index')
+    form_class = MemberForm
 
     def get_context_data(self, **kwargs):
-        context = super(SellerCreate, self).get_context_data(**kwargs)
+        context = super(MemberCreate, self).get_context_data(**kwargs)
         context['email_find'] = self.request.session['email_find']
         return context
 
@@ -328,17 +328,17 @@ class SellerCreate(LoginRequiredMixin, SessionMixin, CreateView):
             Sendx.send_invite(self, user_organization)
         except Exception, e:
             form.add_error(None, str(e.message))
-        return super(SellerCreate, self).form_valid(form)
+        return super(MemberCreate, self).form_valid(form)
 
 
-class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
+class MemberJoin(LoginRequiredMixin, SessionMixin, CreateView):
     model = UserOrganization
-    template_name = 'crm/seller_join_form.html'
-    success_url = reverse_lazy('crm:seller-index')
+    template_name = 'crm/member_join_form.html'
+    success_url = reverse_lazy('crm:member-index')
     fields = []
 
     def get_context_data(self, **kwargs):
-        context = super(SellerJoin, self).get_context_data(**kwargs)
+        context = super(MemberJoin, self).get_context_data(**kwargs)
         user_join = User.objects.get(email=self.request.session['email_find'])
         context['email_find'] = user_join.email
         context['full_name'] = str(user_join.first_name) + str(
@@ -363,35 +363,35 @@ class SellerJoin(LoginRequiredMixin, SessionMixin, CreateView):
         user_organization.code_activating = code_activating
         user_organization.save()
         Sendx.send_invite(self, user_organization)
-        return super(SellerJoin, self).form_valid(form)
+        return super(MemberJoin, self).form_valid(form)
 
 
-class SellerDeactivate(LoginRequiredMixin, SessionMixin,
-                       SellerSecMixin, UpdateView):
+class MemberDeactivate(LoginRequiredMixin, SessionMixin,
+                       MemberSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.status_active = 'I'
         self.object.save()
-        return redirect('crm:seller-index')
+        return redirect('crm:member-index')
 
 
-class SellerActivate(LoginRequiredMixin, SessionMixin,
-                     SellerSecMixin, UpdateView):
+class MemberActivate(LoginRequiredMixin, SessionMixin,
+                     MemberSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.status_active = 'A'
         self.object.save()
-        return redirect('crm:seller-index')
+        return redirect('crm:member-index')
 
 
-class SellerDelete(LoginRequiredMixin, SessionMixin,
-                   SellerSecMixin, DeleteView):
+class MemberDelete(LoginRequiredMixin, SessionMixin,
+                   MemberSecMixin, DeleteView):
     model = UserOrganization
-    success_url = reverse_lazy('crm:seller-index')
+    success_url = reverse_lazy('crm:member-index')
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -405,7 +405,7 @@ class SellerDelete(LoginRequiredMixin, SessionMixin,
         return HttpResponseRedirect(success_url)
 
 
-class SellerInviteActivate(base.View):
+class MemberInviteActivate(base.View):
 
     def get(self, request):
         code = request.GET.get("code", False)
@@ -420,14 +420,14 @@ class SellerInviteActivate(base.View):
         return redirect('crm:error-index')
 
 
-class SellerInvite(LoginRequiredMixin, SessionMixin,
-                   SellerSecMixin, UpdateView):
+class MemberInvite(LoginRequiredMixin, SessionMixin,
+                   MemberSecMixin, UpdateView):
     model = UserOrganization
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         Sendx.send_invite(self, self.object)
-        return redirect('crm:seller-index')
+        return redirect('crm:member-index')
 
 
 # Occupation Area Views
