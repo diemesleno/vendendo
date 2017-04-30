@@ -20,6 +20,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from datetime import datetime
 from django.db.models import Q, F, Sum
+from operator import itemgetter
 import uuid
 import hashlib
 import locale
@@ -122,19 +123,10 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
         context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
         context['customers_base_complete'] = range(context['customers_base_count'], 5)
-        # calculate opportunity values by stage
-        stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
-        opportunity_value_stages = "["
-        idx = 0
-        for stage in stages:
-            opportunity_value = stage.get_opportunity_value_by_type_user(is_admin=self.is_admin, user_account=self.user_account)
-            if opportunity_value > 0:
-                if idx > 0:
-                    opportunity_value_stages += ","
-                opportunity_value_stages += "['%s', %s]" % (stage.name, str(opportunity_value))
-                idx += 1
-        opportunity_value_stages += "]"
-        context['opportunity_value_stages'] = opportunity_value_stages
+        
+        context['opportunity_value_stages'] = self.get_opportunity_value_stages()
+        context['customers_by_category'] = self.get_customers_by_category()
+        context['segments_by_value'] = self.get_segments_by_value()
         return context
 
     def get_queryset(self):
@@ -154,6 +146,45 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
                 self.template_name = 'crm/help_index.html'
             return [self.template_name]
 
+    def get_opportunity_value_stages(self):
+        # calculate opportunity values by stage
+        stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
+        opportunity_value_stages = "["
+        idx = 0
+        for stage in stages:
+            opportunity_value = stage.get_opportunity_value_by_type_user(is_admin=self.is_admin, user_account=self.user_account)
+            if opportunity_value > 0:
+                if idx > 0:
+                    opportunity_value_stages += ","
+                opportunity_value_stages += "['%s', %s]" % (stage.name, str(opportunity_value))
+                idx += 1
+        opportunity_value_stages += "]"
+        return opportunity_value_stages
+
+    def get_customers_by_category(self):
+        qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
+        not_qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='U').count()
+        result = "[{name: 'Qualificados', y: %s }, {name: 'Não qualificados', y: %s }]" % (qualified_customers, not_qualified_customers)
+        return result
+
+    def get_segments_by_value(self):
+        customers = Customer.objects.filter(organization=self.organization_active, category='P')
+        customers_and_value = [{'name':customer.occupationarea.name, 'value':customer.opportunities_won_value} for customer in customers]
+        result = self.building_list(customers_and_value)
+        return result
+
+    def building_list(self, sorted_trees):
+        summary_trees = []
+        for item in sorted_trees:
+            if not item['name'] in [k[0] for k in summary_trees]:
+                summary_trees.append([item['name'], sum(i['value'] for i in sorted_trees if i['name'] == item['name'])])
+        result = "["
+        for idx, item in enumerate(sorted(summary_trees, key=itemgetter(1), reverse=True)[:5]):
+            if idx > 0:
+                result += ","
+            result += "['%s', %s]" % (item[0], str(item[1]))
+        result += "]"
+        return result
 
 # Organization Views
 class OrganizationSecMixin(object):
