@@ -98,10 +98,13 @@ class Customer(models.Model):
 
 
 class SaleStage(models.Model):
+    conclusion_choices = ((u'W', u'Ganha'),
+                          (u'L', u'Perdida'))
     name = models.CharField(max_length=100)
     order_number = models.IntegerField(default=0)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     final_stage = models.BooleanField(default=False)
+    conclusion = models.CharField(max_length=1, choices=conclusion_choices, null=True, blank=True)
     add_customer = models.BooleanField(default=False)
 
     def __unicode__(self):

@@ -24,6 +24,7 @@ from operator import itemgetter
 import uuid
 import hashlib
 import locale
+import pytz
 locale.setlocale(locale.LC_ALL, 'pt_BR')
 
 
@@ -127,6 +128,9 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['opportunity_value_stages'] = self.get_opportunity_value_stages()
         context['customers_by_category'] = self.get_customers_by_category()
         context['segments_by_value'] = self.get_segments_by_value()
+        context['new_deals'] = self.get_new_deals()
+        context['lost_deals'] = self.get_lost_deals()
+        context['won_deals'] = self.get_won_deals()
         return context
 
     def get_queryset(self):
@@ -184,6 +188,47 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
                 result += ","
             result += "['%s', %s]" % (item[0], str(item[1]))
         result += "]"
+        return result
+
+    def get_new_deals(self):
+        current_year = datetime.today().year
+        current_month = datetime.today().month
+        opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                   created__year__gte=current_year,
+                                                   created__month__gte=current_month,
+                                                   stage__final_stage=False)
+        result = 0
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        result = locale.currency(result, grouping=True, symbol=None)
+        return result
+
+    def get_lost_deals(self):
+        current_year = datetime.today().year
+        current_month = datetime.today().month
+        opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                   created__year__gte=current_year,
+                                                   created__month__gte=current_month,
+                                                   stage__final_stage=True,
+                                                   stage__conclusion='L')
+        result = 0
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        result = locale.currency(result, grouping=True, symbol=None)
+        return result
+
+    def get_won_deals(self):
+        current_year = datetime.today().year
+        current_month = datetime.today().month
+        opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                   created__year__gte=current_year,
+                                                   created__month__gte=current_month,
+                                                   stage__final_stage=True,
+                                                   stage__conclusion='W')
+        result = 0
+        for opportunity in opportunities:
+            result += opportunity.expected_value
+        result = locale.currency(result, grouping=True, symbol=None)
         return result
 
 # Organization Views

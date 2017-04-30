@@ -123,7 +123,7 @@ class SaleStageForm(forms.ModelForm):
 
     class Meta:
         model = SaleStage
-        fields = ('name','final_stage','add_customer')
+        fields = ('name','final_stage','conclusion','add_customer')
 
     def __init__(self, *args, **kwargs):
         super(SaleStageForm, self).__init__(*args, **kwargs)
@@ -134,6 +134,9 @@ class SaleStageForm(forms.ModelForm):
         self.fields['final_stage'].required = False
         self.fields['final_stage'].label = 'Fase final'
         self.fields['final_stage'].widget = forms.CheckboxInput()
+        # field conclusion
+        self.fields['conclusion'].required = False
+        self.fields['conclusion'].label = 'Conclusão da fase'
         # field add_customer
         self.fields['add_customer'].required = False
         self.fields['add_customer'].label = 'Adicionar cliente na base'
