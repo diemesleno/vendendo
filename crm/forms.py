@@ -94,7 +94,8 @@ class CustomerForm(forms.ModelForm):
                   'category',
                   'occupationarea',
                   'relevance',
-                  'notes',)
+                  'notes',
+                  'responsible_seller',)
 
     def __init__(self, organization, *args, **kwargs):
         super(CustomerForm, self).__init__(*args, **kwargs)
@@ -117,6 +118,11 @@ class CustomerForm(forms.ModelForm):
         self.fields['notes'].required = False
         self.fields['notes'].label = 'Notas'
         self.fields['notes'].widget.attrs.update({'class': 'form-control'})
+        # field seller
+        self.fields['responsible_seller'].required = False
+        self.fields['responsible_seller'].label = 'Gerente da conta'
+        self.fields['responsible_seller'].widget.attrs.update({'class': 'form-control'})
+        self.fields['responsible_seller'].choices = [(user.pk, user.get_full_name()) for user in User.objects.filter(userorganization__organization=organization)]
 
 
 class SaleStageForm(forms.ModelForm):
@@ -137,6 +143,7 @@ class SaleStageForm(forms.ModelForm):
         # field conclusion
         self.fields['conclusion'].required = False
         self.fields['conclusion'].label = 'Conclusão da fase'
+        self.fields['conclusion'].widget.attrs.update({'class': 'form-control'})
         # field add_customer
         self.fields['add_customer'].required = False
         self.fields['add_customer'].label = 'Adicionar cliente na base'

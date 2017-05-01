@@ -78,7 +78,7 @@ class Customer(models.Model):
     notes = models.TextField(null=True, blank=True)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     occupationarea = models.ForeignKey('OccupationArea')
-    responsible_seller = models.ForeignKey('auth.User')
+    responsible_seller = models.ForeignKey('auth.User', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
