@@ -23,24 +23,8 @@
               <H6>CLIENTES POTENCIAIS</H6>
             </div>
             <div class="panel-body">
-              <table class="table">
-                <tr>
-                    <th>Cliente</th>
-                    <th>Relevância</th>
-                </tr>
-                {% for customer_potential in customers_potential_top5 %}
-                <tr>
-                  <td>{{ customer_potential.name }}</td>
-                  <td>{{ customer_potential.relevance }}%</td>
-                </tr>
-                {% endfor %}
-                {% for _ in customers_potential_complete %}
-                <tr>
-                  <td>-</td>
-                  <td>-</td>
-                </tr>
-                {% endfor %}
-              </table>
+              <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+              <div id="container_chart_potential_customers" style="height: 250px; margin: 0 auto"></div>
             </div>
           </div>
         </div>
@@ -54,27 +38,8 @@
               <H6>OPORTUNIDADES</H6>
             </div>
             <div class="panel-body">
-                <table class="table">
-                  <tr>
-                      <th>Cliente</th>
-                      <th>Fase</th>
-                      <th>Valor Estimado</th>
-                  </tr>
-                  {% for opportunity in opportunities_open_top5 %}
-                  <tr>
-                    <td>{{ opportunity.customer }}</td>
-                    <td>{{ opportunity.stage }}</td>
-                    <td>{{ opportunity.expected_value|floatformat:2|default:"0,00" }}</td>
-                  </tr>
-                  {% endfor %}
-                  {% for _ in opportunities_open_complete %}
-                  <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                  </tr>
-                  {% endfor %}
-                </table>
+                <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+                <div id="container_chart_sales_funnel" style="height: 250px; width:80%; margin: 0 auto"></div>
             </div>
           </div>
         </div>
@@ -88,27 +53,8 @@
               <H6>CLIENTES DA BASE</H6>
             </div>
             <div class="panel-body">
-                <table class="table">
-                  <tr>
-                      <th>Cliente</th>
-                      <th>Segmento</th>
-                      <th>Relevância</th>
-                  </tr>
-                  {% for customer in customers_base_top5 %}
-                  <tr>
-                    <td>{{ customer.name }}</td>
-                    <td>{{ customer.occupationarea }}</td>
-                    <td>{{ customer.relevance }}%</td>
-                  </tr>
-                  {% endfor %}
-                  {% for _ in customers_base_complete %}
-                  <tr>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>-</td>
-                  </tr>
-                  {% endfor %}
-                </table>
+                <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+                <div id="container_chart_segment_by_value" style="height: 250px; margin: 0 auto"></div>
             </div>
           </div>
         </div>
@@ -167,15 +113,59 @@
 
           <h5 align="right"><a href="{% url 'crm:activity-index' %}"<span class="label label-default">Ver todas</span></a></h5>
         </div>
-
+        <!-- Oportunidades Novas -->
         <div class="col-xs-12 col-sm-4 placeholder">
           <div class="panel-group">
             <div class="panel panel-default">
-              <div class="panel-body panel-count">
-                <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+              <div class="panel-body">
+                <div class="col-xs-12 col-sm-12" style="color:#2d2e2e;">
+                  <strong>Novas Oportunidades</strong>
+                  <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+                </div>
+                <div class="col-xs-12 col-sm-12 panel-count-md" style="color:#4ca5ff;">
+                  R$ {{ new_deals }}
+                </div>
+                <div class="col-xs-12 col-sm-12" style="color:silver; font-size:x-small; font-style:italic; text-align:right; line-height: 1px;">
+                  (Deste Mês)
+                </div>
               </div>
             </div>
           </div>
+          <!-- Oportunidades Perdidas -->
+          <div class="panel-group">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="col-xs-12 col-sm-12">
+                  <strong>Oportunidades Perdidas</strong>
+                  <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+                </div>
+                <div class="col-xs-12 col-sm-12 panel-count-md" style="color:#d9534f;">
+                  R$ {{ lost_deals }}
+                </div>
+                <div class="col-xs-12 col-sm-12" style="color:silver; font-size:x-small; font-style:italic; text-align:right; line-height: 1px;">
+                  (Deste Mês)
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Oportunidades Ganhas -->
+          <div class="panel-group">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="col-xs-12 col-sm-12">
+                  <strong>Oportunidades Ganhas</strong>
+                  <div style="width:100%; height:1px; border-top: thin solid #F0F0F0;"></div>
+                </div>
+                <div class="col-xs-12 col-sm-12 panel-count-md" style="color:#43cb83;">
+                  R$ {{ won_deals }}
+                </div>
+                <div class="col-xs-12 col-sm-12" style="color:silver; font-size:x-small; font-style:italic; text-align:right; line-height: 1px;">
+                  (Deste Mês)
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div> <!-- end row -->
     </section>
@@ -200,8 +190,9 @@
 <script src="/static/highcharts/js/modules/funnel.js"></script>
 <script>
 
+// Sales funnel
 $(function () {
-    $('#container_chart').highcharts({
+    $('#container_chart_sales_funnel').highcharts({
         chart: {
             type: 'funnel'
         },
@@ -214,7 +205,11 @@ $(function () {
             }
         },
         title: {
-            text: 'Funil de vendas'
+            //text: 'Funil de vendas'
+            text: ''
+        },
+        credits: {
+            enabled: false
         },
         legend: {
            enabled: false
@@ -240,6 +235,106 @@ $(function () {
           name: 'Valor estimado',
           data: {{ opportunity_value_stages|safe }}
         }]
+    });
+});
+
+// Potential customers
+$(function () {
+    $('#container_chart_potential_customers').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        exporting: {
+            buttons: {
+                contextButton: {
+                    enabled: false,
+                    align: 'left'
+                }
+            }
+        },
+        title: {
+            text: ''
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.y}</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: false,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: false
+                },
+                showInLegend: true
+            }
+        },
+        series: [{
+            name: 'Qtd',
+            colorByPoint: true,
+            data: {{ customers_by_category|safe }}
+        }]
+    });
+});
+
+// Segment by value
+$(function () {
+    $('#container_chart_segment_by_value').highcharts({
+        chart: {
+          type: 'bar'
+      },
+      title: {
+          text: ''
+      },
+      exporting: {
+              buttons: {
+                  contextButton: {
+                      enabled: false,
+                      align: 'left'
+                  }
+              }
+          },
+      xAxis: {
+        labels: {
+          enabled: false
+        }
+      },
+      yAxis: {
+          min: 0,
+          title: {
+              text: 'Contas (R$)'
+          }
+      },
+      credits: {
+          enabled: false
+      },
+      legend: {
+          enabled: false
+      },
+      tooltip: {
+          pointFormat: 'Valor: <b>R$ {point.y:,.2f} </b>'
+      },
+      series: [{
+          name: 'Segmento',
+          data: {{ segments_by_value|safe }},
+          dataLabels: {
+              enabled: true,
+              rotation: -0,
+              color: '#FFFFFF',
+              align: 'right',
+              format: '{point.name}', // one decimal
+              y: 0, // 10 pixels down from the top
+              style: {
+                  fontSize: '10px',
+                  fontFamily: 'Verdana, sans-serif'
+              }
+          }
+      }]
     });
 });
 

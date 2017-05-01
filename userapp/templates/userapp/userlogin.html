@@ -24,8 +24,13 @@
           </label>
         </div>
         <p class="btn-align">
-          <a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-danger">Login com Google</a>
-          <input type="submit" class="btn btn-primary" value="Entrar">
+          <input type="submit" class="btn btn-default" style="width:100%" value="Entrar">
+        </p>
+        <p class="btn-align" style="text-align:center; font-style: italic;">
+          ou
+        </p>
+        <p class="btn-align">
+          <a href="{% url "social:begin" "google-oauth2" %}" class="btn btn-danger" style="width:100%">Login com Google</a>
         </p>
         <p class="forgot-pwd">
            Ainda não tem uma conta? <a href="/newuser/">Registre-se aqui.</a><br>

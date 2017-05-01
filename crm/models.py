@@ -86,12 +86,25 @@ class Customer(models.Model):
     def get_absolute_url(self):
         return reverse('crm:customer-index')
 
+    def get_opportunities_won(self):
+        return Opportunity.objects.filter(customer=self, stage__final_stage=True)
+
+    @property
+    def opportunities_won_value(self):
+        result = 0
+        for opportunity in self.get_opportunities_won():
+            result += opportunity.expected_value
+        return result
+
 
 class SaleStage(models.Model):
+    conclusion_choices = ((u'W', u'Ganha'),
+                          (u'L', u'Perdida'))
     name = models.CharField(max_length=100)
     order_number = models.IntegerField(default=0)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     final_stage = models.BooleanField(default=False)
+    conclusion = models.CharField(max_length=1, choices=conclusion_choices, null=True, blank=True)
     add_customer = models.BooleanField(default=False)
 
     def __unicode__(self):
