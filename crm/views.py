@@ -193,10 +193,17 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     def get_new_deals(self):
         current_year = datetime.today().year
         current_month = datetime.today().month
-        opportunities = Opportunity.objects.filter(organization=self.organization_active,
-                                                   created__year__gte=current_year,
-                                                   created__month__gte=current_month,
-                                                   stage__final_stage=False)
+        if self.is_admin:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=False)
+        else:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=False,
+                                                       seller=self.user_account)
         result = 0
         for opportunity in opportunities:
             result += opportunity.expected_value
@@ -206,11 +213,19 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     def get_lost_deals(self):
         current_year = datetime.today().year
         current_month = datetime.today().month
-        opportunities = Opportunity.objects.filter(organization=self.organization_active,
-                                                   created__year__gte=current_year,
-                                                   created__month__gte=current_month,
-                                                   stage__final_stage=True,
-                                                   stage__conclusion='L')
+        if self.is_admin:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=True,
+                                                       stage__conclusion='L')
+        else:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=True,
+                                                       stage__conclusion='L',
+                                                       seller=self.user_account)
         result = 0
         for opportunity in opportunities:
             result += opportunity.expected_value
@@ -220,11 +235,19 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
     def get_won_deals(self):
         current_year = datetime.today().year
         current_month = datetime.today().month
-        opportunities = Opportunity.objects.filter(organization=self.organization_active,
-                                                   created__year__gte=current_year,
-                                                   created__month__gte=current_month,
-                                                   stage__final_stage=True,
-                                                   stage__conclusion='W')
+        if self.is_admin:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=True,
+                                                       stage__conclusion='W')
+        else:
+            opportunities = Opportunity.objects.filter(organization=self.organization_active,
+                                                       created__year__gte=current_year,
+                                                       created__month__gte=current_month,
+                                                       stage__final_stage=True,
+                                                       stage__conclusion='W',
+                                                       seller=self.user_account)
         result = 0
         for opportunity in opportunities:
             result += opportunity.expected_value
