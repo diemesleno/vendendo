@@ -115,16 +115,13 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(Dashboard, self).get_context_data(**kwargs)
-        context['customers_potential_count'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
-        context['customers_potential_top5'] = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').order_by('-relevance')[:5]
-        context['opportunities_open_count'] = Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False).count()
-        context['opportunities_open_top5'] = sorted(Opportunity.objects.filter(organization=self.organization_active, stage__final_stage=False)[:5], key=lambda o: o.expected_value, reverse=True)
+        context['customers_potential_count'] = self.get_customers_potential_count()
+        context['opportunities_open_count'] = self.get_opportunities_open_count()
         context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
         context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
         context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
         context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
         context['customers_base_complete'] = range(context['customers_base_count'], 5)
-
         context['opportunity_value_stages'] = self.get_opportunity_value_stages()
         context['customers_by_category'] = self.get_customers_by_category()
         context['segments_by_value'] = self.get_segments_by_value()
@@ -150,6 +147,26 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
                 self.template_name = 'crm/help_index.html'
             return [self.template_name]
 
+    def get_opportunities_open_count(self):
+        if self.is_admin:
+            result = Opportunity.objects.filter(organization=self.organization_active,
+                                                stage__final_stage=False).count()
+        else:
+            result = Opportunity.objects.filter(organization=self.organization_active,
+                                                stage__final_stage=False,
+                                                seller=self.user_account).count()
+        return result
+
+    def get_customers_potential_count(self):
+        if self.is_admin:
+            result = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+                                             organization=self.organization_active).count()
+        else:
+            result = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+                                             organization=self.organization_active,
+                                             responsible_seller=self.user_account).count()
+        return result
+
     def get_opportunity_value_stages(self):
         # calculate opportunity values by stage
         stages = SaleStage.objects.filter(organization=self.organization_active, final_stage=False).order_by('order_number')
@@ -166,8 +183,16 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         return opportunity_value_stages
 
     def get_customers_by_category(self):
-        qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='Q').count()
-        not_qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True), organization=self.organization_active, category='U').count()
+        if self.is_admin:
+            qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+                                                          organization=self.organization_active).count()
+        else:
+            qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+                                                          organization=self.organization_active,
+                                                          responsible_seller=self.user_account).count()
+        not_qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True),
+                                                          organization=self.organization_active,
+                                                          category='U').count()
         result = "[{name: 'Qualificados', y: %s }, {name: 'Não qualificados', y: %s }]" % (qualified_customers, not_qualified_customers)
         return result
 
@@ -615,10 +640,12 @@ class CustomerIndex(LoginRequiredMixin, SessionMixin, ListView):
     context_object_name = 'my_customers'
 
     def get_queryset(self):
-        user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                user_account=user_account).organization_active
-        return Customer.objects.filter(organization=organization_active)
+        if self.is_admin:
+            customers = Customer.objects.filter(organization=self.organization_active)
+        else:
+            customers = Customer.objects.filter(Q(category='U') | Q(category__in=['Q','P']) & Q(responsible_seller=self.user_account),
+                                                organization=self.organization_active)
+        return customers
 
 
 class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
@@ -627,15 +654,12 @@ class CustomerCreate(LoginRequiredMixin, SessionMixin, CreateView):
 
     def form_valid(self, form):
         customer = form.save(commit=False)
-        user_account = User.objects.get(id=self.request.user.id)
-        organization_active = UserComplement.objects.get(
-                                 user_account=user_account).organization_active
-        customer.organization = organization_active
-        customer.responsible_seller = user_account
+        customer.organization = self.organization_active
+        customer.responsible_seller = self.user_account
         customer.save()
         user_complement = UserComplement.objects.get(
-                                 user_account=user_account,
-                                 organization_active=organization_active)
+                                 user_account=self.user_account,
+                                 organization_active=self.organization_active)
         user_complement.customers.add(customer)
         user_complement.save()
         # contacts
@@ -678,7 +702,10 @@ class CustomerUpdate(LoginRequiredMixin, SessionMixin, CutomerSecMixin, UpdateVi
         return context
 
     def form_valid(self, form):
-        customer = form.save()
+        customer = form.save(commit=False)
+        if not self.is_admin:
+            customer.responsible_seller = self.user_account
+        customer.save()
         # contacts
         self.save_contacts(customer=customer)
         return super(CustomerUpdate, self).form_valid(form)
