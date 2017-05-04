@@ -218,7 +218,7 @@ class ActivityForm(forms.ModelForm):
         model = Activity
         fields = ('title', 'description', 'opportunity', 'type_activity', 'details', 'deadline', 'completed',)
 
-    def __init__(self, organization, *args, **kwargs):
+    def __init__(self, organization, user, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
         # field title
         self.fields['title'].required = True
@@ -232,7 +232,7 @@ class ActivityForm(forms.ModelForm):
         self.fields['opportunity'].required = True
         self.fields['opportunity'].label = 'Oportunidade'
         self.fields['opportunity'].widget.attrs.update({'class': 'form-control'})
-        self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False)
+        self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False, seller=user)
         # field type_activity
         self.fields['type_activity'].required = False
         self.fields['type_activity'].label = 'Tipo de Atividade'
