@@ -33,7 +33,7 @@
                   <p class="help-block"><small>{{ field.help_text }}</small></p>
                   {% endif %}
               </div>
-              {% elif type_user_organization == 'A' %}
+              {% elif type_user_organization == 'A' or type_user_organization == 'M'%}
               <div class="form-group">
                   <div class="col-xs-12 col-sm-12">
                       {% if field.errors %}
