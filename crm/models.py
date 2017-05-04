@@ -62,19 +62,6 @@ class Customer(models.Model):
                         (u'P', u'Cliente da Base'))
     category = models.CharField(max_length=1,
                                 choices=category_choices)
-    relevance_choices = ((0, u'0%'),
-                         (10, u'10%'),
-                         (20, u'20%'),
-                         (30, u'30%'),
-                         (40, u'40%'),
-                         (50, u'50%'),
-                         (60, u'60%'),
-                         (70, u'70%'),
-                         (80, u'80%'),
-                         (90, u'90%'),
-                         (100, u'100%'))
-    relevance = models.IntegerField(default=0,
-                                    choices=relevance_choices)
     notes = models.TextField(null=True, blank=True)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
     occupationarea = models.ForeignKey('OccupationArea')

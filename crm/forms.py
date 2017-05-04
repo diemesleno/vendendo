@@ -93,7 +93,6 @@ class CustomerForm(forms.ModelForm):
                   'legal_personality',
                   'category',
                   'occupationarea',
-                  'relevance',
                   'notes',
                   'responsible_seller',)
 
@@ -112,9 +111,6 @@ class CustomerForm(forms.ModelForm):
         self.fields['occupationarea'].label = 'Segmento'
         self.fields['occupationarea'].widget.attrs.update({'class': 'form-control'})
         self.fields['occupationarea'].queryset = OccupationArea.objects.filter(organization=organization)
-        self.fields['relevance'].required = True
-        self.fields['relevance'].label = 'Relevância'
-        self.fields['relevance'].widget.attrs.update({'class': 'form-control'})
         self.fields['notes'].required = False
         self.fields['notes'].label = 'Notas'
         self.fields['notes'].widget.attrs.update({'class': 'form-control'})
