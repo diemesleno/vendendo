@@ -21,12 +21,12 @@ class Organization(models.Model):
 class UserOrganization(models.Model):
     user_account = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     organization = models.ForeignKey('Organization', on_delete=models.CASCADE)
-    type_user_choices = ((u'A', u'Admin'),
-                         (u'M', u'Manager'),
-                         (u'S', u'Seller'))
-    type_status_choices = ((u'A', u'Active'),
-                           (u'I', u'Inactive'),
-                           (u'N', u'Invited'))
+    type_user_choices = ((u'A', u'Administrador'),
+                         (u'M', u'Gerente'),
+                         (u'S', u'Comercial'))
+    type_status_choices = ((u'A', u'Ativo'),
+                           (u'I', u'Inativo'),
+                           (u'N', u'Convidado'))
     type_user = models.CharField(max_length=1, choices=type_user_choices)
     status_active = models.CharField(max_length=1,
                                      choices=type_status_choices,

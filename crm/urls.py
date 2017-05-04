@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^member/(?P<pk>[0-9]+)/activate/$', views.MemberActivate.as_view(), name='member-activate'),
     url(r'^member/(?P<pk>[0-9]+)/delete/$', views.MemberDelete.as_view(), name='member-delete'),
     url(r'^member/(?P<pk>[0-9]+)/toinvite/$', views.MemberInvite.as_view(), name='member-invite'),
+    url(r'^member/(?P<pk>[0-9]+)/altertype/$', views.MemberAlterType.as_view(), name='member-alter-type'),
     url(r'^invite/activate/$', views.MemberInviteActivate.as_view(), name='member-invite-activate'),
     url(r'^member/find/$', views.MemberFind.as_view(), name='member-find'),
     url(r'^member/add/$', views.MemberCreate.as_view(), name='member-add'),

@@ -65,7 +65,7 @@ class SessionMixin(object):
             type_user_organization = UserOrganization.objects.get(
                                         user_account=user_account,
                                         organization=self.organization_active).type_user
-            if type_user_organization == "A":
+            if type_user_organization == "A" or type_user_organization == "M":
                 return True
             else:
                 return False
@@ -124,7 +124,7 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
         context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
         context['customers_base_complete'] = range(context['customers_base_count'], 5)
-        
+
         context['opportunity_value_stages'] = self.get_opportunity_value_stages()
         context['customers_by_category'] = self.get_customers_by_category()
         context['segments_by_value'] = self.get_segments_by_value()
@@ -328,33 +328,35 @@ class MemberSecMixin(object):
 
         if not UserOrganization.objects.filter(user_account=user,
                                                organization=organization,
-                                               type_user='A').exists():
-            return redirect('crm:member-index')
+                                               type_user__in=['A','M']).exists():
+            return redirect('crm:dashboard-index')
+        return super(MemberSecMixin, self).dispatch(*args, **kwargs)
+
+class MemberSecMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        user = self.request.user
+        organization = UserOrganization.objects.get(
+                                pk=self.kwargs['pk']).organization
+
+        if not UserOrganization.objects.filter(user_account=user,
+                                               organization=organization,
+                                               type_user__in=['A','M']).exists():
+            return redirect('crm:dashboard-index')
         return super(MemberSecMixin, self).dispatch(*args, **kwargs)
 
 
 class MemberUserSecMixin(object):
 
     def dispatch(self, *args, **kwargs):
-        user = self.request.user
-        organization_active = UserComplement.objects.get(
-                                  user_account=user).organization_active
-        member_user = User.objects.get(pk=self.kwargs['pk'])
-        is_member_here = UserOrganization.objects.filter(
-                             user_account=member_user,
-                             organization=organization_active,
-                             type_user='S').exists()
-        is_admin_logon = UserOrganization.objects.filter(
-                             user_account=user,
-                             organization=organization_active,
-                             type_user='A').exists()
-
-        if is_member_here and is_admin_logon:
-            return super(MemberUserSecMixin, self).dispatch(*args, **kwargs)
-        return redirect('crm:member-index')
+        if not UserOrganization.objects.filter(user_account=self.user_account,
+                                               organization=self.organization_active,
+                                               type_user__in=['A','M']).exists():
+            return redirect('crm:dashboard-index')
+        return super(MemberUserSecMixin, self).dispatch(*args, **kwargs)
 
 
-class MemberIndex(LoginRequiredMixin, SessionMixin, ListView):
+class MemberIndex(LoginRequiredMixin, SessionMixin, MemberUserSecMixin, ListView):
     template_name = 'crm/member_index.html'
     context_object_name = 'members'
 
@@ -363,7 +365,7 @@ class MemberIndex(LoginRequiredMixin, SessionMixin, ListView):
         organization_active = UserComplement.objects.get(
                                 user_account=user_account).organization_active
         return UserOrganization.objects.filter(
-            organization=organization_active, type_user='S')
+            organization=organization_active, type_user__in=['S', 'M'])
 
 
 class MemberFind(LoginRequiredMixin, SessionMixin, FormView):
@@ -483,6 +485,20 @@ class MemberActivate(LoginRequiredMixin, SessionMixin,
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         self.object.status_active = 'A'
+        self.object.save()
+        return redirect('crm:member-index')
+
+
+class MemberAlterType(LoginRequiredMixin, SessionMixin,
+                      MemberSecMixin, UpdateView):
+    model = UserOrganization
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.type_user == 'M':
+            self.object.type_user = 'S'
+        elif self.object.type_user == 'S':
+            self.object.type_user = 'M'
         self.object.save()
         return redirect('crm:member-index')
 
