@@ -2,9 +2,14 @@
 <!doctype html>
 <html class="no-js" lang="en">
   <head>
+    <!-- Meta -->
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicons -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/images/favicon.png">
+
     <title>{% block title %}{% endblock %}</title>
 
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -105,6 +110,7 @@
               <li style="text-align:center; font-weight:bold;"><a href="{% url 'crm:invitemessage-index' %}">Ver todas as mensagens</a></li>
             </ul>
           </li>
+          <li><a href="{% url 'crm:help-index' %}"><icon class="glyphicon glyphicon-question-sign"></a></li>
           {% if type_user_organization == "A" or type_user_organization == "M" %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administração<span class="caret"></span></a>
@@ -127,9 +133,6 @@
               <li><a href="/logout/">Sair</a></li>
             </ul>
           </li>
-          <ul class="nav navbar-nav">
-            <li><a href="{% url 'crm:help-index' %}"><icon class="glyphicon glyphicon-question-sign"></a></li>
-          </ul>
         </ul>
       </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
