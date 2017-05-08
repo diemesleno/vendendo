@@ -232,7 +232,11 @@ class ActivityForm(forms.ModelForm):
         self.fields['opportunity'].required = True
         self.fields['opportunity'].label = 'Oportunidade'
         self.fields['opportunity'].widget.attrs.update({'class': 'form-control'})
-        self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False, seller=user)
+        type_user = UserOrganization.objects.get(user_account=user, organization=organization).type_user
+        if type_user == "A" or type_user == "M":
+            self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False).order_by('customer')
+        elif type_user == "S":
+            self.fields['opportunity'].queryset = Opportunity.objects.filter(organization=organization, stage__final_stage=False, seller=user).order_by('customer')
         # field type_activity
         self.fields['type_activity'].required = False
         self.fields['type_activity'].label = 'Tipo de Atividade'
