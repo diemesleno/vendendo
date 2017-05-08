@@ -1083,6 +1083,7 @@ class ActivityCreate(LoginRequiredMixin, SessionMixin, CreateView):
         if form_class is None:
             form_class = self.get_form_class()
         return form_class(organization=self.organization_active,
+                          user=self.user_account,
                           **self.get_form_kwargs())
 
 
@@ -1105,6 +1106,7 @@ class ActivityUpdate(LoginRequiredMixin, SessionMixin, ActivitySecMixin, UpdateV
         if form_class is None:
             form_class = self.get_form_class()
         return form_class(organization=self.organization_active,
+                          user=self.user_account,
                           **self.get_form_kwargs())
 
 
