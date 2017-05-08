@@ -1122,7 +1122,7 @@ class InviteMessageIndex(LoginRequiredMixin, SessionMixin, ListView):
 
     def get_queryset(self):
         user_account = User.objects.get(id=self.request.user.id)
-        return UserOrganization.objects.filter(user_account=user_account, type_user='S')
+        return UserOrganization.objects.filter(user_account=user_account).exclude(type_user='A')
 
 
 class InviteMessageActivate(LoginRequiredMixin, SessionMixin, UpdateView):
