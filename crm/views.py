@@ -33,11 +33,11 @@ class Sendx(object):
     @staticmethod
     def send_invite(self, user_organization):
         try:
+            header = '<div id="header" style="width:100%;"> <img src="http://www.vendendocrm.com/static/images/vendendo_logo_mini.png"> <div><div id="content" style="font-family:helvetica, arial, sans-serif; font-size:14px; font-weight: 300;"><br>'
+            footer = '</div> <div id="footer" style="width:100%; color:#1abc9c; text-align: left; font-family:Helvetica; font-size:small;"> <a href="http://www.vendendocrm.com" style="text-decoration:underline; color:#1abc9c;">www.vendendocrm.com</a><br> </div> <div style="margin-top:5px;"> <a href="https://www.facebook.com/Vendendo-CRM-1821057294879669/"><img src="http://www.vendendocrm.com/static/images/facebook_icon.png" width="24" height="24"></a> <a href="http://twitter.com/vendendocrm"><img src="http://www.vendendocrm.com/static/images/tweet_icon.png" width="24" height="24"></a> <a href="http://www.youtube.com/channel/UCzotKDjwHxykwGmv8TstxhA"><img src="http://www.vendendocrm.com/static/images/youtube_icon.png" width="24" height="24"></a> </div>'
             subject = "Você foi convidado! Vendendo CRM"
-            body = "Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus membros na <b>"+str(user_organization.organization.name)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a>"
-            print "subject: " + str(subject)
-            print "body: " + str(body)
-            print "to: " + str(user_organization.user_account.email)
+            body = "<p>Olá "+str(user_organization.user_account.first_name)+", <br /><br />Você foi convidado por <b>"+str(self.request.user.first_name)+"</b> para ser um de seus membros na <b>"+str(user_organization.organization)+"</b>. <br /><br /> Clique no link a seguir para aceitar o convite: <br /><a href='"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"'>"+str(settings.INVITE_HOST)+"/invite/activate/?code="+str(user_organization.code_activating)+"</a></p>"
+            body = header + body + footer
             send_mail(subject, body, "Vendendo CRM <do-not-reply@vendendocrm.com>",
                                      [user_organization.user_account.email],
                                      html_message=body)
@@ -344,19 +344,6 @@ class OrganizationActivate(LoginRequiredMixin, SessionMixin, UpdateView):
 
 
 # Member Views
-class MemberSecMixin(object):
-
-    def dispatch(self, *args, **kwargs):
-        user = self.request.user
-        organization = UserOrganization.objects.get(
-                                pk=self.kwargs['pk']).organization
-
-        if not UserOrganization.objects.filter(user_account=user,
-                                               organization=organization,
-                                               type_user__in=['A','M']).exists():
-            return redirect('crm:dashboard-index')
-        return super(MemberSecMixin, self).dispatch(*args, **kwargs)
-
 class MemberSecMixin(object):
 
     def dispatch(self, *args, **kwargs):
