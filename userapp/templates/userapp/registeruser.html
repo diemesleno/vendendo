@@ -55,7 +55,7 @@
         {% endif %}
         <div class="checkbox">
           <label>
-            <input type="checkbox" value=""> Li e concordo com os <a href="#">termos de uso</a>.
+            <input type="checkbox" value=""> Li e concordo com os <a data-toggle="modal" data-target="#termsofuser">termos de uso</a>.
           </label>
         </div>
         <p class="btn-align" style="text-align:center;">
@@ -70,11 +70,40 @@
         <p class="msg-error">
             {% if error %}
             <div class="alert alert-danger" role="alert">
-                <a href="#" class="alert-link">{{ error }}</a>
+                <a href="#09;pl" class="alert-link">{{ error }}</a>
             </div>
             {% endif %}
         </p>
 
     </form>
+    <!-- Modal -->
+    <div class="modal fade" id="termsofuser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <div style="text-align:center;"><img src="/static/images/vendendo_logo_verde_escuro.png"></div>
+            <h4 class="modal-title" id="myModalLabel">Termos de Uso</h4>
+          </div>
+          <div class="modal-body" style="overflow:scroll; height:400px">
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam vehicula mollis purus sed suscipit. Nulla nec gravida nulla. Nam gravida mi a neque interdum sollicitudin. In sed nibh turpis. Pellentesque orci sapien, pellentesque quis risus eget, pretium placerat nisi. Proin nunc erat, euismod ac mauris et, egestas pellentesque elit. Suspendisse iaculis nulla pulvinar hendrerit tincidunt. Fusce fringilla varius mauris, rhoncus congue nulla tristique at. Vestibulum finibus, nisi eu porta sagittis, felis ipsum viverra nisl, ac aliquam enim felis nec mi. Morbi sed commodo felis. Nunc lobortis sapien nec aliquet cursus. Vivamus eleifend nisi est, sit amet scelerisque justo egestas sed. Aenean id sapien libero. Donec sit amet sodales velit. In erat neque, semper eu efficitur vitae, auctor a odio. Quisque id lacus mi.</p>
+              <p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Pellentesque auctor accumsan euismod. Morbi convallis diam mi, rhoncus viverra risus dignissim nec. Sed rutrum turpis vitae augue iaculis tincidunt. Vestibulum blandit urna in gravida pretium. Suspendisse tortor magna, condimentum vel erat a, volutpat varius mi. Morbi nisi neque, pretium et rutrum vitae, pellentesque id nibh. In quis est risus. Vivamus vitae quam aliquam, finibus sapien ut, vulputate felis.</p>
+              <p>Etiam luctus urna nulla, vel cursus erat ultrices ut. Quisque consectetur pulvinar erat sed blandit. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere laoreet augue accumsan efficitur. Phasellus erat dui, viverra at quam quis, maximus iaculis nisl. Nulla viverra interdum purus, id eleifend erat dictum non. Curabitur eu mi quis mauris dictum maximus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Sed maximus pharetra libero, vel dictum eros pulvinar vitae. Donec metus lectus, interdum nec posuere id, congue sit amet sapien.</p>
+              <p>Aenean eu dui ut orci dictum dapibus ut id justo. Vivamus sit amet tortor neque. Nunc efficitur lorem nec sem ullamcorper, sit amet mattis enim congue. Sed ante ante, dapibus a ligula gravida, feugiat laoreet magna. Vestibulum blandit magna diam, sit amet laoreet nibh ullamcorper vel. Proin elementum mauris non turpis porttitor, ut ultricies turpis laoreet. Vestibulum in suscipit tellus. Phasellus imperdiet, orci at porttitor pellentesque, sem neque auctor sapien, a ultricies ligula orci eu dui.</p>
+              <p>Vivamus accumsan molestie ultrices. Ut pharetra eros eget euismod consequat. Aenean ornare eros felis. Duis pharetra, ante sed pulvinar consectetur, orci erat laoreet ante, aliquam suscipit ex orci a ligula. Praesent in pulvinar augue, at eleifend diam. Nam a tristique ipsum. Pellentesque ac ligula a elit fermentum placerat. Aliquam ut urna felis. Nunc in velit euismod, pellentesque tortor sed, dictum lacus. Nulla tempus felis in maximus malesuada. Proin sagittis feugiat justo eget semper. Nulla euismod mauris non nulla facilisis placerat. Maecenas ut bibendum ex, eget posuere diam. Curabitur libero tortor, ultrices vitae maximus a, commodo vitae augue. Sed dapibus nec ex at mattis.</p>
+              <p>Fusce dapibus aliquam arcu. Fusce accumsan, dolor vitae ornare consequat, ante felis sodales dolor, eu tempor lorem est vel ante. Phasellus leo lectus, fermentum vitae orci quis, posuere dignissim massa. Cras tempus iaculis mauris, ut varius neque elementum sit amet. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nunc at malesuada purus. Ut in lacus turpis. Curabitur dictum, neque et consequat tincidunt, odio est commodo nisl, ac efficitur ante odio sit amet eros.</p>
+              <p>Nunc ac faucibus leo, eget mattis metus. Aliquam rhoncus iaculis mollis. Sed sed bibendum arcu. Suspendisse non nunc nec lacus eleifend mattis ut a purus. Curabitur quis nisl a erat pellentesque rutrum sit amet eu ligula. Aliquam convallis lectus quis dictum accumsan. Vestibulum tempor diam ut dapibus vestibulum. Nullam porttitor, leo sit amet euismod vestibulum, nunc dolor elementum diam, at placerat risus massa quis dui. Sed convallis eros lacus, in vestibulum urna pretium eu.</p>
+              <p>Integer elit erat, sodales quis consequat at, vehicula at nulla. Aenean quis dapibus leo, vitae finibus sapien. Praesent a sapien sem. Nunc facilisis dui a metus commodo, vel imperdiet felis dapibus. Praesent sodales venenatis tempor. Nam facilisis urna quis ipsum malesuada mattis. Maecenas placerat mi in tortor pulvinar tincidunt. Sed pretium hendrerit est sed eleifend. Donec eget tristique metus. Donec eleifend nunc ut enim maximus, non mollis velit aliquam. Sed ac orci nec risus viverra congue sit amet at arcu. Vestibulum justo sapien, vulputate a sapien et, cursus euismod mauris. Integer nec faucibus magna. Vestibulum ullamcorper, neque eget aliquet scelerisque, nulla lacus porttitor nunc, in ultricies magna tortor sed augue.</p>
+              <p>Aenean eget tellus metus. Mauris vitae fringilla quam. Duis ut fermentum elit. Mauris venenatis porta ipsum, ac pharetra sapien. Donec at dictum lacus. Nunc metus justo, pretium id dignissim a, volutpat accumsan tellus. Praesent sapien odio, imperdiet non mi ac, rutrum viverra est. Aenean id metus eget nunc ullamcorper mattis. Duis sit amet leo vel arcu lobortis condimentum at eu arcu. Vivamus sem sem, ullamcorper in dui tincidunt, egestas euismod mauris. Sed consequat commodo enim quis congue. Quisque rutrum consectetur dui nec suscipit. Etiam tellus neque, faucibus eu augue vitae, interdum egestas mauris. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas feugiat dolor mi, vitae pulvinar augue placerat quis. Morbi ullamcorper neque eu lobortis tristique.</p>
+              <p>Nulla tincidunt lacus mollis augue placerat, viverra hendrerit mauris dapibus. Cras et mi congue lorem gravida posuere eu eu sapien. Aliquam tempus ex ante, at ultrices ex mattis eget. Morbi vitae lectus nisi. In vitae risus eget ante bibendum facilisis in a libero. Vivamus ut risus sit amet tellus luctus aliquam. Sed vel placerat est. Cras pharetra commodo est tristique dictum. Phasellus tempus felis vitae sodales consectetur. Etiam quis tortor eget augue cursus molestie. Mauris ultricies, urna at malesuada dictum, libero odio euismod mauris, non maximus ipsum enim ac neque.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
+{% endblock %}
+{% block customjs %}
 {% endblock %}
