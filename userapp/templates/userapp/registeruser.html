@@ -55,14 +55,14 @@
         {% endif %}
         <div class="checkbox">
           <label>
-            <input type="checkbox" value=""> Li e concordo com os <a data-toggle="modal" data-target="#termsofuser">termos de uso</a>.
+            <input type="checkbox" id="cb1" value=""> Li e concordo com os <a data-toggle="modal" data-target="#termsofuser">termos de uso</a>.
           </label>
         </div>
         <p class="btn-align" style="text-align:center;">
-            <button type="submit" class="btn btn-success">Criar nova conta</button>
+            <button type="submit"  id="btn1" class="btn btn-success">Criar nova conta</button>
         </p>
         <p class="btn-align" style="text-align:center;">
-            <input type="button" class="btn btn-danger" value="Registre-se com o Google" onclick="javascript:location.href='{% url "social:begin" "google-oauth2" %}';">
+            <input type="button"  id="btngoogle" class="btn btn-danger" value="Registre-se com o Google" onclick="javascript:location.href='{% url "social:begin" "google-oauth2" %}';">
         </p>
         <p class="btn-align" style="text-align:center;">
             Já tem uma conta? <a href="/login/">Faça login aqui</a>.
@@ -106,4 +106,19 @@
 </div>
 {% endblock %}
 {% block customjs %}
+
+<script>
+    $('#btn1').prop('disabled',true);
+    $('#btngoogle').prop('disabled',true);
+    $('#cb1').change(function(){
+        if($(this).is(":checked")){
+            $('#btn1').prop('disabled',false);
+            $('#btngoogle').prop('disabled',false);
+        }
+        else{
+            $('#btn1').prop('disabled',true);
+            $('#btngoogle').prop('disabled',true);
+        }
+    });
+</script>
 {% endblock %}
