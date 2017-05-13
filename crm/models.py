@@ -53,10 +53,6 @@ class OccupationArea(models.Model):
 
 class Customer(models.Model):
     name = models.CharField(max_length=100)
-    legal_personality_choices = ((u'N', u'Pessoa Física'),
-                                 (u'L', u'Pessoa Jurídica'))
-    legal_personality = models.CharField(max_length=1,
-                                         choices=legal_personality_choices)
     category_choices = ((u'U', u'Não Qualificado'),
                         (u'Q', u'Cliente Potencial'),
                         (u'P', u'Cliente da Base'))
@@ -82,6 +78,9 @@ class Customer(models.Model):
         for opportunity in self.get_opportunities_won():
             result += opportunity.expected_value
         return result
+
+    def get_contacts(self):
+        return Contact.objects.filter(customer=self)
 
 
 class SaleStage(models.Model):

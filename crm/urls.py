@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^customer/(?P<pk>[0-9]+)/delete/$', views.CustomerDelete.as_view(), name='customer-delete'),
     url(r'^customer/(?P<pk>[0-9]+)/$', views.CustomerUpdate.as_view(), name='customer-update'),
     url(r'^customer/add/$', views.CustomerCreate.as_view(), name='customer-add'),
+    url(r'^customer/import/$', views.CustomerImport.as_view(), name='customer-import'),
     url(r'^customer/$', views.CustomerIndex.as_view(), name='customer-index'),
 
     url(r'^salestage/(?P<pk>[0-9]+)/up/$', views.SaleStageUp.as_view(), name='salestage-up'),

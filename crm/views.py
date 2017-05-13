@@ -4,7 +4,7 @@ from django.views.generic import base, ListView, CreateView, UpdateView, \
     DeleteView, TemplateView, FormView
 from django.template.response import TemplateResponse
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from crm.models import Organization, UserOrganization, OccupationArea, \
                        Customer, SaleStage, CustomerService, Opportunity, \
@@ -21,10 +21,13 @@ from django.core.mail import send_mail
 from datetime import datetime
 from django.db.models import Q, F, Sum
 from operator import itemgetter
+from xlrd import open_workbook
+#import pyexcel as pe 
 import uuid
 import hashlib
 import locale
 import pytz
+import json
 locale.setlocale(locale.LC_ALL, 'pt_BR')
 
 
@@ -587,6 +590,11 @@ class OccupationAreaCreate(LoginRequiredMixin, SessionMixin, CreateView):
     model = OccupationArea
     form_class = OccupationAreaForm
 
+    def get_form_kwargs(self):
+        kwargs = super(OccupationAreaCreate, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
+
     def form_valid(self, form):
         occupation_area = form.save(commit=False)
         user_account = User.objects.get(id=self.request.user.id).id
@@ -600,6 +608,11 @@ class OccupationAreaCreate(LoginRequiredMixin, SessionMixin, CreateView):
 class OccupationAreaUpdate(LoginRequiredMixin, SessionMixin, OccupationAreaSecMixin, UpdateView):
     model = OccupationArea
     form_class = OccupationAreaForm
+
+    def get_form_kwargs(self):
+        kwargs = super(OccupationAreaUpdate, self).get_form_kwargs()
+        kwargs.update({'user': self.request.user})
+        return kwargs
 
 
 class OccupationAreaDelete(LoginRequiredMixin, SessionMixin, OccupationAreaSecMixin, DeleteView):
@@ -725,6 +738,96 @@ class CustomerUpdate(LoginRequiredMixin, SessionMixin, CutomerSecMixin, UpdateVi
 class CustomerDelete(LoginRequiredMixin, SessionMixin, CutomerSecMixin, DeleteView):
     model = Customer
     success_url = reverse_lazy('crm:customer-index')
+
+
+class CustomerImport(LoginRequiredMixin, SessionMixin, base.View):
+
+    def post(self, request):
+        output = json.loads('{"valid":true, "messages":[], "imported":false}')
+        file_upload = request.FILES.get('file_upload', False)
+        if file_upload:
+            try:
+                book = open_workbook(file_contents=file_upload.read())
+                sheet = book.sheet_by_index(0)
+                num_cols = sheet.ncols
+                import_file = self.sheet_validate(output=output, sheet=sheet)
+                print import_file
+                if import_file['valid']:
+                    for row_idx in range(1, sheet.nrows):
+                        self.customer_add(sheet=sheet, row_idx=row_idx)
+                    import_file['imported'] = True
+
+                return HttpResponse(json.dumps(import_file))
+            except:
+                output['valid'] = False
+                message_str = '{"line":"", "message":"%s"}' % ("Erro interno.")
+                message = json.loads(message_str)
+                output['messages'].append(message)
+                return HttpResponse(json.dumps(import_file))
+        else:
+            output['valid'] = False
+            message_str = '{"line":"", "message":"%s"}' % ("Arquivo não encontrado")
+            message = json.loads(message_str)
+            output['messages'].append()
+            return HttpResponse(json.dumps(import_file))
+
+    def sheet_validate(self, output, sheet):
+        if sheet.nrows > 1:
+            for row_idx in range(1, sheet.nrows):
+                # customer name
+                if sheet.cell(row_idx, 0).value == '':
+                    output['valid'] = False
+                    message_str = '{"line":"%s", "message":"%s"}' % (str(row_idx), "Nome do cliente não informado")
+                    message = json.loads(message_str)
+                    output['messages'].append(message)
+                # customer name
+                if sheet.cell(row_idx, 1).value == '':
+                    output['valid'] = False
+                    message_str = '{"line":"%s", "message":"%s"}' % (str(row_idx), "Segmento não informado")
+                    message = json.loads(message_str)
+                    output['messages'].append(message)
+        else:
+            output['valid'] = False
+            message_str = '{"line":"", "message":"%s"}' % ("Arquivo de importação vazio")
+            message = json.loads(message_str)
+            output['messages'].append(message)
+        return output
+
+    def customer_add(self, sheet, row_idx):
+        # Customer add
+        customer = Customer()
+        customer.name = sheet.cell(row_idx, 0).value
+        customer.category = 'U'
+        if OccupationArea.objects.filter(organization=self.organization_active,name=sheet.cell(row_idx, 1).value).exists():
+            customer.occupationarea = OccupationArea.objects.get(organization=self.organization_active,name=sheet.cell(row_idx, 1).value)
+        else:
+            occupation_area = OccupationArea()
+            occupation_area.organization = self.organization_active
+            occupation_area.name = sheet.cell(row_idx, 1).value
+            occupation_area.save()
+            customer.occupationarea = occupation_area
+        customer.organization = self.organization_active
+        customer.responsible_seller = self.user_account
+        customer.save()
+        # Contact 1 add
+        if sheet.cell(row_idx, 3).value != '':
+            contact = Contact()
+            contact.customer = customer
+            contact.contact_name = sheet.cell(row_idx, 3).value
+            contact.contact_email = sheet.cell(row_idx, 4).value
+            contact.contact_tel = sheet.cell(row_idx, 5).value
+            contact.contact_position = sheet.cell(row_idx, 6).value
+            contact.save()
+        # Contact 2 add
+        if sheet.cell(row_idx, 7).value != '':
+            contact = Contact()
+            contact.customer = customer
+            contact.contact_name = sheet.cell(row_idx, 7).value
+            contact.contact_email = sheet.cell(row_idx, 8).value
+            contact.contact_tel = sheet.cell(row_idx, 9).value
+            contact.contact_position = sheet.cell(row_idx, 10).value
+            contact.save()
+        return customer
 
 
 # SaleStage Views
@@ -877,7 +980,6 @@ class CustomerServiceDelete(LoginRequiredMixin, SessionMixin, CustomerServiceSec
 class CustomerServiceUpdate(LoginRequiredMixin, SessionMixin, CustomerServiceSecMixin, UpdateView):
     model = CustomerService
     form_class = CustomerServiceForm
-
 
 
 # Opportunity
