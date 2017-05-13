@@ -79,10 +79,23 @@ class OccupationAreaForm(forms.ModelForm):
         fields = ('name',)
 
     def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user')
         super(OccupationAreaForm, self).__init__(*args, **kwargs)
         self.fields['name'].required = True
         self.fields['name'].label = 'Nome'
         self.fields['name'].widget.attrs.update({'class': 'form-control'})
+
+    def clean(self):
+        cleaned_data = super(OccupationAreaForm, self).clean()
+        name = cleaned_data.get('name')
+        # Obtain user admin and organization logon
+        user_account = User.objects.get(id=self.user.id)
+        organization = UserComplement.objects.get(
+                           user_account=user_account).organization_active
+        # Verify if a new occupation area 
+        if OccupationArea.objects.filter(organization=organization,name=name).exists():
+            self.add_error('name', 'Já existe um segmento com este nome')
+        return cleaned_data
 
 
 class CustomerForm(forms.ModelForm):
@@ -90,7 +103,6 @@ class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
         fields = ('name',
-                  'legal_personality',
                   'category',
                   'occupationarea',
                   'notes',
@@ -101,9 +113,6 @@ class CustomerForm(forms.ModelForm):
         self.fields['name'].required = True
         self.fields['name'].label = 'Nome'
         self.fields['name'].widget.attrs.update({'class': 'form-control'})
-        self.fields['legal_personality'].required = True
-        self.fields['legal_personality'].label = 'Tipo de Pessoa'
-        self.fields['legal_personality'].widget = forms.RadioSelect(choices=Customer.legal_personality_choices)
         self.fields['category'].required = True
         self.fields['category'].label = 'Categoria'
         self.fields['category'].widget = forms.RadioSelect(choices=Customer.category_choices)
