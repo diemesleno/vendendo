@@ -4,8 +4,9 @@ function open_import() {
   // Initialize file
   $('#file').val('');
   // Initialize content
-  var body = "<label for='contact_name' class='control-label'>Arquivo:</label>"
-  body += "<input type='file' class='form-control' id='file' value=''>"
+  var body = "<div style='text-align:center;'>Se desejar, <a href='/static/common/arquivo_exemplo_cliente.xlsx'>baixe o arquivo exemplo</a>.</div>";
+  body += "<label for='contact_name' class='control-label'>Arquivo:</label>";
+  body += "<input type='file' class='form-control' id='file' value=''>";
   $('#container_form_import').html(body);
   $('#btn_import').prop('disabled', false);
   // show modal
