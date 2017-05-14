@@ -19,29 +19,63 @@
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <table class="table">
+        <table id="table" class="table">
+          <thead>
             <th></th>
             <th>Nome</th>
-          {% for my_occupationarea in my_occupationareas %}
-          <tr>
-            <td class="action-column">
-              <form action="{% url 'crm:occupationarea-delete' my_occupationarea.id %}" method="post">
-              {% csrf_token %}
-                <button type="submit" class="btn btn-default">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-              </form>
-            </td>
-            <td><a href="{% url 'crm:occupationarea-update' my_occupationarea.id %}">{{ my_occupationarea.name }}</a></td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="2" style="text-align:center;"><i>Nenhum registro</i></td>
-          </tr>
-          {% endfor %}
+          </thead>
+          <tbody>
+            {% for my_occupationarea in my_occupationareas %}
+            <tr>
+              <td class="action-column">
+                <form action="{% url 'crm:occupationarea-delete' my_occupationarea.id %}" method="post">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                  </button>
+                </form>
+              </td>
+              <td><a href="{% url 'crm:occupationarea-update' my_occupationarea.id %}">{{ my_occupationarea.name }}</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="2" style="text-align:center;"><i>Nenhum registro</i></td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block customjs %}
+<script>
+  $(document).ready(function() {
+      var table = $('#table').DataTable({
+        language: {
+            emptyTable: "Nenhum registro encontrado",
+            search: "Pesquisar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            sInfoFiltered: "(Filtrados de _MAX_ registros)",
+            sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
+            sZeroRecords: "Nenhum registro encontrado",
+            paginate: {
+                first: "Primeiro",
+                previous: "Anterior",
+                next: "Próximo",
+                last: "Último"
+            }
+        },
+        order: [[ 1, "asc"]],
+        autoWidth: false,
+        columnDefs: [
+          {orderable: false, targets: [0]}
+        ],
+        lengthChange: false
+      });
+  });
+</script>
 {% endblock %}

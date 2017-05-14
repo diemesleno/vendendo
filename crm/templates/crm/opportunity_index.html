@@ -15,39 +15,113 @@
             <a href="{% url 'crm:opportunity-add' %}" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Adicionar</a>
         </br>
     </h3>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12">
+        
+      </div>
+    </div>
 
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <table class="table">
-            <th></th>
-            <th>Cliente</th>
-            <th>Descrição</th>
-            <th>Etapa</th>
-            <th>Valor</th>
-          {% for my_opportunity in my_opportunities %}
-          <tr>
-            <td class="action-column">
-              <form action="{% url 'crm:opportunity-delete' my_opportunity.id %}" method="post">
-              {% csrf_token %}
-                <button type="submit" class="btn btn-default">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-              </form>
-            </td>
-            <td><a href="{% url 'crm:opportunity-update' my_opportunity.id %}">{{ my_opportunity.customer.name }}</a></td>
-            <td>{{ my_opportunity.description_opportunity }}</td>
-            <td>{{ my_opportunity.stage.name }}</td>
-            <td>{{ my_opportunity.expected_value|floatformat:2|default:"0,00" }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="5" style="text-align:center;"><i>Nenhum registro</i></td>
-          </tr>
-          {% endfor %}
+        <table id="table" class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Cliente</th>
+              <th>Descrição</th>
+              <th>Etapa</th>
+              <th>Estapa_2</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for my_opportunity in my_opportunities %}
+            <tr>
+              <td class="action-column">
+                <form action="{% url 'crm:opportunity-delete' my_opportunity.id %}" method="post">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                  </button>
+                </form>
+              </td>
+              <td><a href="{% url 'crm:opportunity-update' my_opportunity.id %}">{{ my_opportunity.customer.name }}</a></td>
+              <td>{{ my_opportunity.description_opportunity }}</td>
+              <td>{{ my_opportunity.stage.name }}</td>
+              <td>{% if my_opportunity.stage.conclusion == 'W' %}Ganha{% elif my_opportunity.stage.conclusion == 'L' %}Perdida{% else %}Aberta{% endif %}</td>
+              <td>{{ my_opportunity.expected_value|floatformat:2|default:"0,00" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="5" style="text-align:center;"><i>Nenhum registro</i></td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block customjs %}
+<script>
+  $(document).ready(function() {
+      var table = $('#table').DataTable({
+        language: {
+            emptyTable: "Nenhum registro encontrado",
+            search: "Pesquisar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            sInfoFiltered: "(Filtrados de _MAX_ registros)",
+            sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
+            sZeroRecords: "Nenhum registro encontrado",
+            paginate: {
+                first: "Primeiro",
+                previous: "Anterior",
+                next: "Próximo",
+                last: "Último"
+            }
+        },
+        order: [[ 1, "asc"]],
+        autoWidth: false,
+        columnDefs: [
+          {orderable: false, targets: [0]},
+          {visible: false, targets: [4]}
+        ],
+        lengthChange: false,
+        buttons: [
+          {
+            text: 'Todas',
+            action: function(e, dt, node, config){
+              this.columns(4).search('').draw();
+            }
+          },
+          {
+            text: 'Abertas',
+            action: function(e, dt, node, config){
+              this.columns(4).search('Aberta').draw();
+            }
+          },
+          {
+            text: 'Ganhas',
+            action: function(e, dt, node, config){
+              this.columns(4).search('Ganha').draw();
+            }
+          },
+          {
+            text: 'Perdidas',
+            action: function(e, dt, node, config){
+              this.columns(4).search('Perdida').draw();
+            }
+          }
+        ]
+      });
+
+      table.buttons().container()
+        .appendTo('#table_wrapper .col-sm-6:eq(0)');
+
+  });
+</script>
 {% endblock %}

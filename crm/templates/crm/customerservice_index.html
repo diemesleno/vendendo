@@ -19,31 +19,91 @@
     <!-- Panel Indicators -->
     <div class="row">
       <div class="col-xs-12 col-sm-12">
-        <table class="table">
+        <table id="table" class="table">
+          <thead>
             <th></th>
             <th>Nome</th>
             <th>Tipo</th>
-          {% for my_customerservice in my_customerservices %}
-          <tr>
-            <td class="action-column">
-              <form action="{% url 'crm:customerservice-delete' my_customerservice.id %}" method="post">
-              {% csrf_token %}
-                <button type="submit" class="btn btn-default">
-                  <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </button>
-              </form>
-            </td>
-            <td><a href="{% url 'crm:customerservice-update' my_customerservice.id %}">{{ my_customerservice.name }}</a></td>
-            <td>{{ my_customerservice.get_definition_display }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3" style="text-align:center;"><i>Nenhum registro</i></td>
-          </tr>
-          {% endfor %}
+            <th>Status</th>
+          </thead>
+          <tbody>
+            {% for my_customerservice in my_customerservices %}
+            <tr>
+              <td class="action-column">
+                <form action="{% url 'crm:customerservice-delete' my_customerservice.id %}" method="post">
+                {% csrf_token %}
+                  <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                  </button>
+                </form>
+              </td>
+              <td><a href="{% url 'crm:customerservice-update' my_customerservice.id %}">{{ my_customerservice.name }}</a></td>
+              <td>{{ my_customerservice.get_definition_display }}</td>
+              <td>{{ my_customerservice.get_status_display }}
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="4" style="text-align:center;"><i>Nenhum registro</i></td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
       </div>
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block customjs %}
+<script>
+  $(document).ready(function() {
+      var table = $('#table').DataTable({
+        language: {
+            emptyTable: "Nenhum registro encontrado",
+            search: "Pesquisar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            sInfoFiltered: "(Filtrados de _MAX_ registros)",
+            sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
+            sZeroRecords: "Nenhum registro encontrado",
+            paginate: {
+                first: "Primeiro",
+                previous: "Anterior",
+                next: "Próximo",
+                last: "Último"
+            }
+        },
+        order: [[ 1, "asc"]],
+        autoWidth: false,
+        columnDefs: [
+          {orderable: false, targets: [0]}
+        ],
+        lengthChange: false,
+        buttons: [
+          {
+            text: 'Todos',
+            action: function(e, dt, node, config){
+              this.columns(3).search('').draw();
+            }
+          },
+          {
+            text: 'Ativos',
+            action: function(e, dt, node, config){
+              this.columns(3).search('Ativo').draw();
+            }
+          },
+          {
+            text: 'Inativos',
+            action: function(e, dt, node, config){
+              this.columns(3).search('Inativo').draw();
+            }
+          }
+        ]
+      });
+
+      table.buttons().container()
+        .appendTo('#table_wrapper .col-sm-6:eq(0)');
+
+  });
+</script>
 {% endblock %}

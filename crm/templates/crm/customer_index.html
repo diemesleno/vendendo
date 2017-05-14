@@ -4,7 +4,6 @@
 {% block customcss %}
 
 <link href="/static/css/organization.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/static/datatables/datatables.min.css"/>
 
 {% endblock %}
 
@@ -27,7 +26,7 @@
     <div class="row">
       <div class="col-xs-12 col-sm-12">
 
-        <table class="table">
+        <table id="table" class="table">
           <thead>
             <tr>
               <th></th>
@@ -93,8 +92,51 @@
 {% block customjs %}
 <script>
   $(document).ready(function() {
-      $('.table').DataTable();
-  } );
+      var table = $('#table').DataTable({
+        language: {
+            emptyTable: "Nenhum registro encontrado",
+            search: "Pesquisar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+            sInfoFiltered: "(Filtrados de _MAX_ registros)",
+            sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
+            sZeroRecords: "Nenhum registro encontrado",
+            paginate: {
+                first: "Primeiro",
+                previous: "Anterior",
+                next: "Próximo",
+                last: "Último"
+            }
+        },
+        order: [[ 1, "asc"]],
+        columnDefs: [{orderable: false, targets: [0]}],
+        lengthChange: false,
+        buttons: [
+          {
+            text: 'Todos',
+            action: function(e, dt, node, config){
+              alert('Button 1 clicked');
+            }
+          },
+          {
+            text: 'Qualificados',
+            action: function(e, dt, node, config){
+              alert('Button 2 clicked');
+            }
+          },
+          {
+            text: 'Não Qualificados',
+            action: function(e, dt, node, config){
+              alert('Button 2 clicked');
+            }
+          }
+        ]
+      });
+
+      table.buttons().container()
+        .appendTo('#table_wrapper .col-sm-6:eq(0)');
+
+  });
 </script>
 <script src="/static/js/crm/imports.js"></script>
 {% endblock %}

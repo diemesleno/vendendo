@@ -20,78 +20,80 @@
     <div class="row">
         <div class="col-xs-12 col-sm-12">
 
-            <table class="table">
-                <tr>
+            <table id="table" class="table">
+                <thead>
                     <th></th>
                     <th>Nome</th>
                     <th>E-mail</th>
                     <th>Perfil</th>
                     <th style="text-align:center;">Status</th>
+                </thead>
+                <tbody>
+                    {% for member in members %}
                     <tr>
-                        {% for member in members %}
-                        <tr>
-                            <td style="width:10%" class="action-column">
-                                {% if member.status_active == 'A' %}
-                                <div>
-                                    <form action="{% url 'crm:member-deactivate' member.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Desativar membro">
-                                            <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
-                                            Inativar
-                                        </button>
-                                    </form>
-                                </div>
-                                <div>
-                                    <form action="{% url 'crm:member-alter-type' member.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Desativar membro">
-                                            <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
-                                            Alterar Perfil
-                                        </button>
-                                    </form>
-                                </div>
-
-                                {% elif member.status_active == 'I' %}
-
-                                <form action="{% url 'crm:member-activate' member.id %}" method="post">
+                        <td style="width:10%" class="action-column">
+                            {% if member.status_active == 'A' %}
+                            <div>
+                                <form action="{% url 'crm:member-deactivate' member.id %}" method="post">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Ativar membro">
-                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                        Ativar
+                                    <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Desativar membro">
+                                        <span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span>
+                                        Inativar
                                     </button>
                                 </form>
+                            </div>
+                            <div>
+                                <form action="{% url 'crm:member-alter-type' member.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Desativar membro">
+                                        <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>
+                                        Alterar Perfil
+                                    </button>
+                                </form>
+                            </div>
 
-                                {% elif member.status_active == 'N' %}
-                                <div>
-                                    <form action="{% url 'crm:member-delete' member.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Cancelar convite">
-                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </div>
-                                <div>
-                                    <form action="{% url 'crm:member-invite' member.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Reenviar convite">
-                                            <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-                                            Reenviar
-                                        </button>
-                                    </form>
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>{{ member.user_account.first_name }}</td>
-                            <td>{{ member.user_account.email }}</td>
-                            <td>{{ member.get_type_user_display }}</td>
-                            <td style="text-align:center;">{% if member.status_active == 'A' %}<span class="label label-success">Ativo</span>{% elif member.status_active == 'I' %}<span class="label label-default">Inativo</span>{% elif member.status_active == 'N' %}<span class="label label-info">Aguardando ativação</span>{% endif %}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="4" style="text-align:center;"><i>Nenhum registro</i></td>
-                        </tr>
-                        {% endfor %}
+                            {% elif member.status_active == 'I' %}
+
+                            <form action="{% url 'crm:member-activate' member.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Ativar membro">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    Ativar
+                                </button>
+                            </form>
+
+                            {% elif member.status_active == 'N' %}
+                            <div>
+                                <form action="{% url 'crm:member-delete' member.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Cancelar convite">
+                                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        Excluir
+                                    </button>
+                                </form>
+                            </div>
+                            <div>
+                                <form action="{% url 'crm:member-invite' member.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="top" title="Reenviar convite">
+                                        <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+                                        Reenviar
+                                    </button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>{{ member.user_account.first_name }}</td>
+                        <td>{{ member.user_account.email }}</td>
+                        <td>{{ member.get_type_user_display }}</td>
+                        <td style="text-align:center;">{% if member.status_active == 'A' %}<span class="label label-success">Ativo</span>{% elif member.status_active == 'I' %}<span class="label label-default">Inativo</span>{% elif member.status_active == 'N' %}<span class="label label-info">Aguardando ativação</span>{% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align:center;"><i>Nenhum registro</i></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
                     </table>
                 </div>
             </div>
@@ -99,6 +101,57 @@
     </div>
     {% endblock %}
     {% block customjs %}
+    <script>
+      $(document).ready(function() {
+          var table = $('#table').DataTable({
+            language: {
+                emptyTable: "Nenhum registro encontrado",
+                search: "Pesquisar:",
+                lengthMenu: "Mostrar _MENU_ registros",
+                info: "Mostrando _START_ até _END_ de _TOTAL_ registros",
+                sInfoFiltered: "(Filtrados de _MAX_ registros)",
+                sInfoEmpty: "Mostrando 0 até 0 de 0 registros",
+                sZeroRecords: "Nenhum registro encontrado",
+                paginate: {
+                    first: "Primeiro",
+                    previous: "Anterior",
+                    next: "Próximo",
+                    last: "Último"
+                }
+            },
+            order: [[ 1, "asc"]],
+            autoWidth: false,
+            columnDefs: [
+              {orderable: false, targets: [0]}
+            ],
+            lengthChange: false,
+            buttons: [
+              {
+                text: 'Todos',
+                action: function(e, dt, node, config){
+                  this.columns(4).search('').draw();
+                }
+              },
+              {
+                text: 'Ativos',
+                action: function(e, dt, node, config){
+                  this.columns(4).search('Ativo').draw();
+                }
+              },
+              {
+                text: 'Inativos',
+                action: function(e, dt, node, config){
+                  this.columns(4).search('Inativo').draw();
+                }
+              }
+            ]
+          });
+
+          table.buttons().container()
+            .appendTo('#table_wrapper .col-sm-6:eq(0)');
+
+      });
+    </script>
     <script>
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
