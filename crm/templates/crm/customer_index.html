@@ -122,24 +122,32 @@
             text: 'Todos',
             action: function(e, dt, node, config){
               this.columns(3).search('').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Qualificados',
             action: function(e, dt, node, config){
               this.columns(3).search('Q').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Não Qualificados',
             action: function(e, dt, node, config){
               this.columns(3).search('U').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Clientes da Base',
             action: function(e, dt, node, config){
               this.columns(3).search('P').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           }
         ]
@@ -147,6 +155,7 @@
 
       table.buttons().container()
         .appendTo('#table_wrapper .col-sm-6:eq(0)');
+      table.buttons(0, null)[0].node.className = table.buttons(0, null)[0].node.className + ' active';
 
   });
 </script>

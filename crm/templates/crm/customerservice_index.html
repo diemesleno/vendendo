@@ -84,18 +84,24 @@
             text: 'Todos',
             action: function(e, dt, node, config){
               this.columns(3).search('').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Ativos',
             action: function(e, dt, node, config){
               this.columns(3).search('Ativo').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Inativos',
             action: function(e, dt, node, config){
               this.columns(3).search('Inativo').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           }
         ]
@@ -103,7 +109,7 @@
 
       table.buttons().container()
         .appendTo('#table_wrapper .col-sm-6:eq(0)');
-
+      table.buttons(0, null)[0].node.className = table.buttons(0, null)[0].node.className + ' active';
   });
 </script>
 {% endblock %}
