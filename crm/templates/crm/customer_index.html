@@ -32,6 +32,7 @@
               <th></th>
               <th>Nome</th>
               <th>Categoria</th>
+              <th>Categoria</th>
               <th>Segmento</th>
             </tr>
           </thead>
@@ -48,6 +49,7 @@
               </td>
               <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.name }}</a></td>
               <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.get_category_display }}</a></td>
+              <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.category }}</a></td>
               <td><a href="{% url 'crm:customer-update' my_customer.id %}">{{ my_customer.occupationarea }}</a></td>
             </tr>
             {% empty %}
@@ -109,25 +111,35 @@
             }
         },
         order: [[ 1, "asc"]],
-        columnDefs: [{orderable: false, targets: [0]}],
+        autoWidth: false,
+        columnDefs: [
+          {orderable: false, targets: [0]},
+          {visible: false, targets: [3]}
+        ],
         lengthChange: false,
         buttons: [
           {
             text: 'Todos',
             action: function(e, dt, node, config){
-              alert('Button 1 clicked');
+              this.columns(3).search('').draw();
             }
           },
           {
             text: 'Qualificados',
             action: function(e, dt, node, config){
-              alert('Button 2 clicked');
+              this.columns(3).search('Q').draw();
             }
           },
           {
             text: 'Não Qualificados',
             action: function(e, dt, node, config){
-              alert('Button 2 clicked');
+              this.columns(3).search('U').draw();
+            }
+          },
+          {
+            text: 'Clientes da Base',
+            action: function(e, dt, node, config){
+              this.columns(3).search('P').draw();
             }
           }
         ]

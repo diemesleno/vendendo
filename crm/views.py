@@ -120,11 +120,6 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context = super(Dashboard, self).get_context_data(**kwargs)
         context['customers_potential_count'] = self.get_customers_potential_count()
         context['opportunities_open_count'] = self.get_opportunities_open_count()
-        context['customers_base_count'] = Customer.objects.filter(organization=self.organization_active, category='P').count()
-        context['customers_base_top5'] = Customer.objects.filter(organization=self.organization_active, category='P').order_by('-relevance')[:5]
-        context['customers_potential_complete'] = range(context['customers_potential_count'], 5)
-        context['opportunities_open_complete'] = range(context['opportunities_open_count'], 5)
-        context['customers_base_complete'] = range(context['customers_base_count'], 5)
         context['opportunity_value_stages'] = self.get_opportunity_value_stages()
         context['customers_by_category'] = self.get_customers_by_category()
         context['segments_by_value'] = self.get_segments_by_value()
@@ -162,10 +157,10 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
 
     def get_customers_potential_count(self):
         if self.is_admin:
-            result = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+            result = Customer.objects.filter(category__in=['U','Q'],
                                              organization=self.organization_active).count()
         else:
-            result = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+            result = Customer.objects.filter(category__in=['U','Q'],
                                              organization=self.organization_active,
                                              responsible_seller=self.user_account).count()
         return result
@@ -187,13 +182,13 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
 
     def get_customers_by_category(self):
         if self.is_admin:
-            qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+            qualified_customers = Customer.objects.filter(category__in=['Q'],
                                                           organization=self.organization_active).count()
         else:
-            qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True, category__in=['Q']) | Q(opportunity__stage__final_stage=True, category__in=['P']),
+            qualified_customers = Customer.objects.filter(category__in=['Q'],
                                                           organization=self.organization_active,
                                                           responsible_seller=self.user_account).count()
-        not_qualified_customers = Customer.objects.filter(Q(opportunity__isnull=True) | Q(opportunity__stage__final_stage=True),
+        not_qualified_customers = Customer.objects.filter(category__in=['U'],
                                                           organization=self.organization_active,
                                                           category='U').count()
         result = "[{name: 'Qualificados', y: %s }, {name: 'Não qualificados', y: %s }]" % (qualified_customers, not_qualified_customers)

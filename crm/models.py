@@ -54,7 +54,7 @@ class OccupationArea(models.Model):
 class Customer(models.Model):
     name = models.CharField(max_length=100)
     category_choices = ((u'U', u'Não Qualificado'),
-                        (u'Q', u'Cliente Potencial'),
+                        (u'Q', u'Qualificado'),
                         (u'P', u'Cliente da Base'))
     category = models.CharField(max_length=1,
                                 choices=category_choices)
