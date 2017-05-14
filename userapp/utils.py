@@ -29,3 +29,14 @@ def create_user(strategy, details, backend=None, user=None, *args, **kwargs):
             user = new_account
 
     return {'strategy': strategy, 'backend': backend, 'details': details, 'user': user, 'args': args, 'kwargs': kwargs}
+
+
+def get_avatar(backend, strategy, details, response,
+               user=None, *args, **kwargs):
+    url = None
+    if backend.name == 'google-oauth2':
+        url = response['image'].get('url')
+    if url:
+        user_complement = UserComplement.objects.get(user_account=user)
+        user_complement.avatar = url
+        user_complement.save()

@@ -22,7 +22,7 @@ from datetime import datetime
 from django.db.models import Q, F, Sum
 from operator import itemgetter
 from xlrd import open_workbook
-#import pyexcel as pe 
+#import pyexcel as pe
 import uuid
 import hashlib
 import locale
@@ -80,6 +80,10 @@ class SessionMixin(object):
                             user_account=self.user_account,
                             status_active='A')
 
+    @cached_property
+    def avatar(self):
+        return UserComplement.objects.get(user_account=self.user_account).avatar
+
     def get_context_data(self, **kwargs):
         context = super(SessionMixin, self).get_context_data(**kwargs)
         user_account = User.objects.get(id=self.request.user.id)
@@ -101,6 +105,7 @@ class SessionMixin(object):
         context['organization_active'] = organization_active
         context['organizations'] = organizations
         context['invites'] = invites
+        context['avatar'] = self.avatar
         return context
 
 
