@@ -20,7 +20,7 @@
         <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Senha" required>
         <div class="checkbox">
           <label>
-            <input type="checkbox" value="remember-me"> Lembrar e-mail
+            <input id="id_save" type="checkbox" value="remember-me"> Lembrar e-mail
           </label>
         </div>
         <p class="btn-align">
@@ -47,4 +47,29 @@
 
     </div>
 
+{% endblock %}
+
+{% block customjs %}
+<script>
+  function init() {
+    if(localStorage.getItem('email_vendendo_login')) {
+      $('#inputEmail').val(localStorage.getItem('email_vendendo_login'));
+      $('#id_save').prop('checked', true);
+      $('#inputPassword').focus();
+    }
+  }
+
+  $(document).ready(function() {
+    init();
+  });
+
+  $('#id_save').change(function(){
+    if($('#id_save').prop('checked')) {
+      localStorage.setItem('email_vendendo_login', $('#inputEmail').val());
+    }else {
+      localStorage.setItem('email_vendendo_login', '');
+    }
+  });
+
+</script>
 {% endblock %}
