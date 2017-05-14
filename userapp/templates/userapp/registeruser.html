@@ -1,73 +1,152 @@
 {% extends "userapp/base.html" %}
-{% block title %}Novo Usuário{% endblock %}
+{% block title %}Cadastre-se grátis{% endblock %}
+
+{% block customcss %}
+
+<link href="../static/css/signin.css" rel="stylesheet">
+
+{% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2>{{ title }}</h2>
-  <p class="msg-error">
-  {% if error %}
-    <div class="alert alert-danger" role="alert">
-      <a href="#" class="alert-link">{{ error }}</a>
+
+    <form class="form-signin" method="POST" action="/newuser/">
+        {% csrf_token %}
+        <div style="margin-bottom:25px;text-align:center;"><img src="/static/images/vendendo_logo_verde_escuro.png"></div>
+        <h3>Cadastre-se grátis</h3>
+        <input type="hidden" name="id" value="{{ user_account.id }}">
+        <div class="form-group">
+            <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
+            {% if form.username.errors %}
+            {{ form.username.errors }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_email">E-mail</label>
+            <input type="email" class="form-control" name="email" id="id_email" value="{% if form %}{{ form.email.value }}{% else %}{% if user_account %}{{ user_account.email }}{% endif %}{% endif %}">
+            {% if form.email.errors %}
+            {{ form.email.errors }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_first_name">Nome</label>
+            <input type="text" class="form-control" name="first_name" id="id_first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if user_account %}{{ user_account.first_name }}{% endif %}{% endif %}">
+            {% if form.first_name.errors %}
+            {{ form.first_name.errors }}
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="id_last_name">Sobrenome</label>
+            <input type="text" class="form-control" name="last_name" id="id_last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if user_account %}{{ user_account.last_name }}{% endif %}{% endif %}">
+            {% if form.last_name.errors %}
+            {{ form.last_name.errors }}
+            {% endif %}
+        </div>
+        {% if not user_account.id %}
+        <div class="form-group">
+            <label for="id_password">Senha</label>
+            <input type="password" class="form-control" name="password" id="id_password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
+            {% if form.password.errors %}
+            {{ form.password.errors }}
+            {% endif %}
+        </div>
+        {% else %}
+        <input type="hidden" class="form-control" name="password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
+        {% endif %}
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" id="cb1" value=""> Li e concordo com os <a data-toggle="modal" data-target="#termsofuser">termos de uso</a>.
+          </label>
+        </div>
+        <p class="btn-align" style="text-align:center;">
+            <button type="submit"  id="btn1" class="btn btn-success">Criar nova conta</button>
+        </p>
+        <p class="btn-align" style="text-align:center;">
+            <input type="button"  id="btngoogle" class="btn btn-danger" value="Registre-se com o Google" onclick="javascript:location.href='{% url "social:begin" "google-oauth2" %}';">
+        </p>
+        <p class="btn-align" style="text-align:center;">
+            Já tem uma conta? <a href="/login/">Faça login aqui</a>.
+        </p>
+        <p class="msg-error">
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                <a href="#09;pl" class="alert-link">{{ error }}</a>
+            </div>
+            {% endif %}
+        </p>
+
+    </form>
+    <!-- Modal -->
+    <div class="modal fade" id="termsofuser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <div style="text-align:center;"><img src="/static/images/vendendo_logo_verde_escuro.png"></div>
+            <h4 class="modal-title" id="myModalLabel">Termos de Uso</h4>
+          </div>
+          <div class="modal-body" style="overflow:scroll; height:400px">
+              <p><strong>Termos e condições de uso</strong></p>
+                <p>Este termo e condições de uso se aplicam a todos os serviços descritos no site www.vendendocrm.com (“Site”). Ao efetuar seu cadastro para utilização dos serviços, ou aceitar estes termos, você concorda com os termos desse documento, sem modificações. Se não concordar, você não poderá usar os serviços.</p>
+                <p>Poderão ser feitas alterações e correções neste termo e condições de uso, para isso, você será notificado por uma mensagem de e-mail ou por outros meios razoáveis. Sempre mostramos a data da última versão deste termo e condições de uso. Ao continuar usando os serviços após o início das alterações, você estará concordando com o termo e condições de uso. Se não concordar com as alterações, você deverá interromper o uso dos serviços e cancelar os serviços, seguindo as instruções do item “Forma de Cancelamento”.<br />
+                </p>
+                <p><strong>Conta VendencoCRM</strong></p>
+                <p>Para acessar os serviços, você deverá criar uma conta no Site, fornecendo seu nome e um endereço de e-mail válido e de sua propriedade para validação do cadastro.</p>
+                <p>Você poderá cancelar os serviços a qualquer momento, entrando em contato com nosso Canal de Comunicação disponível no Site, no link ‘Contato’.</p>
+                <p>Não oferecemos suporte técnico para os serviços, mas através do nosso Canal de Comunicação esclareceremos dúvidas sempre que possível.</p>
+                <p>Enviaremos a você, e-mails que tenham relação com os serviços. Caso você não queira recebe-los, poderá cancelar o envio deles clicando na opção ‘cancelar assinatura’, dentro do e-mail enviado. </p>
+                <p>Você apenas conseguirá utilizar os serviços de forma adequada, se estiver usando:<br />
+                  (i) PC Windows ou Mac; ii) acesso a Internet com velocidade maior que 1MB/s e; (iii) navegadores web: a) Mozilla (Firefox versão 13 ou superior); b) Google Chrome (versão 20 ou superior) e; c) Safari (versão 6 ou superior).<br />
+                </p>
+                <p><strong>Forma de cancelamento</strong></p>
+                <p>Caso você queira cancelar algum de nossos serviços, entre em contato com nosso Canal de Comunicação.<br />
+                </p>
+                <p><strong>Nossa responsabilidade</strong></p>
+                <p>Somos responsáveis por manter os serviços no ar, pelo maior período possível, mas poderão ocorrer casos fora de nosso controle que poderão ocasionar uma indisponibilidade temporária do Site (“Casos Fortuitos ou Força Maior”).</p>
+                <p>Faremos nosso melhor para manter a segurança do Site e de seus dados utilizando as práticas de backup e políticas de seguranças adequadas e as melhores possíveis.</p>
+                <p>Não podemos nos responsabilizar por danos causados a você pela utilização de nossos serviços, uma vez que apenas disponibilizamos uma ferramenta, e que o conteúdo por ela gerado é inserido por você.</p>
+                <p>Nossos serviços não garantem resultados específicos, garantias de desempenho ou outra expectativa.<br />
+                </p>
+                <p><strong>Sua responsabilidade</strong></p>
+                <p>Você será responsável por manter sua senha segura. </p>
+                <p>O Conteúdo por você postado é de sua responsabilidade, assim como todos os atos por você praticados. <br />
+                </p>
+                <p>Os dados de sua organização são acessíveis apenas por você e com aqueles com quem você decidir compartilhar, através da funcionalidade de adicionar membros. <br />
+                </p>
+                <p><strong>Política de privacidade do Vendendo</strong></p>
+                <p>Não divulgamos seus dados pessoais ou financeiros para fins comerciais.</p>
+                <p>Algumas informações são coletadas pelos nossos servidores, como seu endereço de IP (Internet Protocol), informações de data e local de acesso, entre outros. Esses dados não são usados por nós para nenhuma finalidade, a não ser o de controle de fluxo de tráfego.</p>
+                <p>Apenas em caso de requisição judicial ou de autoridade competente, iremos fornecer seus dados.<br />
+                </p>
+                <p><strong>Propriedade intelectual</strong></p>
+                <p>Os elementos e ferramentas do Site são de nossa titularidade ou são licenciados por nós, nos termos da legislação vigente. <br />
+                </p>
+                <p><strong>Disposições finais</strong></p>
+                <p>Este termo e condições de uso é regido pelas leis brasileiras. Eventuais controvérsias existentes em relação a este termo e condições de uso ou ao uso do Site serão solucionados entre Você e a M2IS no Foro da Comarca do Rio de Janeiro/RJ, mesmo que haja outro mais privilegiado.</p>
+                <p>Podemos não exigir de Você o cumprimento de alguma cláusula, o que não representará uma renúncia de direito ou cláusula.</p>
+                <p>Caso algum item deste termo e condições de uso venha a ser declarado nulo ou não aplicável, os outros termos continuarão se aplicando e permanecerão em vigor e efeito.</p>          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+          </div>
+        </div>
+      </div>
     </div>
-  {% endif %}
-  </p>
-  <form method="POST" action="/newuser/">
-    {% csrf_token %}
-    <input type="hidden" name="id" value="{{ user_account.id }}">
-    <div class="form-group">
-      <input type="hidden"  class="form-control" name="username" id="id_username" value="{% if form %}{{ form.username.value }}{% else %}{% if user_account %}{{ user_account.username }}{% endif %}{% endif %}">
-      {% if form.username.errors %}
-        {{ form.username.errors }}
-      {% endif %}
-    </div>
-    <div class="form-group">
-      <label for="id_email">E-mail</label>
-      <input type="email" class="form-control" name="email" id="id_email" value="{% if form %}{{ form.email.value }}{% else %}{% if user_account %}{{ user_account.email }}{% endif %}{% endif %}">
-      {% if form.email.errors %}
-        {{ form.email.errors }}
-      {% endif %}
-    </div>
-    <div class="form-group">
-      <label for="id_first_name">Nome</label>
-      <input type="text" class="form-control" name="first_name" id="id_first_name" value="{% if form %}{{ form.first_name.value }}{% else %}{% if user_account %}{{ user_account.first_name }}{% endif %}{% endif %}">
-      {% if form.first_name.errors %}
-        {{ form.first_name.errors }}
-      {% endif %}
-    </div>
-    <div class="form-group">
-      <label for="id_last_name">Sobrenome</label>
-      <input type="text" class="form-control" name="last_name" id="id_last_name" value="{% if form %}{{ form.last_name.value }}{% else %}{% if user_account %}{{ user_account.last_name }}{% endif %}{% endif %}">
-      {% if form.last_name.errors %}
-        {{ form.last_name.errors }}
-      {% endif %}
-    </div>
-    {% if not user_account.id %}
-    <div class="form-group">
-      <label for="id_password">Senha</label>
-      <input type="password" class="form-control" name="password" id="id_password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
-      {% if form.password.errors %}
-        {{ form.password.errors }}
-      {% endif %}
-    </div>
-    <!-- Confirmação de senhas iguais
-    <div class="form-group">
-      <label for="id_rep-password">Repita a senha</label>
-      <input type="password" name="rep-password" id="id_rep-password" data-equalto="password">
-      <span class="form-error">
-        As senhas não combinam!
-      </span>
-    </div>
-    -->
-    {% else %}
-    <input type="hidden" class="form-control" name="password" value="{% if form %}{{ form.password.value }}{% else %}{% if user_account %}{{ user_account.password }}{% endif %}{% endif %}">
-    {% endif %}
-    <p class="text-right">
-      {% if user_account.id %}
-      <input type="button" class="btn btn-danger" value="Excluir" onclick="javascript:location.href='/deleteuser/?eid={{ user_account.id }}';">
-      {% endif %}
-      <button type="submit" class="btn btn-success">Salvar</button>
-      <input type="button" class="btn btn-default" value="Voltar" onclick="javascript:location.href='/';">
-    </p>
-  </form>
 </div>
+{% endblock %}
+{% block customjs %}
+
+<script>
+    $('#btn1').prop('disabled',true);
+    $('#btngoogle').prop('disabled',true);
+    $('#cb1').change(function(){
+        if($(this).is(":checked")){
+            $('#btn1').prop('disabled',false);
+            $('#btngoogle').prop('disabled',false);
+        }
+        else{
+            $('#btn1').prop('disabled',true);
+            $('#btngoogle').prop('disabled',true);
+        }
+    });
+</script>
 {% endblock %}
