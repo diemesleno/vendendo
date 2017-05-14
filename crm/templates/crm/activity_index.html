@@ -92,18 +92,24 @@
             text: 'Todas',
             action: function(e, dt, node, config){
               this.columns(3).search('').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Pendentes',
             action: function(e, dt, node, config){
               this.columns(3).search('Pendente').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           },
           {
             text: 'Atrasadas',
             action: function(e, dt, node, config){
               this.columns(3).search('Atrasada').draw();
+              $('.dt-buttons.btn-group > a').removeClass('active');
+              node[0].className = node[0].className + ' active';
             }
           }
         ]
@@ -111,6 +117,7 @@
 
       table.buttons().container()
         .appendTo('#table_wrapper .col-sm-6:eq(0)');
+      table.buttons(0, null)[0].node.className = table.buttons(0, null)[0].node.className + ' active';
 
   });
 </script>
