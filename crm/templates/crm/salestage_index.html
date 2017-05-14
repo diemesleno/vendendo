@@ -22,6 +22,7 @@
         <table class="table">
             <tr>
                 <th></th>
+                <th style="text-align:center; width:100px">Ordem</th>
                 <th>Fase</th>
             <tr>
           {% for my_salestage in my_salestages %}
@@ -51,6 +52,7 @@
                 </form>
               </div>
             </td>
+            <td style="text-align:center;">{{ my_salestage.order_number }}</a></td>
             <td><a href="{% url 'crm:salestage-update' my_salestage.id %}">{{ my_salestage.name }}</a></td>
           </tr>
           {% empty %}
