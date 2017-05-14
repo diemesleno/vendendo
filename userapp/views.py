@@ -165,11 +165,8 @@ class UserLogin(base.View):
 
     def post(self, request):
         email = request.POST['email']
-        print email
         password = request.POST['password']
-        print password
         username = hashlib.md5(email).hexdigest()[-30:]
-        print username
         user_account = authenticate(username=username, password=password)
         if user_account is not None:
             if user_account.is_active:
