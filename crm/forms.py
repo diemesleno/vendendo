@@ -92,7 +92,7 @@ class OccupationAreaForm(forms.ModelForm):
         user_account = User.objects.get(id=self.user.id)
         organization = UserComplement.objects.get(
                            user_account=user_account).organization_active
-        # Verify if a new occupation area 
+        # Verify if a new occupation area
         if OccupationArea.objects.filter(organization=organization,name=name).exists():
             self.add_error('name', 'Já existe um segmento com este nome')
         return cleaned_data
@@ -189,7 +189,7 @@ class OpportunityForm(forms.ModelForm):
 
     class Meta:
         model = Opportunity
-        fields = ('customer', 'description_opportunity', 'stage', 'seller', 'expected_month')
+        fields = ('customer', 'description_opportunity', 'stage', 'seller', 'expected_month', 'notes',)
 
     def __init__(self, organization, *args, **kwargs):
         super(OpportunityForm, self).__init__(*args, **kwargs)
@@ -219,6 +219,10 @@ class OpportunityForm(forms.ModelForm):
         self.fields['expected_month'].validators = [my_validator]
         self.fields['expected_month'].widget.attrs.update({'class': 'form-control'})
         self.fields['expected_month'].help_text="Por favor, use o formato: MM/AAAA."
+        # field notes
+        self.fields['notes'].required = False
+        self.fields['notes'].label = 'Notas'
+        self.fields['notes'].widget.attrs.update({'class': 'form-control'})
 
 
 class ActivityForm(forms.ModelForm):

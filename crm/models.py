@@ -149,6 +149,7 @@ class Opportunity(models.Model):
     seller = models.ForeignKey('auth.User')
     stage = models.ForeignKey('SaleStage', on_delete=models.CASCADE)
     expected_month = models.CharField(max_length=7)
+    notes = models.TextField(null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     description_opportunity = models.CharField(max_length=100)
 
