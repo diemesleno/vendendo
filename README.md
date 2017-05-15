@@ -1,9 +1,20 @@
-# Vendendo
-Open Source CRM
+![vendendo](static/images/vendendo_logo_verde_escuro.png)
 
 ## Sobre o Vendendo
 
-O Vendendo é um projeto de CRM Open Source com foco em força de venda. Seu desenvolvimento está em fase inicial e sendo cuidadosamente organizado para que possamos entregar ao mundo uma ferramenta simples, objetiva e poderosa. 
+O Vendendo é um projeto de CRM Open Source com foco em gestão de vendas desenvolvido para pequenas equipes de vendas que necessitam de um produto inteligente, consistente e gratuito. 
+
+## Recursos
+
+ - Dashboard com indicadores de vendas
+ - Gestão de múltiplas organizações
+ - Importação de prospects
+ - Envio de convites para membros
+ - Controle de produtos e serviços
+ - Controle de oportunidades
+ - Etapas de venda customizáveis
+
+ Estamos trabalhando para a inclusão de muitos outros recursos!
 
 ## Contribuindo com o Vendendo
 
@@ -15,8 +26,6 @@ Você pode:
  - Sugerir uma funcionalidade para o aplicativo
 
 Você pode baixá-lo, utilizá-lo e nos contar como foi também!
-
-Bem, nós ainda não fechamos nenhum release, então infelizmente ainda não há muito o que baixar e utilizar, mas logo liberaremos o RoadMap da primeira versão!
 
 Se você desejar contribuir com o código do projeto:
  
