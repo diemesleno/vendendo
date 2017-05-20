@@ -125,6 +125,7 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         context = super(Dashboard, self).get_context_data(**kwargs)
         context['customers_potential_count'] = self.get_customers_potential_count()
         context['opportunities_open_count'] = self.get_opportunities_open_count()
+        context['customers_base_count'] = self.get_customers_base_count()
         context['opportunity_value_stages'] = self.get_opportunity_value_stages()
         context['customers_by_category'] = self.get_customers_by_category()
         context['segments_by_value'] = self.get_segments_by_value()
@@ -203,6 +204,10 @@ class Dashboard(LoginRequiredMixin, SessionMixin, ListView):
         customers = Customer.objects.filter(organization=self.organization_active, category='P')
         customers_and_value = [{'name':customer.occupationarea.name, 'value':customer.opportunities_won_value} for customer in customers]
         result = self.building_list(customers_and_value)
+        return result
+
+    def get_customers_base_count(self):
+        result = Customer.objects.filter(organization=self.organization_active, category='P').count()
         return result
 
     def building_list(self, sorted_trees):
